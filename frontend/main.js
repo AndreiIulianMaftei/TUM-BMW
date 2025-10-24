@@ -45,14 +45,16 @@ function handleFileSelect(file) {
     
     selectedFile = file;
     uploadBox.innerHTML = `
-        <div class="upload-icon">
+        <div class="upload-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
         </div>
         <h3>Document Ready</h3>
-        <p class="upload-description"><strong>${file.name}</strong></p>
-        <p class="upload-formats">Click "Analyze Document" to proceed</p>
+        <p class="upload-hint"><strong>${file.name}</strong></p>
+        <div class="file-types">
+            <span class="file-badge">Ready to analyze</span>
+        </div>
     `;
     uploadBtn.disabled = false;
 }
@@ -101,7 +103,7 @@ function displayResults(analysis) {
             variablesContainer.appendChild(div);
         });
     } else {
-        variablesContainer.innerHTML = '<p style="color: var(--bmw-gray); font-size: 14px;">No variables identified</p>';
+        variablesContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No variables identified</p>';
     }
     
     const formulasContainer = document.getElementById('formulasContainer');
@@ -114,15 +116,13 @@ function displayResults(analysis) {
             formulasContainer.appendChild(div);
         });
     } else {
-        formulasContainer.innerHTML = '<p style="color: var(--bmw-gray); font-size: 14px;">No formulas generated</p>';
+        formulasContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No formulas generated</p>';
     }
     
     document.getElementById('marketSizeValue').textContent = analysis.market_size || 'Not available';
     document.getElementById('revenuePotentialValue').textContent = analysis.revenue_potential || 'Not available';
     document.getElementById('addressableMarketValue').textContent = analysis.addressable_market || 'Not available';
-    document.getElementById('serviceableMarketValue').textContent = analysis.serviceable_market || 'Not available';
     document.getElementById('targetMarketShareValue').textContent = analysis.target_market_share || 'Not available';
-    document.getElementById('unitEconomicsValue').textContent = analysis.unit_economics || 'Not available';
     document.getElementById('roiEstimateValue').textContent = analysis.roi_estimate || 'Not available';
     
     const assumptionsList = document.getElementById('assumptionsList');
@@ -144,14 +144,17 @@ function resetUpload() {
     selectedFile = null;
     fileInput.value = '';
     uploadBox.innerHTML = `
-        <div class="upload-icon">
+        <div class="upload-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
         </div>
-        <h3>Upload 1-Pager Document</h3>
-        <p class="upload-description">Drop your BMW 1-Pager here or click to browse</p>
-        <p class="upload-formats">Supported formats: PDF, DOCX</p>
+        <h3>Drop your document here</h3>
+        <p class="upload-hint">or click to browse files</p>
+        <div class="file-types">
+            <span class="file-badge">PDF</span>
+            <span class="file-badge">DOCX</span>
+        </div>
     `;
     uploadBtn.disabled = true;
     
