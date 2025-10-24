@@ -1,0 +1,81 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# === Directory files ===
+
+ai_summary.txt
+index.html
+test.pdf
+
+# === Environment ===
+.env
+.venv/
+venv/
+env/
+conda-env/
+*.env
+.env.*
+
+# === IDEs & Editors ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# === Jupyter Notebooks ===
+.ipynb_checkpoints
+
+# === Logs & Outputs ===
+*.log
+logs/
+*.out
+*.err
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+
+# === Cache ===
+*.cache
+.cache/
+.pytest_cache/
+__pypackages__/
+
+# === Packaging ===
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# === Testing ===
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# === Data ===
+data/
+*.sqlite3
+*.db
+*.csv
+*.tsv
+*.json
+
+# === PDFs / large outputs ===
+*.pdf
+*.zip
+*.rar
+
+# === Temporary ===
+tmp/
+temp/
+*.bak
+*.swp
+
+# === Node / Frontend (if applicable) ===
+node_modules/
+npm-debug.log
+yarn-error.log
