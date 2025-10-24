@@ -5,26 +5,29 @@
 }
 
 :root {
-    --bmw-blue: #1C69D4;
-    --bmw-dark-blue: #0A2F5C;
-    --bmw-light-blue: #E8F1FC;
-    --bmw-black: #1A1A1A;
-    --bmw-gray: #6B7280;
-    --bmw-light-gray: #F3F4F6;
-    --bmw-border: #E5E7EB;
-    --bmw-white: #FFFFFF;
-    --bmw-success: #10B981;
-    --bmw-shadow: rgba(0, 0, 0, 0.05);
-    --bmw-shadow-md: rgba(0, 0, 0, 0.1);
-    --bmw-shadow-lg: rgba(0, 0, 0, 0.15);
+    --primary: #3B82F6;
+    --primary-dark: #1E40AF;
+    --primary-light: #DBEAFE;
+    --secondary: #64748B;
+    --background: #F8FAFC;
+    --surface: #FFFFFF;
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --success: #10B981;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --radius: 12px;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bmw-light-gray);
-    min-height: 100vh;
-    color: var(--bmw-black);
-    overflow-x: hidden;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 .app-wrapper {
@@ -33,9 +36,9 @@ body {
 }
 
 .sidebar {
-    width: 280px;
-    background: var(--bmw-white);
-    border-right: 1px solid var(--bmw-border);
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -44,46 +47,48 @@ body {
 }
 
 .brand {
-    padding: 32px 24px;
-    border-bottom: 1px solid var(--bmw-border);
+    padding: 28px 20px;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
-.bmw-logo {
+.logo {
     width: 48px;
     height: 48px;
     flex-shrink: 0;
 }
 
-.bmw-logo svg {
+.logo svg {
     width: 100%;
     height: 100%;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .brand-text {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .brand-title {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--bmw-black);
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
 }
 
 .brand-subtitle {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
-    color: var(--bmw-gray);
+    color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
 }
 
-.nav-items {
-    padding: 24px 0;
+.nav-menu {
+    padding: 20px 0;
     flex: 1;
 }
 
@@ -91,32 +96,46 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 24px;
-    color: var(--bmw-gray);
-    cursor: pointer;
+    padding: 12px 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
     transition: all 0.2s ease;
     font-weight: 500;
     font-size: 14px;
+    margin: 4px 12px;
+    border-radius: 8px;
 }
 
 .nav-item svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 }
 
 .nav-item:hover {
-    background: var(--bmw-light-blue);
-    color: var(--bmw-blue);
+    background: var(--primary-light);
+    color: var(--primary);
 }
 
 .nav-item.active {
-    background: var(--bmw-light-blue);
-    color: var(--bmw-blue);
-    border-right: 3px solid var(--bmw-blue);
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.sidebar-footer p {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
 }
 
 .main-content {
-    margin-left: 280px;
+    margin-left: 260px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -124,90 +143,131 @@ body {
 }
 
 .header {
-    background: var(--bmw-white);
-    border-bottom: 1px solid var(--bmw-border);
-    padding: 32px 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 40px;
 }
 
-.header-content h1 {
+.page-title h1 {
     font-size: 28px;
     font-weight: 700;
-    color: var(--bmw-black);
-    margin-bottom: 4px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
 }
 
-.header-content p {
-    font-size: 14px;
-    color: var(--bmw-gray);
+.page-title p {
+    font-size: 15px;
+    color: var(--text-secondary);
     font-weight: 400;
 }
 
 .content-area {
     flex: 1;
-    padding: 32px 48px;
-}
-
-.upload-section {
-    max-width: 800px;
+    padding: 40px;
+    max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
 }
 
-.upload-container {
-    background: var(--bmw-white);
-    border-radius: 12px;
-    padding: 48px;
-    box-shadow: 0 1px 3px var(--bmw-shadow);
+.upload-section {
+    max-width: 700px;
+    margin: 60px auto;
 }
 
-.upload-box {
-    border: 2px dashed var(--bmw-border);
-    border-radius: 12px;
-    padding: 64px 32px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: var(--bmw-light-gray);
+.upload-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
 }
 
-.upload-box:hover {
-    border-color: var(--bmw-blue);
-    background: var(--bmw-light-blue);
+.upload-instructions {
+    margin-bottom: 24px;
 }
 
-.upload-box.drag-over {
-    border-color: var(--bmw-blue);
-    background: var(--bmw-light-blue);
-    transform: scale(1.01);
-}
-
-.upload-icon {
-    margin: 0 auto 24px;
-    width: 64px;
-    height: 64px;
-    color: var(--bmw-blue);
-}
-
-.upload-box h3 {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--bmw-black);
-    margin-bottom: 8px;
-}
-
-.upload-description {
-    color: var(--bmw-gray);
+.step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
     font-size: 14px;
-    margin-bottom: 4px;
-}
-
-.upload-formats {
-    color: var(--bmw-gray);
-    font-size: 12px;
     font-weight: 500;
 }
 
-.btn-primary,
-.btn-secondary {
+.step {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.upload-box {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 60px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--background);
+}
+
+.upload-box:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.upload-box.drag-over {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: scale(1.01);
+}
+
+.upload-icon-wrapper {
+    margin: 0 auto 20px;
+    width: 64px;
+    height: 64px;
+    color: var(--primary);
+}
+
+.upload-box h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.upload-hint {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.file-types {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.file-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.btn-analyze,
+.btn-new {
     padding: 14px 28px;
     border: none;
     border-radius: 8px;
@@ -217,66 +277,69 @@ body {
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     font-family: 'Inter', sans-serif;
 }
 
-.btn-primary svg,
-.btn-secondary svg {
+.btn-analyze svg,
+.btn-new svg {
     width: 18px;
     height: 18px;
 }
 
-.btn-primary {
-    background: var(--bmw-blue);
-    color: var(--bmw-white);
+.btn-analyze {
+    background: var(--primary);
+    color: white;
     width: 100%;
     margin-top: 24px;
-    justify-content: center;
+    box-shadow: var(--shadow-sm);
 }
 
-.btn-primary:hover:not(:disabled) {
-    background: var(--bmw-dark-blue);
+.btn-analyze:hover:not(:disabled) {
+    background: var(--primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(28, 105, 212, 0.3);
+    box-shadow: var(--shadow-md);
 }
 
-.btn-primary:disabled {
-    background: var(--bmw-border);
-    color: var(--bmw-gray);
+.btn-analyze:disabled {
+    background: var(--border);
+    color: var(--text-muted);
     cursor: not-allowed;
 }
 
-.btn-secondary {
-    background: var(--bmw-white);
-    color: var(--bmw-black);
-    border: 1px solid var(--bmw-border);
+.btn-new {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
 }
 
-.btn-secondary:hover {
-    background: var(--bmw-light-gray);
-    border-color: var(--bmw-blue);
+.btn-new:hover {
+    background: var(--background);
+    border-color: var(--primary);
 }
 
 .loading-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 400px;
+    min-height: 500px;
 }
 
-.loading-container {
+.loading-card {
     text-align: center;
+    max-width: 400px;
+    padding: 40px;
 }
 
-.spinner {
-    border: 3px solid var(--bmw-light-blue);
-    border-top: 3px solid var(--bmw-blue);
+.loading-spinner {
+    border: 3px solid var(--primary-light);
+    border-top: 3px solid var(--primary);
     border-radius: 50%;
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     animation: spin 0.8s linear infinite;
-    margin: 0 auto 24px;
+    margin: 0 auto 28px;
 }
 
 @keyframes spin {
@@ -284,165 +347,142 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-.loading-container h3 {
-    font-size: 18px;
+.loading-card h3 {
+    font-size: 20px;
     font-weight: 600;
-    color: var(--bmw-black);
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
-.loading-container p {
+.loading-card p {
     font-size: 14px;
-    color: var(--bmw-gray);
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    width: 60%;
+    animation: progress 1.5s ease-in-out infinite;
+}
+
+@keyframes progress {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
 }
 
 .results-section {
-    animation: fadeIn 0.4s ease-in;
-    max-width: 1400px;
+    animation: fadeIn 0.4s ease;
 }
 
-.results-header {
+.results-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
 }
 
-.results-title {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.results-title h2 {
+.results-toolbar h2 {
     font-size: 24px;
     font-weight: 700;
-    color: var(--bmw-black);
+    color: var(--text-primary);
 }
 
-.results-badge {
-    background: var(--bmw-light-blue);
-    color: var(--bmw-blue);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.metrics-grid {
+.insight-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
     margin-bottom: 32px;
 }
 
-.metric-card {
-    background: var(--bmw-white);
+.insight-card {
+    background: var(--surface);
     padding: 24px;
-    border-radius: 12px;
-    border: 1px solid var(--bmw-border);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
     transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
 }
 
-.metric-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--bmw-blue), var(--bmw-dark-blue));
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-
-.metric-card:hover {
-    border-color: var(--bmw-blue);
-    box-shadow: 0 4px 12px var(--bmw-shadow-md);
+.insight-card:hover {
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
-.metric-card:hover::before {
-    transform: scaleX(1);
-}
-
-.metric-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--bmw-light-blue);
-    border-radius: 10px;
+.insight-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
     margin-bottom: 16px;
+    color: var(--text-secondary);
 }
 
-.metric-icon svg {
-    width: 22px;
-    height: 22px;
-    color: var(--bmw-blue);
+.insight-header svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
 }
 
-.metric-label {
+.insight-header span {
     font-size: 13px;
     font-weight: 500;
-    color: var(--bmw-gray);
-    margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.metric-value {
-    font-size: 16px;
+.insight-value {
+    font-size: 18px;
     font-weight: 600;
-    color: var(--bmw-black);
+    color: var(--text-primary);
     line-height: 1.4;
 }
 
-.section-card {
-    background: var(--bmw-white);
-    border-radius: 12px;
-    border: 1px solid var(--bmw-border);
+.content-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
     margin-bottom: 24px;
     overflow: hidden;
 }
 
-.section-header {
-    padding: 20px 28px;
-    border-bottom: 1px solid var(--bmw-border);
-    background: var(--bmw-light-gray);
+.card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--background);
 }
 
-.section-header h3 {
-    font-size: 16px;
+.card-header h3 {
+    font-size: 15px;
     font-weight: 600;
-    color: var(--bmw-black);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--text-primary);
 }
 
-.section-content {
-    padding: 28px;
-}
-
-.generated-text {
-    background: var(--bmw-light-gray);
+.card-body {
     padding: 24px;
+}
+
+.summary-text {
+    background: var(--background);
+    padding: 20px;
     border-radius: 8px;
     line-height: 1.8;
-    color: var(--bmw-black);
+    color: var(--text-primary);
     font-size: 14px;
     white-space: pre-wrap;
-    border-left: 3px solid var(--bmw-blue);
+    border-left: 3px solid var(--primary);
 }
 
-.data-grid {
+.details-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 24px;
     margin-bottom: 24px;
 }
@@ -456,22 +496,21 @@ body {
 
 .variable-item,
 .formula-item {
-    background: var(--bmw-light-gray);
+    background: var(--background);
     padding: 16px;
     border-radius: 8px;
-    border-left: 3px solid var(--bmw-blue);
+    border-left: 3px solid var(--primary);
     transition: all 0.2s ease;
 }
 
 .variable-item:hover,
 .formula-item:hover {
-    background: var(--bmw-light-blue);
-    transform: translateX(4px);
+    background: var(--primary-light);
 }
 
 .variable-item strong,
 .formula-item strong {
-    color: var(--bmw-blue);
+    color: var(--primary);
     font-size: 14px;
     font-weight: 600;
     display: block;
@@ -480,29 +519,28 @@ body {
 
 .variable-item small,
 .formula-item small {
-    color: var(--bmw-gray);
+    color: var(--text-secondary);
     font-size: 13px;
     line-height: 1.5;
 }
 
-#assumptionsList {
+.assumptions-list {
     list-style: none;
     padding: 0;
 }
 
-#assumptionsList li {
-    padding: 12px 16px;
+.assumptions-list li {
+    padding: 14px 16px 14px 36px;
     margin-bottom: 8px;
-    background: var(--bmw-light-gray);
+    background: var(--background);
     border-radius: 8px;
-    color: var(--bmw-black);
+    color: var(--text-primary);
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.7;
     position: relative;
-    padding-left: 40px;
 }
 
-#assumptionsList li::before {
+.assumptions-list li::before {
     content: '';
     position: absolute;
     left: 16px;
@@ -510,18 +548,8 @@ body {
     transform: translateY(-50%);
     width: 6px;
     height: 6px;
-    background: var(--bmw-blue);
+    background: var(--primary);
     border-radius: 50%;
-}
-
-.footer {
-    padding: 24px 48px;
-    text-align: center;
-    color: var(--bmw-gray);
-    font-size: 13px;
-    border-top: 1px solid var(--bmw-border);
-    background: var(--bmw-white);
-    margin-top: auto;
 }
 
 @keyframes fadeIn {
@@ -537,14 +565,14 @@ body {
 
 @media (max-width: 1024px) {
     .sidebar {
-        width: 240px;
+        width: 220px;
     }
     
     .main-content {
-        margin-left: 240px;
+        margin-left: 220px;
     }
     
-    .data-grid {
+    .details-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -559,28 +587,22 @@ body {
         height: auto;
         position: relative;
         border-right: none;
-        border-bottom: 1px solid var(--bmw-border);
+        border-bottom: 1px solid var(--border);
     }
     
     .brand {
         padding: 20px;
     }
     
-    .nav-items {
-        padding: 12px 0;
+    .nav-menu {
+        padding: 12px;
         display: flex;
         overflow-x: auto;
     }
     
     .nav-item {
         white-space: nowrap;
-        border-right: none;
-        border-bottom: 3px solid transparent;
-    }
-    
-    .nav-item.active {
-        border-right: none;
-        border-bottom: 3px solid var(--bmw-blue);
+        margin: 0 4px;
     }
     
     .main-content {
@@ -588,27 +610,25 @@ body {
     }
     
     .header,
-    .content-area,
-    .footer {
-        padding-left: 24px;
-        padding-right: 24px;
+    .content-area {
+        padding: 24px 20px;
     }
     
-    .upload-container {
-        padding: 32px 24px;
+    .upload-card {
+        padding: 28px 20px;
     }
     
-    .metrics-grid {
+    .insight-grid {
         grid-template-columns: 1fr;
     }
     
-    .results-header {
+    .results-toolbar {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
     
-    .btn-secondary {
+    .btn-new {
         width: 100%;
     }
 }
