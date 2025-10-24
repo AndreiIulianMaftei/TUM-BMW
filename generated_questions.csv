@@ -1,0 +1,5 @@
+Question Number,Question,Reason,Suggested Answer 1,Suggested Answer 2
+1,"Given a $30M revenue target, which customer segment is best?",Customer segment not defined for revenue target.,Enterprise clients,SMB clients
+2,"With 3M annual volume, is support outsourced or in-house?",Support model needs clarification given transaction volume.,Outsourced support,In-house support
+3,"Given $12M COGS, is manufacturing onshore or offshore?",Manufacturing location impacts cost structure and risk.,Onshore production,Offshore production
+4,"With 250% ROI, is marketing primarily digital or traditional?",Marketing strategy not specified given high ROI.,Digital marketing,Traditional marketing

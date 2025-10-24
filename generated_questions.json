@@ -1,0 +1,36 @@
+{
+  "questions": [
+    {
+      "question": "Given a $30M revenue target, which customer segment is best?",
+      "reason": "Customer segment not defined for revenue target.",
+      "suggested_answers": [
+        "Enterprise clients",
+        "SMB clients"
+      ]
+    },
+    {
+      "question": "With 3M annual volume, is support outsourced or in-house?",
+      "reason": "Support model needs clarification given transaction volume.",
+      "suggested_answers": [
+        "Outsourced support",
+        "In-house support"
+      ]
+    },
+    {
+      "question": "Given $12M COGS, is manufacturing onshore or offshore?",
+      "reason": "Manufacturing location impacts cost structure and risk.",
+      "suggested_answers": [
+        "Onshore production",
+        "Offshore production"
+      ]
+    },
+    {
+      "question": "With 250% ROI, is marketing primarily digital or traditional?",
+      "reason": "Marketing strategy not specified given high ROI.",
+      "suggested_answers": [
+        "Digital marketing",
+        "Traditional marketing"
+      ]
+    }
+  ]
+}
