@@ -1,9 +1,10 @@
 const uploadBox = document.getElementById('uploadBox');
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
-const resultsSection = document.getElementById('resultsSection');
+const uploadSection = document.getElementById('uploadSection');
 const loadingSection = document.getElementById('loadingSection');
-const resetBtn = document.getElementById('resetBtn');
+const resultsSection = document.getElementById('resultsSection');
+const newAnalysisBtn = document.getElementById('newAnalysisBtn');
 
 let selectedFile = null;
 
@@ -35,13 +36,24 @@ fileInput.addEventListener('change', (e) => {
 });
 
 function handleFileSelect(file) {
-    if (!['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
-        alert('Only PDF and DOCX files are allowed');
+    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    
+    if (!validTypes.includes(file.type)) {
+        alert('Please upload a PDF or Word document');
         return;
     }
     
     selectedFile = file;
-    uploadBox.innerHTML = `<p><strong>${file.name}</strong> selected</p>`;
+    uploadBox.innerHTML = `
+        <div class="upload-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+        </div>
+        <h3>Document Ready</h3>
+        <p class="upload-description"><strong>${file.name}</strong></p>
+        <p class="upload-formats">Click "Analyze Document" to proceed</p>
+    `;
     uploadBtn.disabled = false;
 }
 
@@ -51,8 +63,8 @@ uploadBtn.addEventListener('click', async () => {
     const formData = new FormData();
     formData.append('file', selectedFile);
     
+    uploadSection.style.display = 'none';
     loadingSection.style.display = 'flex';
-    resultsSection.style.display = 'none';
     
     try {
         const response = await fetch('/api/upload', {
@@ -61,46 +73,89 @@ uploadBtn.addEventListener('click', async () => {
         });
         
         if (!response.ok) {
-            throw new Error('Upload failed');
+            throw new Error('Analysis failed');
         }
         
         const data = await response.json();
-        displayResults(data);
+        displayResults(data.analysis);
+        
     } catch (error) {
         alert('Error: ' + error.message);
-        loadingSection.style.display = 'none';
+        resetUpload();
     }
 });
 
-function displayResults(data) {
+function displayResults(analysis) {
     loadingSection.style.display = 'none';
     resultsSection.style.display = 'block';
     
-    const docData = data.data;
-    const analysis = docData.analysis_data;
+    document.getElementById('generatedText').textContent = analysis.value_market_potential_text || 'Generated text not available';
     
-    document.getElementById('filename').textContent = docData.filename;
-    document.getElementById('fileType').textContent = docData.file_type.toUpperCase();
-    document.getElementById('wordCount').textContent = docData.word_count;
-    document.getElementById('pageCount').textContent = docData.page_count || 'N/A';
+    const variablesContainer = document.getElementById('variablesContainer');
+    variablesContainer.innerHTML = '';
+    if (analysis.identified_variables && analysis.identified_variables.length > 0) {
+        analysis.identified_variables.forEach(v => {
+            const div = document.createElement('div');
+            div.className = 'variable-item';
+            div.innerHTML = `<strong>${v.name}:</strong> ${v.value}<br><small>${v.description}</small>`;
+            variablesContainer.appendChild(div);
+        });
+    } else {
+        variablesContainer.innerHTML = '<p style="color: var(--bmw-gray); font-size: 14px;">No variables identified</p>';
+    }
     
-    document.getElementById('uniqueWords').textContent = analysis.unique_words;
-    document.getElementById('sentenceCount').textContent = analysis.sentence_count;
-    document.getElementById('avgWordLength').textContent = analysis.average_word_length;
+    const formulasContainer = document.getElementById('formulasContainer');
+    formulasContainer.innerHTML = '';
+    if (analysis.formulas && analysis.formulas.length > 0) {
+        analysis.formulas.forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'formula-item';
+            div.innerHTML = `<strong>${f.name}:</strong> ${f.formula}<br><small>Result: ${f.calculation}</small>`;
+            formulasContainer.appendChild(div);
+        });
+    } else {
+        formulasContainer.innerHTML = '<p style="color: var(--bmw-gray); font-size: 14px;">No formulas generated</p>';
+    }
     
-    const preview = docData.content.substring(0, 500) + (docData.content.length > 500 ? '...' : '');
-    document.getElementById('previewBox').textContent = preview;
+    document.getElementById('marketSizeValue').textContent = analysis.market_size || 'Not available';
+    document.getElementById('revenuePotentialValue').textContent = analysis.revenue_potential || 'Not available';
+    document.getElementById('addressableMarketValue').textContent = analysis.addressable_market || 'Not available';
+    document.getElementById('serviceableMarketValue').textContent = analysis.serviceable_market || 'Not available';
+    document.getElementById('targetMarketShareValue').textContent = analysis.target_market_share || 'Not available';
+    document.getElementById('unitEconomicsValue').textContent = analysis.unit_economics || 'Not available';
+    document.getElementById('roiEstimateValue').textContent = analysis.roi_estimate || 'Not available';
+    
+    const assumptionsList = document.getElementById('assumptionsList');
+    assumptionsList.innerHTML = '';
+    if (analysis.business_assumptions && analysis.business_assumptions.length > 0) {
+        analysis.business_assumptions.forEach(assumption => {
+            const li = document.createElement('li');
+            li.textContent = assumption;
+            assumptionsList.appendChild(li);
+        });
+    } else {
+        assumptionsList.innerHTML = '<li>No assumptions provided</li>';
+    }
 }
 
-resetBtn.addEventListener('click', () => {
+newAnalysisBtn.addEventListener('click', resetUpload);
+
+function resetUpload() {
     selectedFile = null;
     fileInput.value = '';
     uploadBox.innerHTML = `
-        <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        <p>Drag and drop your file here or click to browse</p>
+        <div class="upload-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+        </div>
+        <h3>Upload 1-Pager Document</h3>
+        <p class="upload-description">Drop your BMW 1-Pager here or click to browse</p>
+        <p class="upload-formats">Supported formats: PDF, DOCX</p>
     `;
     uploadBtn.disabled = true;
+    
+    loadingSection.style.display = 'none';
     resultsSection.style.display = 'none';
-});
+    uploadSection.style.display = 'block';
+}
