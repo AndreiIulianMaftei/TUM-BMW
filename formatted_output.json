@@ -1,0 +1,73 @@
+{
+  "TAM": {
+    "Market size": 100000000000,
+    "Growth Rate": null,
+    "Time Horizon": null,
+    "Insight": "The total addressable market is $100 billion.",
+    "Confidence (%)": 85
+  },
+  "SAM": {
+    "Region": null,
+    "Target Segment": null,
+    "Market size": 15000000000,
+    "Insight": "The serviceable available market is $15 billion.",
+    "Confidence (%)": 78
+  },
+  "SOM": {
+    "Market Share": null,
+    "Revenue Potential": 500000000,
+    "Capture Period": null,
+    "Insight": "The serviceable obtainable market is $500 million.",
+    "Confidence (%)": 70
+  },
+  "ROI": {
+    "Revenue": null,
+    "Cost": null,
+    "ROI (%)": 250,
+    "Insight": "The return on investment is projected at 250%.",
+    "Confidence (%)": 72
+  },
+  "Turnover": {
+    "Year": 2025,
+    "Total Revenue": 30000000,
+    "YoY Growth": null,
+    "Insight": "The annual turnover is projected to be $30 million in 2025.",
+    "Confidence (%)": 75
+  },
+  "Volume": {
+    "Units Sold": 3000000,
+    "Region": null,
+    "Period": null,
+    "Insight": "The annual transaction volume is projected at 3 million.",
+    "Confidence (%)": 80
+  },
+  "Unit Economics": {
+    "Unit Revenue": null,
+    "Unit Cost": null,
+    "Margin": 8.5,
+    "Insight": "The profit per unit is $8.5.",
+    "Confidence (%)": 82
+  },
+  "EBIT": {
+    "Revenue": null,
+    "Operating Expense": null,
+    "EBIT Margin": 9000000,
+    "Insight": "Earnings Before Interest and Tax is $9 million.",
+    "Confidence (%)": 68
+  },
+  "COGS": {
+    "Material": null,
+    "Labor": null,
+    "Overheads": null,
+    "Total COGS": 12000000,
+    "Insight": "The cost of goods sold is $12 million.",
+    "Confidence (%)": 85
+  },
+  "Market Potential": {
+    "Market Size": null,
+    "Penetration": null,
+    "Growth Rate": null,
+    "Insight": "The market potential score is 90 out of 100.",
+    "Confidence (%)": 80
+  }
+}
