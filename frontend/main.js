@@ -91,7 +91,117 @@ function displayResults(analysis) {
     loadingSection.style.display = 'none';
     resultsSection.style.display = 'block';
     
+    document.getElementById('executiveSummary').textContent = analysis.executive_summary || 'No executive summary available';
     document.getElementById('generatedText').textContent = analysis.value_market_potential_text || 'Generated text not available';
+    
+    const formatCurrency = (value) => {
+        if (!value && value !== 0) return 'N/A';
+        return new Intl.NumberFormat('en-US', { 
+            style: 'currency', 
+            currency: 'EUR',
+            notation: 'compact',
+            maximumFractionDigits: 1
+        }).format(value);
+    };
+
+    const formatNumber = (value) => {
+        if (!value && value !== 0) return 'N/A';
+        return new Intl.NumberFormat('en-US', { 
+            notation: 'compact',
+            maximumFractionDigits: 1
+        }).format(value);
+    };
+
+    const formatPercentage = (value) => {
+        if (!value && value !== 0) return 'N/A';
+        return `${value.toFixed(1)}%`;
+    };
+
+    const getConfidenceBadgeClass = (confidence) => {
+        if (confidence >= 80) return 'confidence-high';
+        if (confidence >= 60) return 'confidence-medium';
+        return 'confidence-low';
+    };
+
+    if (analysis.tam) {
+        document.getElementById('tamValue').textContent = formatCurrency(analysis.tam.market_size);
+        document.getElementById('tamInsight').textContent = analysis.tam.insight || '';
+        const tamBadge = document.getElementById('tamConfidence');
+        tamBadge.textContent = `${analysis.tam.confidence}%`;
+        tamBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.tam.confidence)}`;
+    }
+
+    if (analysis.sam) {
+        document.getElementById('samValue').textContent = formatCurrency(analysis.sam.market_size);
+        document.getElementById('samInsight').textContent = analysis.sam.insight || '';
+        const samBadge = document.getElementById('samConfidence');
+        samBadge.textContent = `${analysis.sam.confidence}%`;
+        samBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.sam.confidence)}`;
+    }
+
+    if (analysis.som) {
+        document.getElementById('somValue').textContent = formatCurrency(analysis.som.revenue_potential);
+        document.getElementById('somInsight').textContent = analysis.som.insight || '';
+        const somBadge = document.getElementById('somConfidence');
+        somBadge.textContent = `${analysis.som.confidence}%`;
+        somBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.som.confidence)}`;
+    }
+
+    if (analysis.roi) {
+        document.getElementById('roiValue').textContent = formatPercentage(analysis.roi.roi_percentage);
+        document.getElementById('roiInsight').textContent = analysis.roi.insight || '';
+        const roiBadge = document.getElementById('roiConfidence');
+        roiBadge.textContent = `${analysis.roi.confidence}%`;
+        roiBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.roi.confidence)}`;
+    }
+
+    if (analysis.turnover) {
+        document.getElementById('turnoverValue').textContent = formatCurrency(analysis.turnover.total_revenue);
+        document.getElementById('turnoverInsight').textContent = analysis.turnover.insight || '';
+        const turnoverBadge = document.getElementById('turnoverConfidence');
+        turnoverBadge.textContent = `${analysis.turnover.confidence}%`;
+        turnoverBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.turnover.confidence)}`;
+    }
+
+    if (analysis.volume) {
+        document.getElementById('volumeValue').textContent = formatNumber(analysis.volume.units_sold);
+        document.getElementById('volumeInsight').textContent = analysis.volume.insight || '';
+        const volumeBadge = document.getElementById('volumeConfidence');
+        volumeBadge.textContent = `${analysis.volume.confidence}%`;
+        volumeBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.volume.confidence)}`;
+    }
+
+    if (analysis.unit_economics) {
+        document.getElementById('unitEconomicsValue').textContent = formatCurrency(analysis.unit_economics.margin);
+        document.getElementById('unitEconomicsInsight').textContent = analysis.unit_economics.insight || '';
+        const ueBadge = document.getElementById('unitEconomicsConfidence');
+        ueBadge.textContent = `${analysis.unit_economics.confidence}%`;
+        ueBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.unit_economics.confidence)}`;
+    }
+
+    if (analysis.ebit) {
+        document.getElementById('ebitValue').textContent = formatCurrency(analysis.ebit.ebit_margin);
+        document.getElementById('ebitInsight').textContent = analysis.ebit.insight || '';
+        const ebitBadge = document.getElementById('ebitConfidence');
+        ebitBadge.textContent = `${analysis.ebit.confidence}%`;
+        ebitBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.ebit.confidence)}`;
+    }
+
+    if (analysis.cogs) {
+        document.getElementById('cogsValue').textContent = formatCurrency(analysis.cogs.total_cogs);
+        document.getElementById('cogsInsight').textContent = analysis.cogs.insight || '';
+        const cogsBadge = document.getElementById('cogsConfidence');
+        cogsBadge.textContent = `${analysis.cogs.confidence}%`;
+        cogsBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.cogs.confidence)}`;
+    }
+
+    if (analysis.market_potential) {
+        document.getElementById('marketPotentialValue').textContent = formatNumber(analysis.market_potential.market_size || analysis.market_potential.penetration);
+        document.getElementById('marketPotentialInsight').textContent = analysis.market_potential.insight || '';
+        const mpBadge = document.getElementById('marketPotentialConfidence');
+        mpBadge.textContent = `${analysis.market_potential.confidence}%`;
+        mpBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.market_potential.confidence)}`;
+    }
     
     const variablesContainer = document.getElementById('variablesContainer');
     variablesContainer.innerHTML = '';
@@ -119,12 +229,6 @@ function displayResults(analysis) {
         formulasContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No formulas generated</p>';
     }
     
-    document.getElementById('marketSizeValue').textContent = analysis.market_size || 'Not available';
-    document.getElementById('revenuePotentialValue').textContent = analysis.revenue_potential || 'Not available';
-    document.getElementById('addressableMarketValue').textContent = analysis.addressable_market || 'Not available';
-    document.getElementById('targetMarketShareValue').textContent = analysis.target_market_share || 'Not available';
-    document.getElementById('roiEstimateValue').textContent = analysis.roi_estimate || 'Not available';
-    
     const assumptionsList = document.getElementById('assumptionsList');
     assumptionsList.innerHTML = '';
     if (analysis.business_assumptions && analysis.business_assumptions.length > 0) {
@@ -135,6 +239,18 @@ function displayResults(analysis) {
         });
     } else {
         assumptionsList.innerHTML = '<li>No assumptions provided</li>';
+    }
+
+    const recommendationsList = document.getElementById('recommendationsList');
+    recommendationsList.innerHTML = '';
+    if (analysis.improvement_recommendations && analysis.improvement_recommendations.length > 0) {
+        analysis.improvement_recommendations.forEach(recommendation => {
+            const li = document.createElement('li');
+            li.textContent = recommendation;
+            recommendationsList.appendChild(li);
+        });
+    } else {
+        recommendationsList.innerHTML = '<li>No recommendations available</li>';
     }
 }
 
