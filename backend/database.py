@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from app.config import get_settings
+from backend.config import get_settings
 
 
 class Database:
@@ -20,7 +20,3 @@ class Database:
     @staticmethod
     def get_db():
         return Database.db
-
-
-def get_database():
-    return Database.get_db()
