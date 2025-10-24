@@ -108,55 +108,100 @@
                         </button>
                     </div>
 
-                    <div class="insight-grid">
-                        <div class="insight-card">
-                            <div class="insight-header">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>Market Size</span>
+                    <div class="executive-summary-card">
+                        <h3>Executive Summary</h3>
+                        <p id="executiveSummary"></p>
+                    </div>
+
+                    <div class="financial-grid">
+                        <div class="financial-card" id="tamCard">
+                            <div class="financial-header">
+                                <span class="financial-label">TAM</span>
+                                <span class="confidence-badge" id="tamConfidence">--</span>
                             </div>
-                            <div class="insight-value" id="marketSizeValue">-</div>
+                            <div class="financial-value" id="tamValue">-</div>
+                            <div class="financial-insight" id="tamInsight"></div>
                         </div>
-                        
-                        <div class="insight-card">
-                            <div class="insight-header">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>Revenue Potential</span>
+
+                        <div class="financial-card" id="samCard">
+                            <div class="financial-header">
+                                <span class="financial-label">SAM</span>
+                                <span class="confidence-badge" id="samConfidence">--</span>
                             </div>
-                            <div class="insight-value" id="revenuePotentialValue">-</div>
+                            <div class="financial-value" id="samValue">-</div>
+                            <div class="financial-insight" id="samInsight"></div>
                         </div>
-                        
-                        <div class="insight-card">
-                            <div class="insight-header">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                                <span>Addressable Market</span>
+
+                        <div class="financial-card" id="somCard">
+                            <div class="financial-header">
+                                <span class="financial-label">SOM</span>
+                                <span class="confidence-badge" id="somConfidence">--</span>
                             </div>
-                            <div class="insight-value" id="addressableMarketValue">-</div>
+                            <div class="financial-value" id="somValue">-</div>
+                            <div class="financial-insight" id="somInsight"></div>
                         </div>
-                        
-                        <div class="insight-card">
-                            <div class="insight-header">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                                </svg>
-                                <span>Market Share Target</span>
+
+                        <div class="financial-card" id="roiCard">
+                            <div class="financial-header">
+                                <span class="financial-label">ROI</span>
+                                <span class="confidence-badge" id="roiConfidence">--</span>
                             </div>
-                            <div class="insight-value" id="targetMarketShareValue">-</div>
+                            <div class="financial-value" id="roiValue">-</div>
+                            <div class="financial-insight" id="roiInsight"></div>
                         </div>
-                        
-                        <div class="insight-card">
-                            <div class="insight-header">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                                <span>ROI Estimate</span>
+
+                        <div class="financial-card" id="turnoverCard">
+                            <div class="financial-header">
+                                <span class="financial-label">Turnover</span>
+                                <span class="confidence-badge" id="turnoverConfidence">--</span>
                             </div>
-                            <div class="insight-value" id="roiEstimateValue">-</div>
+                            <div class="financial-value" id="turnoverValue">-</div>
+                            <div class="financial-insight" id="turnoverInsight"></div>
+                        </div>
+
+                        <div class="financial-card" id="volumeCard">
+                            <div class="financial-header">
+                                <span class="financial-label">Volume</span>
+                                <span class="confidence-badge" id="volumeConfidence">--</span>
+                            </div>
+                            <div class="financial-value" id="volumeValue">-</div>
+                            <div class="financial-insight" id="volumeInsight"></div>
+                        </div>
+
+                        <div class="financial-card" id="unitEconomicsCard">
+                            <div class="financial-header">
+                                <span class="financial-label">Unit Economics</span>
+                                <span class="confidence-badge" id="unitEconomicsConfidence">--</span>
+                            </div>
+                            <div class="financial-value" id="unitEconomicsValue">-</div>
+                            <div class="financial-insight" id="unitEconomicsInsight"></div>
+                        </div>
+
+                        <div class="financial-card" id="ebitCard">
+                            <div class="financial-header">
+                                <span class="financial-label">EBIT</span>
+                                <span class="confidence-badge" id="ebitConfidence">--</span>
+                            </div>
+                            <div class="financial-value" id="ebitValue">-</div>
+                            <div class="financial-insight" id="ebitInsight"></div>
+                        </div>
+
+                        <div class="financial-card" id="cogsCard">
+                            <div class="financial-header">
+                                <span class="financial-label">COGS</span>
+                                <span class="confidence-badge" id="cogsConfidence">--</span>
+                            </div>
+                            <div class="financial-value" id="cogsValue">-</div>
+                            <div class="financial-insight" id="cogsInsight"></div>
+                        </div>
+
+                        <div class="financial-card" id="marketPotentialCard">
+                            <div class="financial-header">
+                                <span class="financial-label">Market Potential</span>
+                                <span class="confidence-badge" id="marketPotentialConfidence">--</span>
+                            </div>
+                            <div class="financial-value" id="marketPotentialValue">-</div>
+                            <div class="financial-insight" id="marketPotentialInsight"></div>
                         </div>
                     </div>
 
@@ -166,6 +211,15 @@
                         </div>
                         <div class="card-body">
                             <div class="summary-text" id="generatedText"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Improvement Recommendations</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul id="recommendationsList" class="assumptions-list"></ul>
                         </div>
                     </div>
 
@@ -191,7 +245,7 @@
 
                     <div class="content-card">
                         <div class="card-header">
-                            <h3>Assumptions</h3>
+                            <h3>Business Assumptions</h3>
                         </div>
                         <div class="card-body">
                             <ul id="assumptionsList" class="assumptions-list"></ul>
