@@ -20,29 +20,19 @@ class IndustryExample(BaseModel):
     name: str
     description: str
     link: Optional[str] = None
-    metric_value: Optional[str] = None
-
-
-class YearlyProjection(BaseModel):
-    """Year-by-year numerical projections"""
-    year_2024: Optional[float] = Field(None, alias="2024")
-    year_2025: Optional[float] = Field(None, alias="2025")
-    year_2026: Optional[float] = Field(None, alias="2026")
-    year_2027: Optional[float] = Field(None, alias="2027")
-    year_2028: Optional[float] = Field(None, alias="2028")
-    year_2029: Optional[float] = Field(None, alias="2029")
-    year_2030: Optional[float] = Field(None, alias="2030")
-    
-    class Config:
-        populate_by_name = True
+    metric_value: Optional[float] = None  # Changed from str to float to accept numeric values
 
 
 # New detailed cost analysis models
 class CostFigure(BaseModel):
     """Industry cost comparison figure"""
     company: str
-    project: str
-    amount: float
+    project: Optional[str] = None  # For development/ops costs
+    product: Optional[str] = None  # For COGS items
+    amount: Optional[float] = None  # General cost amount
+    retail_price: Optional[float] = None  # For COGS retail price
+    cogs: Optional[float] = None  # For COGS per item
+    margin: Optional[float] = None  # For COGS margin percentage
     currency: str
     year: int
 
@@ -125,12 +115,27 @@ class SevenYearSummary(BaseModel):
     currency: str = "EUR"
 
 
+class KeyRisk(BaseModel):
+    """Individual risk assessment"""
+    risk: str
+    probability: Optional[str] = None
+    mitigation: Optional[str] = None
+    impact: Optional[str] = None
+
+
+class CompetitiveAdvantage(BaseModel):
+    """Competitive advantage description"""
+    advantage: str
+    market_validation: Optional[str] = None
+    sustainability_assessment: Optional[str] = None
+
+
 class TAMMetrics(BaseModel):
     description_of_public: str
     market_size: Optional[float] = None
     growth_rate: Optional[float] = None
     time_horizon: Optional[str] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None  # {"2024": 1000000, "2025": 1200000, ...}
     justification: str
     insight: str
     confidence: int = Field(ge=0, le=100)
@@ -143,7 +148,7 @@ class SAMMetrics(BaseModel):
     region: Optional[str] = None
     target_segment: Optional[str] = None
     market_size: Optional[float] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     justification: str
     insight: str
     confidence: int = Field(ge=0, le=100)
@@ -156,7 +161,7 @@ class SOMMetrics(BaseModel):
     market_share: Optional[float] = None
     revenue_potential: Optional[float] = None
     capture_period: Optional[str] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     justification: str
     insight: str
     confidence: int = Field(ge=0, le=100)
@@ -168,7 +173,7 @@ class ROIMetrics(BaseModel):
     revenue: Optional[float] = None
     cost: Optional[float] = None
     roi_percentage: Optional[float] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     payback_period_months: Optional[int] = None
     insight: str
     confidence: int = Field(ge=0, le=100)
@@ -179,7 +184,7 @@ class TurnoverMetrics(BaseModel):
     year: Optional[int] = None
     total_revenue: Optional[float] = None
     yoy_growth: Optional[float] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     revenue_streams: Optional[Dict[str, float]] = None
     insight: str
     confidence: int = Field(ge=0, le=100)
@@ -189,7 +194,7 @@ class VolumeMetrics(BaseModel):
     units_sold: Optional[int] = None
     region: Optional[str] = None
     period: Optional[str] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     insight: str
     confidence: int = Field(ge=0, le=100)
     growth_drivers: Optional[List[str]] = None
@@ -211,7 +216,7 @@ class EBITMetrics(BaseModel):
     operating_expense: Optional[float] = None
     ebit_margin: Optional[float] = None
     ebit_percentage: Optional[float] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     insight: str
     confidence: int = Field(ge=0, le=100)
     opex_breakdown: Optional[Dict[str, float]] = None
@@ -223,7 +228,7 @@ class COGSMetrics(BaseModel):
     overheads: Optional[float] = None
     total_cogs: Optional[float] = None
     cogs_percentage: Optional[float] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     insight: str
     confidence: int = Field(ge=0, le=100)
 
@@ -232,7 +237,7 @@ class MarketPotential(BaseModel):
     market_size: Optional[float] = None
     penetration: Optional[float] = None
     growth_rate: Optional[float] = None
-    numbers: Optional[YearlyProjection] = None
+    numbers: Optional[Dict[str, float]] = None
     market_drivers: Optional[List[str]] = None
     barriers_to_entry: Optional[List[str]] = None
     insight: str
@@ -282,8 +287,8 @@ class ComprehensiveAnalysis(BaseModel):
     value_market_potential_text: str
     executive_summary: str
     sources: Optional[List[str]] = None
-    key_risks: Optional[List[str]] = None
-    competitive_advantages: Optional[List[str]] = None
+    key_risks: Optional[List[KeyRisk]] = None
+    competitive_advantages: Optional[List[CompetitiveAdvantage]] = None
 
 
 class AnalysisSettings(BaseModel):

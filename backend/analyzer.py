@@ -5,9 +5,9 @@ from backend.models import (
     ComprehensiveAnalysis, Variable, Formula, TAMMetrics, SAMMetrics, 
     SOMMetrics, ROIMetrics, TurnoverMetrics, VolumeMetrics, UnitEconomics,
     EBITMetrics, COGSMetrics, MarketPotential, AnalysisSettings, 
-    IndustryExample, YearlyProjection, DevelopmentCost, CustomerAcquisitionCost,
+    IndustryExample, DevelopmentCost, CustomerAcquisitionCost,
     DistributionOperationsCost, AfterSalesCost, COGSItem, YearlyCostBreakdown,
-    SevenYearSummary
+    SevenYearSummary, KeyRisk, CompetitiveAdvantage
 )
 import json
 import os
@@ -471,10 +471,43 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
         # Check if response was truncated (doesn't end with })
         if not response_text.rstrip().endswith('}'):
             print("WARNING: Response appears truncated, attempting to repair...")
-            # Find the last complete field and close the JSON
-            last_complete = response_text.rfind('",')
-            if last_complete > 0:
-                response_text = response_text[:last_complete + 1] + '\n    }\n  }\n}'
+            
+            # Advanced repair logic
+            # 1. Try to find incomplete arrays and close them
+            lines = response_text.split('\n')
+            
+            # Track open brackets
+            open_braces = response_text.count('{') - response_text.count('}')
+            open_brackets = response_text.count('[') - response_text.count(']')
+            
+            # Remove incomplete last line if it doesn't end with proper punctuation
+            last_line = lines[-1].strip()
+            if last_line and not last_line.endswith((',', '}', ']', '"')):
+                lines = lines[:-1]
+                response_text = '\n'.join(lines)
+                # Recalculate
+                open_braces = response_text.count('{') - response_text.count('}')
+                open_brackets = response_text.count('[') - response_text.count(']')
+            
+            # Close any open arrays first
+            closing = ''
+            if open_brackets > 0:
+                # Check if last character is a comma, if not add one before closing
+                if response_text.rstrip().endswith(','):
+                    closing = '\n  ]'
+                else:
+                    closing = '\n  ]'
+                open_brackets -= 1
+            
+            # Close remaining arrays
+            closing += '\n  ]' * open_brackets
+            
+            # Close any open objects
+            closing += '\n}' * open_braces
+            
+            response_text = response_text.rstrip() + closing
+            
+            print(f"Repair: Added {open_braces} closing braces and {open_brackets + (1 if '[' in closing[:10] else 0)} closing brackets")
         
         # Attempt to parse JSON
         analysis_data = json.loads(response_text)
@@ -598,6 +631,7 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
         "temperature": settings.temperature,
         "top_p": 0.95,
         "top_k": 40,
+        "max_output_tokens": 8192,  # Increase token limit to prevent truncation
     }
     
     # Configure model with extended request options and proper safety settings

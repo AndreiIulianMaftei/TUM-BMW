@@ -29,6 +29,13 @@ const sendChat = document.getElementById('sendChat');
 const chatMessages = document.getElementById('chatMessages');
 const resultsMainContent = document.getElementById('resultsMainContent');
 
+// History elements
+const historySidebar = document.getElementById('historySidebar');
+const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
+const closeHistorySidebar = document.getElementById('closeHistorySidebar');
+const historySearchInput = document.getElementById('historySearchInput');
+const historyList = document.getElementById('historyList');
+
 // Modal elements
 const metricModal = document.getElementById('metricModal');
 const modalBackdrop = document.getElementById('modalBackdrop');
@@ -39,6 +46,8 @@ const closeModal = document.getElementById('closeModal');
 let selectedFile = null;
 let selectedProvider = 'gemini'; // Default provider
 let inputMode = 'file'; // 'file' or 'text'
+let historyData = [];
+let currentAnalysisId = null;
 let analysisContext = null;
 let settings = loadSettings();
 
@@ -155,6 +164,9 @@ uploadBtn.addEventListener('click', async () => {
         const data = await response.json();
         analysisContext = data.analysis; // Save for chat
         displayResults(data.analysis);
+        
+        // Reload history to show the new analysis
+        loadHistory();
         
         // Chat is now ready (user can click "Chat with AI" button)
         
@@ -328,6 +340,91 @@ function displayResults(analysis) {
         });
     } else {
         recommendationsList.innerHTML = '<li>No recommendations available</li>';
+    }
+    
+    // Render Key Risks
+    if (analysis.key_risks && analysis.key_risks.length > 0) {
+        const risksCard = document.getElementById('keyRisksCard');
+        const risksContainer = document.getElementById('keyRisksContainer');
+        risksContainer.innerHTML = '';
+        
+        analysis.key_risks.forEach(riskItem => {
+            const riskDiv = document.createElement('div');
+            riskDiv.className = 'risk-item';
+            riskDiv.innerHTML = `
+                <div class="risk-header">
+                    <div class="risk-title">${riskItem.risk || riskItem}</div>
+                    ${riskItem.probability ? `<span class="risk-probability">${riskItem.probability}</span>` : ''}
+                </div>
+                ${riskItem.impact ? `<div class="risk-impact"><strong>Impact:</strong> ${riskItem.impact}</div>` : ''}
+                ${riskItem.mitigation ? `<div class="risk-mitigation"><strong>Mitigation:</strong> ${riskItem.mitigation}</div>` : ''}
+            `;
+            risksContainer.appendChild(riskDiv);
+        });
+        
+        risksCard.style.display = 'block';
+    }
+    
+    // Render Competitive Advantages
+    if (analysis.competitive_advantages && analysis.competitive_advantages.length > 0) {
+        const advCard = document.getElementById('competitiveAdvantagesCard');
+        const advContainer = document.getElementById('competitiveAdvantagesContainer');
+        advContainer.innerHTML = '';
+        
+        analysis.competitive_advantages.forEach(advItem => {
+            const advDiv = document.createElement('div');
+            advDiv.className = 'advantage-item';
+            advDiv.innerHTML = `
+                <div class="advantage-title">${advItem.advantage || advItem}</div>
+                ${advItem.market_validation ? `<div class="advantage-validation"><strong>Market Validation:</strong> ${advItem.market_validation}</div>` : ''}
+                ${advItem.sustainability_assessment ? `<div class="advantage-sustainability"><strong>Sustainability:</strong> ${advItem.sustainability_assessment}</div>` : ''}
+            `;
+            advContainer.appendChild(advDiv);
+        });
+        
+        advCard.style.display = 'block';
+    }
+    
+    // Render Sources
+    if (analysis.sources && analysis.sources.length > 0) {
+        const sourcesCard = document.getElementById('sourcesCard');
+        const sourcesContainer = document.getElementById('sourcesContainer');
+        sourcesContainer.innerHTML = '';
+        
+        analysis.sources.forEach((source, idx) => {
+            const sourceDiv = document.createElement('div');
+            sourceDiv.className = 'source-link-item';
+            sourceDiv.innerHTML = `
+                <a href="${source}" target="_blank" rel="noopener noreferrer" title="${source}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    ${source}
+                </a>
+            `;
+            sourcesContainer.appendChild(sourceDiv);
+        });
+        
+        sourcesCard.style.display = 'block';
+    }
+    
+    // Render Additional Notes
+    if (analysis.additional_notes) {
+        const notesCard = document.getElementById('additionalNotesCard');
+        const notesText = document.getElementById('additionalNotesText');
+        notesText.textContent = analysis.additional_notes;
+        notesCard.style.display = 'block';
+    }
+    
+    // Render Confidence Level Badge
+    if (analysis.confidence_level) {
+        const confidenceBadge = document.createElement('div');
+        confidenceBadge.className = 'overall-confidence-badge';
+        confidenceBadge.innerHTML = `
+            <span class="badge-label">Overall Confidence:</span>
+            <span class="badge-value">${analysis.confidence_level}</span>
+        `;
+        document.querySelector('.executive-summary-card').appendChild(confidenceBadge);
     }
     
     // Render all charts and visualizations
@@ -931,5 +1028,203 @@ function attachCardClickHandlers() {
     });
 }
 
+// ============== HISTORY SIDEBAR FUNCTIONALITY ==============
+
+// Load analysis history from the backend
+async function loadHistory() {
+    try {
+        const response = await fetch('/api/history');
+        if (!response.ok) {
+            throw new Error('Failed to load history');
+        }
+        
+        const data = await response.json();
+        historyData = data.history || [];
+        renderHistory(historyData);
+    } catch (error) {
+        console.error('Error loading history:', error);
+        historyList.innerHTML = '<div class="history-empty">Failed to load history</div>';
+    }
+}
+
+// Render history items in the sidebar
+function renderHistory(items) {
+    if (!items || items.length === 0) {
+        historyList.innerHTML = '<div class="history-empty">No analysis history yet</div>';
+        return;
+    }
+    
+    historyList.innerHTML = items.map(item => {
+        const date = item.date ? new Date(item.date) : null;
+        const dateStr = date ? formatDateTime(date) : 'Unknown date';
+        
+        return `
+            <div class="history-item ${item.id === currentAnalysisId ? 'active' : ''}" data-id="${item.id}">
+                <div class="history-item-header">
+                    <h4 class="history-item-title">${escapeHtml(item.title)}</h4>
+                    <span class="history-item-provider history-item-provider-${item.provider}">
+                        ${item.provider.toUpperCase()}
+                    </span>
+                </div>
+                <div class="history-item-meta">
+                    <span class="history-item-date">${dateStr}</span>
+                    <span class="history-item-type">${item.file_type || 'unknown'}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Attach click handlers to history items
+    document.querySelectorAll('.history-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const id = item.getAttribute('data-id');
+            loadAnalysisById(id);
+        });
+    });
+}
+
+// Format date and time with exact seconds
+function formatDateTime(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Load analysis by ID from the backend
+async function loadAnalysisById(id) {
+    try {
+        // Show loading state
+        loadingSection.style.display = 'flex';
+        uploadSection.style.display = 'none';
+        resultsSection.style.display = 'none';
+        
+        const response = await fetch(`/api/documents/${id}`);
+        if (!response.ok) {
+            throw new Error('Failed to load analysis');
+        }
+        
+        const data = await response.json();
+        
+        // Update current analysis ID
+        currentAnalysisId = id;
+        
+        // Update active state in history list
+        document.querySelectorAll('.history-item').forEach(item => {
+            item.classList.toggle('active', item.getAttribute('data-id') === id);
+        });
+        
+        // Save to context for chat
+        analysisContext = data.analysis;
+        
+        // Display the analysis using existing displayResults function
+        displayResults(data.analysis);
+        
+        // Close history sidebar on mobile
+        if (window.innerWidth <= 768) {
+            historySidebar.classList.remove('open');
+        }
+        
+    } catch (error) {
+        console.error('Error loading analysis:', error);
+        loadingSection.style.display = 'none';
+        uploadSection.style.display = 'flex';
+        alert('Failed to load the selected analysis. Please try again.');
+    }
+}
+
+// Search/filter history
+function filterHistory() {
+    const query = historySearchInput.value.toLowerCase().trim();
+    
+    if (!query) {
+        renderHistory(historyData);
+        return;
+    }
+    
+    const filtered = historyData.filter(item => 
+        item.title.toLowerCase().includes(query) ||
+        item.provider.toLowerCase().includes(query) ||
+        (item.file_type && item.file_type.toLowerCase().includes(query))
+    );
+    
+    renderHistory(filtered);
+}
+
+// Toggle history sidebar
+function toggleHistorySidebar() {
+    historySidebar.classList.toggle('open');
+}
+
+// Close history sidebar
+function closeHistorySidebarFunc() {
+    historySidebar.classList.remove('open');
+}
+
+// History event listeners
+if (toggleHistoryBtn) {
+    toggleHistoryBtn.addEventListener('click', toggleHistorySidebar);
+}
+
+if (closeHistorySidebar) {
+    closeHistorySidebar.addEventListener('click', closeHistorySidebarFunc);
+}
+
+if (historySearchInput) {
+    historySearchInput.addEventListener('input', filterHistory);
+}
+
+// Load history on page load
+loadHistory();
+
+// ============== STICKY HEADER FUNCTIONALITY ==============
+
+// Add shadow to header on scroll
+const header = document.querySelector('.header');
+if (header) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+}
+
+// ============== END HISTORY/HEADER FUNCTIONALITY ==============
+
 // Initialize settings on load
 applySettings();
+
+// Cost Accordion Functionality
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('cost-accordion-toggle') || e.target.closest('.cost-accordion-toggle')) {
+        const toggle = e.target.classList.contains('cost-accordion-toggle') ? e.target : e.target.closest('.cost-accordion-toggle');
+        const targetId = toggle.getAttribute('data-target');
+        const content = document.getElementById(targetId);
+        
+        if (content) {
+            const isActive = toggle.classList.contains('active');
+            
+            // Toggle active state
+            if (isActive) {
+                toggle.classList.remove('active');
+                content.classList.remove('active');
+            } else {
+                toggle.classList.add('active');
+                content.classList.add('active');
+            }
+        }
+    }
+});

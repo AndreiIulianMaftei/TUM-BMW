@@ -13,22 +13,13 @@
     <div class="app-wrapper">
         <aside class="sidebar">
             <div class="brand">
-                <div class="logo">
-                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#1C69D4;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#0A4BA0;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <circle cx="24" cy="24" r="22" fill="url(#logoGrad)" stroke="white" stroke-width="1.5"/>
-                        <circle cx="24" cy="24" r="14" fill="none" stroke="white" stroke-width="3"/>
-                        <path d="M 32 32 L 37 37" stroke="white" stroke-width="3" stroke-linecap="round"/>
-                        <circle cx="37" cy="37" r="2" fill="white"/>
-                    </svg>
+                <div class="brand-header">
+                    <div class="logo">
+                        <img src="icons/Logo.png" alt="Quant Logo" class="logo-image">
+                    </div>
+                    <span class="brand-title">Quant</span>
                 </div>
                 <div class="brand-text">
-                    <span class="brand-title">Quant</span>
                     <span class="brand-subtitle">Market Intelligence</span>
                 </div>
             </div>
@@ -44,6 +35,42 @@
                 <p>Powered by BMW Innovation</p>
             </div>
         </aside>
+
+        <!-- History Sidebar -->
+        <aside class="history-sidebar" id="historySidebar">
+            <div class="history-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Analysis History
+                </h3>
+                <button class="history-close-btn" id="closeHistorySidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="history-search">
+                <input type="text" id="historySearch" placeholder="Search analysis history..." />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="history-loading">
+                    <div class="spinner"></div>
+                    <p>Loading history...</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- History Toggle Button -->
+        <button class="history-toggle" id="toggleHistoryBtn" title="Analysis History">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </button>
 
         <main class="main-content">
             <header class="header">
@@ -356,89 +383,185 @@
 
                     <!-- Cost Details Section -->
                     <div id="costDetailsSection" style="display: none;">
-                        <h2 class="section-title">Detailed Cost Analysis</h2>
+                        <div class="cost-analysis-header">
+                            <h2 class="section-title">Detailed Cost Analysis</h2>
+                            <p class="section-subtitle">Comprehensive breakdown of project costs with market comparisons</p>
+                        </div>
                         
-                        <div class="content-card">
-                            <div class="card-header">
-                                <h3>Development Costs</h3>
+                        <div class="cost-accordion">
+                            <div class="cost-accordion-item">
+                                <button class="cost-accordion-toggle" data-target="developmentCostsContainer">
+                                    <div class="accordion-toggle-left">
+                                        <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                        </svg>
+                                        <span class="accordion-title">Development Costs</span>
+                                    </div>
+                                    <svg class="accordion-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="cost-accordion-content" id="developmentCostsContainer"></div>
                             </div>
-                            <div class="card-body">
-                                <div id="developmentCostsContainer"></div>
-                            </div>
-                        </div>
 
-                        <div class="content-card">
-                            <div class="card-header">
-                                <h3>Customer Acquisition Costs</h3>
+                            <div class="cost-accordion-item">
+                                <button class="cost-accordion-toggle" data-target="cacContainer">
+                                    <div class="accordion-toggle-left">
+                                        <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <span class="accordion-title">Customer Acquisition Costs</span>
+                                    </div>
+                                    <svg class="accordion-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="cost-accordion-content" id="cacContainer"></div>
                             </div>
-                            <div class="card-body">
-                                <div id="cacContainer"></div>
-                            </div>
-                        </div>
 
-                        <div class="content-card">
-                            <div class="card-header">
-                                <h3>Distribution & Operations</h3>
+                            <div class="cost-accordion-item">
+                                <button class="cost-accordion-toggle" data-target="distributionCostsContainer">
+                                    <div class="accordion-toggle-left">
+                                        <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                        </svg>
+                                        <span class="accordion-title">Distribution & Operations</span>
+                                    </div>
+                                    <svg class="accordion-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="cost-accordion-content" id="distributionCostsContainer"></div>
                             </div>
-                            <div class="card-body">
-                                <div id="distributionCostsContainer"></div>
-                            </div>
-                        </div>
 
-                        <div class="content-card">
-                            <div class="card-header">
-                                <h3>After-Sales Costs</h3>
-                            </div>
-                            <div class="card-body">
-                                <div id="afterSalesContainer"></div>
+                            <div class="cost-accordion-item">
+                                <button class="cost-accordion-toggle" data-target="afterSalesContainer">
+                                    <div class="accordion-toggle-left">
+                                        <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                        <span class="accordion-title">After-Sales Costs</span>
+                                    </div>
+                                    <svg class="accordion-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="cost-accordion-content" id="afterSalesContainer"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="content-card">
-                        <div class="card-header">
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
                             <h3>Market Potential Summary</h3>
                         </div>
-                        <div class="card-body">
+                        <div class="insight-body">
                             <div class="summary-text" id="generatedText"></div>
                         </div>
                     </div>
 
-                    <div class="content-card">
-                        <div class="card-header">
+                    <div class="insight-card recommendations-card">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             <h3>Improvement Recommendations</h3>
                         </div>
-                        <div class="card-body">
-                            <ul id="recommendationsList" class="assumptions-list"></ul>
+                        <div class="insight-body">
+                            <ul id="recommendationsList" class="recommendations-list"></ul>
                         </div>
                     </div>
 
-                    <div class="details-grid">
-                        <div class="content-card">
-                            <div class="card-header">
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                </svg>
                                 <h3>Key Variables</h3>
                             </div>
-                            <div class="card-body">
+                            <div class="info-card-body">
                                 <div id="variablesContainer"></div>
                             </div>
                         </div>
 
-                        <div class="content-card">
-                            <div class="card-header">
+                        <div class="info-card">
+                            <div class="info-card-header">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
                                 <h3>Calculations</h3>
                             </div>
-                            <div class="card-body">
+                            <div class="info-card-body">
                                 <div id="formulasContainer"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="content-card">
-                        <div class="card-header">
+                    <div class="insight-card assumptions-card">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
                             <h3>Business Assumptions</h3>
                         </div>
-                        <div class="card-body">
+                        <div class="insight-body">
                             <ul id="assumptionsList" class="assumptions-list"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Key Risks Section -->
+                    <div class="insight-card risks-card" id="keyRisksCard" style="display: none;">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <h3>Key Risks & Mitigation Strategies</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div id="keyRisksContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Competitive Advantages Section -->
+                    <div class="insight-card advantages-card" id="competitiveAdvantagesCard" style="display: none;">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <h3>Competitive Advantages</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div id="competitiveAdvantagesContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sources Section -->
+                    <div class="insight-card sources-card" id="sourcesCard" style="display: none;">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <h3>Data Sources & References</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div id="sourcesContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes Section -->
+                    <div class="insight-card notes-card" id="additionalNotesCard" style="display: none;">
+                        <div class="insight-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <h3>Additional Notes</h3>
+                        </div>
+                        <div class="insight-body">
+                            <div id="additionalNotesText" class="notes-text"></div>
                         </div>
                     </div>
                         </div>

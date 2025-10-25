@@ -527,49 +527,151 @@ function renderCostDetails(analysis) {
             });
         }
     }
+    
+    // COGS Items (Cost of Goods Sold) - handled separately with product_category
+    if (analysis.cost_of_goods_sold && analysis.cost_of_goods_sold.length > 0) {
+        const cogsSection = document.getElementById('cogsDetailsSection');
+        if (!cogsSection) {
+            // Create COGS section if it doesn't exist
+            const detailsSection = document.getElementById('costDetailsSection');
+            if (detailsSection) {
+                const cogsCard = document.createElement('div');
+                cogsCard.className = 'content-card';
+                cogsCard.innerHTML = `
+                    <div class="card-header">
+                        <h3>Cost of Goods Sold (COGS) Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="cogsItemsContainer"></div>
+                    </div>
+                `;
+                detailsSection.appendChild(cogsCard);
+            }
+        }
+        
+        const cogsContainer = document.getElementById('cogsItemsContainer');
+        if (cogsContainer) {
+            cogsContainer.innerHTML = '';
+            analysis.cost_of_goods_sold.forEach(cogsItem => {
+                cogsContainer.appendChild(createCOGSItemElement(cogsItem));
+            });
+        }
+    }
 }
 
-function createCostItemElement(cost) {
+function createCOGSItemElement(cogsItem) {
     const div = document.createElement('div');
     div.className = 'cost-item';
     
     let html = `
         <div class="cost-item-header">
-            <div class="cost-item-category">${cost.category}</div>
-            <div class="cost-item-amount">${formatCurrency(cost.estimated_amount || cost.estimated_annual_budget)}</div>
+            <div class="cost-item-category">${cogsItem.product_category}</div>
+            <div class="cost-item-pricing">
+                <span class="cogs-price">Price: ${formatCurrency(cogsItem.price_per_item)}</span>
+                <span class="cogs-cost">COGS: ${formatCurrency(cogsItem.cogs_per_item)}</span>
+                <span class="cogs-margin">Margin: ${cogsItem.gross_margin_percentage.toFixed(1)}%</span>
+            </div>
         </div>
-        <div class="cost-item-reasoning">${cost.reasoning}</div>
+        <div class="cost-item-reasoning">${cogsItem.reasoning}</div>
     `;
     
-    if (cost.market_comparison) {
+    if (cogsItem.market_comparison) {
         html += `
             <div class="cost-comparison">
                 <div class="cost-comparison-title">Market Comparison</div>
-                <div class="cost-comparison-details"><strong>${cost.market_comparison.similar_case}</strong></div>
-                <div class="cost-comparison-details">${cost.market_comparison.comparison_details}</div>
+                <div class="cost-comparison-details"><strong>${cogsItem.market_comparison.similar_case}</strong></div>
+                <div class="cost-comparison-details">${cogsItem.market_comparison.comparison_details}</div>
         `;
         
-        if (cost.market_comparison.cost_figures && cost.market_comparison.cost_figures.length > 0) {
+        if (cogsItem.market_comparison.cost_figures && cogsItem.market_comparison.cost_figures.length > 0) {
             html += '<div class="cost-figures">';
-            cost.market_comparison.cost_figures.forEach(figure => {
+            cogsItem.market_comparison.cost_figures.forEach(figure => {
                 html += `
                     <div class="cost-figure-card">
                         <div class="cost-figure-company">${figure.company}</div>
-                        <div class="cost-figure-amount">${formatCurrency(figure.amount)} ${figure.currency}</div>
-                        <div class="cost-figure-project">${figure.project} (${figure.year})</div>
+                        <div class="cost-figure-product">${figure.product || figure.project}</div>
+                        <div class="cost-figure-pricing">
+                            Price: ${formatCurrency(figure.retail_price || figure.amount)} | 
+                            COGS: ${formatCurrency(figure.cogs)} | 
+                            Margin: ${figure.margin ? figure.margin.toFixed(1) + '%' : 'N/A'}
+                        </div>
+                        <div class="cost-figure-year">(${figure.year})</div>
                     </div>
                 `;
             });
             html += '</div>';
         }
         
-        if (cost.market_comparison.reference_links && cost.market_comparison.reference_links.length > 0) {
+        if (cogsItem.market_comparison.reference_links && cogsItem.market_comparison.reference_links.length > 0) {
             html += `
                 <div class="cost-sources">
                     <div class="cost-sources-label">Sources</div>
             `;
+            cogsItem.market_comparison.reference_links.forEach((link, idx) => {
+                html += `<a href="${link}" target="_blank" rel="noopener noreferrer" title="${link}">${link}</a>`;
+            });
+            html += '</div>';
+        }
+        
+        html += '</div>';
+    }
+    
+    div.innerHTML = html;
+    return div;
+}
+
+function createCostItemElement(cost) {
+    const div = document.createElement('div');
+    div.className = 'cost-item-modern';
+    
+    let html = `
+        <div class="cost-item-main">
+            <div class="cost-item-info">
+                <h4 class="cost-item-title">${cost.category}</h4>
+                <p class="cost-item-description">${cost.reasoning}</p>
+            </div>
+            <div class="cost-item-value">${formatCurrency(cost.estimated_amount || cost.estimated_annual_budget)}</div>
+        </div>
+    `;
+    
+    if (cost.market_comparison) {
+        html += `
+            <div class="cost-comparison-modern">
+                <div class="comparison-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>Market Benchmark: ${cost.market_comparison.similar_case}</span>
+                </div>
+                <p class="comparison-note">${cost.market_comparison.comparison_details}</p>
+        `;
+        
+        if (cost.market_comparison.cost_figures && cost.market_comparison.cost_figures.length > 0) {
+            html += '<div class="comparison-table">';
+            html += '<table><thead><tr><th>Company</th><th>Project</th><th>Cost</th><th>Year</th></tr></thead><tbody>';
+            cost.market_comparison.cost_figures.forEach(figure => {
+                html += `
+                    <tr>
+                        <td><strong>${figure.company}</strong></td>
+                        <td>${figure.project}</td>
+                        <td class="amount-cell">${formatCurrency(figure.amount)} ${figure.currency}</td>
+                        <td>${figure.year}</td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table></div>';
+        }
+        
+        if (cost.market_comparison.reference_links && cost.market_comparison.reference_links.length > 0) {
+            html += '<div class="comparison-sources">';
             cost.market_comparison.reference_links.forEach((link, idx) => {
-                html += `<a href="${link}" target="_blank" rel="noopener noreferrer">Source ${idx + 1} →</a>`;
+                const displayUrl = link.length > 50 ? link.substring(0, 47) + '...' : link;
+                html += `<a href="${link}" target="_blank" rel="noopener noreferrer" title="${link}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    ${displayUrl}
+                </a>`;
             });
             html += '</div>';
         }
