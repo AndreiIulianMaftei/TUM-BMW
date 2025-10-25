@@ -204,95 +204,194 @@
                         <p id="executiveSummary"></p>
                     </div>
 
-                    <div class="financial-grid">
-                        <div class="financial-card" id="tamCard">
-                            <div class="financial-header">
-                                <span class="financial-label">TAM</span>
-                                <span class="confidence-badge" id="tamConfidence">--</span>
+                    <!-- Key Metrics Overview -->
+                    <div class="metrics-overview-section">
+                        <h2 class="section-title">Key Financial Metrics</h2>
+                        <div class="financial-grid">
+                            <div class="financial-card" id="tamCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">TAM</span>
+                                    <span class="confidence-badge" id="tamConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="tamValue">-</div>
+                                <div class="financial-insight" id="tamInsight"></div>
                             </div>
-                            <div class="financial-value" id="tamValue">-</div>
-                            <div class="financial-insight" id="tamInsight"></div>
+
+                            <div class="financial-card" id="samCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">SAM</span>
+                                    <span class="confidence-badge" id="samConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="samValue">-</div>
+                                <div class="financial-insight" id="samInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="somCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">SOM</span>
+                                    <span class="confidence-badge" id="somConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="somValue">-</div>
+                                <div class="financial-insight" id="somInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="roiCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">ROI</span>
+                                    <span class="confidence-badge" id="roiConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="roiValue">-</div>
+                                <div class="financial-insight" id="roiInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="turnoverCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Turnover</span>
+                                    <span class="confidence-badge" id="turnoverConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="turnoverValue">-</div>
+                                <div class="financial-insight" id="turnoverInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="volumeCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Volume</span>
+                                    <span class="confidence-badge" id="volumeConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="volumeValue">-</div>
+                                <div class="financial-insight" id="volumeInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="unitEconomicsCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Unit Economics</span>
+                                    <span class="confidence-badge" id="unitEconomicsConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="unitEconomicsValue">-</div>
+                                <div class="financial-insight" id="unitEconomicsInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="ebitCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">EBIT</span>
+                                    <span class="confidence-badge" id="ebitConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="ebitValue">-</div>
+                                <div class="financial-insight" id="ebitInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="cogsCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">COGS</span>
+                                    <span class="confidence-badge" id="cogsConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="cogsValue">-</div>
+                                <div class="financial-insight" id="cogsInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="marketPotentialCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Market Potential</span>
+                                    <span class="confidence-badge" id="marketPotentialConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="marketPotentialValue">-</div>
+                                <div class="financial-insight" id="marketPotentialInsight"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <h2 class="section-title">Financial Projections & Analysis</h2>
+                        
+                        <!-- Market Growth Chart -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Market Size Projections (TAM/SAM/SOM)</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="marketGrowthChart"></canvas>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="financial-card" id="samCard">
-                            <div class="financial-header">
-                                <span class="financial-label">SAM</span>
-                                <span class="confidence-badge" id="samConfidence">--</span>
+                        <!-- Revenue & Cost Projections -->
+                        <div class="charts-grid">
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3>Revenue & Volume Growth</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="financial-value" id="samValue">-</div>
-                            <div class="financial-insight" id="samInsight"></div>
+
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3>Cost Breakdown by Year</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="costChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="financial-card" id="somCard">
-                            <div class="financial-header">
-                                <span class="financial-label">SOM</span>
-                                <span class="confidence-badge" id="somConfidence">--</span>
+                        <!-- Profitability Analysis -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Profitability Analysis (EBIT & ROI)</h3>
                             </div>
-                            <div class="financial-value" id="somValue">-</div>
-                            <div class="financial-insight" id="somInsight"></div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="profitabilityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Details Section -->
+                    <div id="costDetailsSection" style="display: none;">
+                        <h2 class="section-title">Detailed Cost Analysis</h2>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Development Costs</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="developmentCostsContainer"></div>
+                            </div>
                         </div>
 
-                        <div class="financial-card" id="roiCard">
-                            <div class="financial-header">
-                                <span class="financial-label">ROI</span>
-                                <span class="confidence-badge" id="roiConfidence">--</span>
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Customer Acquisition Costs</h3>
                             </div>
-                            <div class="financial-value" id="roiValue">-</div>
-                            <div class="financial-insight" id="roiInsight"></div>
+                            <div class="card-body">
+                                <div id="cacContainer"></div>
+                            </div>
                         </div>
 
-                        <div class="financial-card" id="turnoverCard">
-                            <div class="financial-header">
-                                <span class="financial-label">Turnover</span>
-                                <span class="confidence-badge" id="turnoverConfidence">--</span>
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Distribution & Operations</h3>
                             </div>
-                            <div class="financial-value" id="turnoverValue">-</div>
-                            <div class="financial-insight" id="turnoverInsight"></div>
+                            <div class="card-body">
+                                <div id="distributionCostsContainer"></div>
+                            </div>
                         </div>
 
-                        <div class="financial-card" id="volumeCard">
-                            <div class="financial-header">
-                                <span class="financial-label">Volume</span>
-                                <span class="confidence-badge" id="volumeConfidence">--</span>
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>After-Sales Costs</h3>
                             </div>
-                            <div class="financial-value" id="volumeValue">-</div>
-                            <div class="financial-insight" id="volumeInsight"></div>
-                        </div>
-
-                        <div class="financial-card" id="unitEconomicsCard">
-                            <div class="financial-header">
-                                <span class="financial-label">Unit Economics</span>
-                                <span class="confidence-badge" id="unitEconomicsConfidence">--</span>
+                            <div class="card-body">
+                                <div id="afterSalesContainer"></div>
                             </div>
-                            <div class="financial-value" id="unitEconomicsValue">-</div>
-                            <div class="financial-insight" id="unitEconomicsInsight"></div>
-                        </div>
-
-                        <div class="financial-card" id="ebitCard">
-                            <div class="financial-header">
-                                <span class="financial-label">EBIT</span>
-                                <span class="confidence-badge" id="ebitConfidence">--</span>
-                            </div>
-                            <div class="financial-value" id="ebitValue">-</div>
-                            <div class="financial-insight" id="ebitInsight"></div>
-                        </div>
-
-                        <div class="financial-card" id="cogsCard">
-                            <div class="financial-header">
-                                <span class="financial-label">COGS</span>
-                                <span class="confidence-badge" id="cogsConfidence">--</span>
-                            </div>
-                            <div class="financial-value" id="cogsValue">-</div>
-                            <div class="financial-insight" id="cogsInsight"></div>
-                        </div>
-
-                        <div class="financial-card" id="marketPotentialCard">
-                            <div class="financial-header">
-                                <span class="financial-label">Market Potential</span>
-                                <span class="confidence-badge" id="marketPotentialConfidence">--</span>
-                            </div>
-                            <div class="financial-value" id="marketPotentialValue">-</div>
-                            <div class="financial-insight" id="marketPotentialInsight"></div>
                         </div>
                     </div>
 
@@ -462,6 +561,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="charts.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

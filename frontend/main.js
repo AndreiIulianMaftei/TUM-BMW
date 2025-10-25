@@ -330,6 +330,11 @@ function displayResults(analysis) {
         recommendationsList.innerHTML = '<li>No recommendations available</li>';
     }
     
+    // Render all charts and visualizations
+    if (typeof renderAllCharts === 'function') {
+        setTimeout(() => renderAllCharts(analysis), 200);
+    }
+    
     // Attach click handlers to cards for modal interactions
     setTimeout(attachCardClickHandlers, 100);
 }

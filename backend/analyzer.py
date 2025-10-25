@@ -10,6 +10,9 @@ from backend.models import (
     SevenYearSummary
 )
 import json
+import os
+from datetime import datetime
+from pathlib import Path
 
 
 def get_analysis_prompt(text: str, settings: AnalysisSettings = None) -> str:
@@ -404,6 +407,48 @@ REMEMBER:
 Return ONLY the JSON. No additional text or explanations outside the JSON structure."""
 
 
+def save_json_response(response_text: str, provider: str) -> str:
+    """
+    Save LLM JSON response to Json_Results folder for inspection.
+    Returns the filepath where the JSON was saved.
+    """
+    try:
+        # Create Json_Results directory if it doesn't exist
+        results_dir = Path("Json_Results")
+        results_dir.mkdir(exist_ok=True)
+        
+        # Generate unique filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{provider}_{timestamp}.json"
+        filepath = results_dir / filename
+        
+        # Clean up the response text if it has markdown code blocks
+        cleaned_text = response_text.strip()
+        if cleaned_text.startswith("```json"):
+            cleaned_text = cleaned_text[7:]
+        if cleaned_text.startswith("```"):
+            cleaned_text = cleaned_text[3:]
+        if cleaned_text.endswith("```"):
+            cleaned_text = cleaned_text[:-3]
+        cleaned_text = cleaned_text.strip()
+        
+        # Try to parse and pretty-print JSON
+        try:
+            parsed_json = json.loads(cleaned_text)
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(parsed_json, f, indent=2, ensure_ascii=False)
+        except json.JSONDecodeError:
+            # If parsing fails, save raw text
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(cleaned_text)
+        
+        print(f"✓ Saved LLM response to: {filepath}")
+        return str(filepath)
+    except Exception as e:
+        print(f"Warning: Could not save JSON response: {e}")
+        return ""
+
+
 def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
     """Parse and validate the LLM response into ComprehensiveAnalysis model with robust error handling"""
     try:
@@ -546,36 +591,89 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
     config = get_settings()
     genai.configure(api_key=config.gemini_api_key)
     
-    # Use temperature from settings
     if settings is None:
         settings = AnalysisSettings()
     
-    # Optimized configuration for high-quality analysis - no limits
     generation_config = {
         "temperature": settings.temperature,
         "top_p": 0.95,
         "top_k": 40,
     }
     
+    # Configure model with extended request options and proper safety settings
     model = genai.GenerativeModel(
         config.gemini_model_name,  # Use environment variable
-        generation_config=generation_config
+        generation_config=generation_config,
+        # Disable all safety filters for business/financial analysis
+        # This prevents false positives on terms like "risk", "exposure", "dangerous", etc.
+        safety_settings=[
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE",
+            },
+        ]
     )
     
     prompt = get_analysis_prompt(text, settings)
     
+    # Log prompt size for debugging
+    prompt_chars = len(prompt)
+    prompt_tokens_estimate = prompt_chars // 4  # Rough estimate: 4 chars per token
+    print(f"Gemini - Prompt size: {prompt_chars} chars (~{prompt_tokens_estimate} tokens)")
+    
     try:
+        # Generate content
         response = model.generate_content(prompt)
+        
+        # Check if response was blocked by safety filters
+        if hasattr(response, 'prompt_feedback') and response.prompt_feedback.block_reason:
+            feedback = response.prompt_feedback
+            print(f"Gemini Safety Filter Triggered: {feedback}")
+            error_msg = f"Content blocked by safety filter: {feedback.block_reason}. Safety ratings: {feedback.safety_ratings}"
+            raise Exception(error_msg)
+        
+        # Check if we have actual text response
+        if not response.text or len(response.text.strip()) == 0:
+            print(f"Gemini Response Debug - Parts: {response.parts if hasattr(response, 'parts') else 'N/A'}")
+            print(f"Gemini Response Debug - Candidates: {response.candidates if hasattr(response, 'candidates') else 'N/A'}")
+            error_msg = "Gemini returned an empty response. This might be due to safety filters or API issues."
+            raise Exception(error_msg)
+        
+        print(f"Gemini - Response received: {len(response.text)} chars")
+        
+        # Save the raw JSON response for inspection
+        save_json_response(response.text, "gemini")
+        
         return parse_analysis_response(response.text)
     except Exception as e:
         error_msg = str(e)
-        print(f"Gemini API Error: {error_msg}")
+        print(f"Gemini API Error Details: {error_msg}")
+        print(f"Error type: {type(e).__name__}")
         
-        # Provide helpful error message
-        if "timeout" in error_msg.lower() or "504" in error_msg or "deadline" in error_msg.lower():
-            error_msg = "Request timed out. The analysis is too complex. Try using the OpenAI provider."
-        elif "quota" in error_msg.lower() or "429" in error_msg:
-            error_msg = "API quota exceeded. Please try again later or use OpenAI provider."
+        # Check for specific error types
+        if "DeadlineExceeded" in str(type(e).__name__) or "timeout" in error_msg.lower() or "deadline" in error_msg.lower():
+            error_msg = f"Gemini API timeout (likely > 60 seconds default). Original error: {error_msg}. Try using OpenAI provider for complex analysis."
+        elif "ResourceExhausted" in str(type(e).__name__) or "quota" in error_msg.lower() or "429" in error_msg or "limit" in error_msg.lower():
+            error_msg = f"API quota/rate limit exceeded: {error_msg}. Wait a moment and try again or use OpenAI provider."
+        elif "safety" in error_msg.lower() or "blocked" in error_msg.lower() or "block_reason" in error_msg.lower():
+            error_msg = f"Content flagged by safety filters: {error_msg}. Try OpenAI provider."
+        elif "500" in error_msg or "503" in error_msg or "InternalServerError" in str(type(e).__name__):
+            error_msg = f"Gemini API internal error: {error_msg}. Try again or use OpenAI provider."
+        else:
+            # Keep original error for debugging
+            error_msg = f"Gemini API error: {error_msg}"
         
         # Return error structure
         return ComprehensiveAnalysis(
@@ -591,8 +689,8 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
             market_potential=MarketPotential(insight=f"Analysis failed. {error_msg}", confidence=0),
             identified_variables=[],
             formulas=[],
-            business_assumptions=["Analysis failed due to API timeout or error"],
-            improvement_recommendations=["Try OpenAI provider", "Simplify your input document"],
+            business_assumptions=["Analysis failed due to API error"],
+            improvement_recommendations=["Try OpenAI provider", "Check your input document for potential issues"],
             value_market_potential_text=f"Analysis could not be completed: {error_msg}",
             executive_summary=f"Analysis failed: {error_msg}"
         )
@@ -615,6 +713,9 @@ def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> Compreh
             {"role": "user", "content": prompt}
         ]
     )
+    
+    # Save the raw JSON response for inspection
+    save_json_response(response.choices[0].message.content, "openai")
     
     return parse_analysis_response(response.choices[0].message.content)
 
