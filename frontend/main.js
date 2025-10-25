@@ -31,9 +31,9 @@ const resultsMainContent = document.getElementById('resultsMainContent');
 
 // History elements
 const historySidebar = document.getElementById('historySidebar');
-const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
+const historyNavItem = document.getElementById('historyNavItem');
 const closeHistorySidebar = document.getElementById('closeHistorySidebar');
-const historySearchInput = document.getElementById('historySearchInput');
+const historySearchInput = document.getElementById('historySearch');
 const historyList = document.getElementById('historyList');
 
 // Modal elements
@@ -485,7 +485,27 @@ function resetUpload() {
                     </svg>
                 </div>
                 <h4>Chat with Quant AI</h4>
-                <p>Ask questions about your analysis results, request clarifications, or explore insights in more detail.</p>
+                <p>Ask questions about your analysis, request detailed breakdowns, or explore insights with interactive data visualizations.</p>
+                <div class="chat-suggestions">
+                    <div class="suggestion-chip" data-suggestion="Explain the TAM/SAM/SOM breakdown in detail">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <span>Explain the market analysis</span>
+                    </div>
+                    <div class="suggestion-chip" data-suggestion="What are the main assumptions in this analysis?">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <span>Show me key assumptions</span>
+                    </div>
+                    <div class="suggestion-chip" data-suggestion="How can I improve the ROI?">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <span>Improvement recommendations</span>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -611,12 +631,32 @@ if (closeChatSidebar) {
     });
 }
 
+// Handle suggestion chip clicks
+document.addEventListener('click', (e) => {
+    const suggestionChip = e.target.closest('.suggestion-chip');
+    if (suggestionChip) {
+        const suggestion = suggestionChip.getAttribute('data-suggestion');
+        if (suggestion && chatInput) {
+            chatInput.value = suggestion;
+            chatInput.focus();
+            // Auto-send the suggestion
+            sendChatMessage();
+        }
+    }
+});
+
 if (chatInput) {
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && e.shiftKey === false) {
             e.preventDefault();
             sendChatMessage();
         }
+    });
+    
+    // Auto-resize textarea
+    chatInput.addEventListener('input', () => {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 150) + 'px';
     });
 }
 
@@ -668,6 +708,11 @@ function addChatMessage(text, sender) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message ${sender}`;
     
+    const timestamp = new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    
     messageDiv.innerHTML = `
         <div class="message-avatar">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -678,11 +723,18 @@ function addChatMessage(text, sender) {
             </svg>
         </div>
         <div class="message-content">
-            <p>${text}</p>
+            <p>${escapeHtml(text)}</p>
+            <div class="message-timestamp">${timestamp}</div>
         </div>
     `;
     
     if (chatMessages) {
+        // Remove welcome message if it exists
+        const welcomeMsg = chatMessages.querySelector('.chat-welcome');
+        if (welcomeMsg) {
+            welcomeMsg.remove();
+        }
+        
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -1173,8 +1225,11 @@ function closeHistorySidebarFunc() {
 }
 
 // History event listeners
-if (toggleHistoryBtn) {
-    toggleHistoryBtn.addEventListener('click', toggleHistorySidebar);
+if (historyNavItem) {
+    historyNavItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleHistorySidebar();
+    });
 }
 
 if (closeHistorySidebar) {
