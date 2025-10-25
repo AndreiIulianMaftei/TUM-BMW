@@ -32,6 +32,13 @@ const sendChat = document.getElementById('sendChat');
 const chatMessages = document.getElementById('chatMessages');
 const resultsMainContent = document.getElementById('resultsMainContent');
 
+// Modal elements
+const metricModal = document.getElementById('metricModal');
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const closeModal = document.getElementById('closeModal');
+
 let selectedFile = null;
 let selectedProvider = 'gemini'; // Default provider
 let inputMode = 'file'; // 'file' or 'text'
@@ -325,6 +332,9 @@ function displayResults(analysis) {
     } else {
         recommendationsList.innerHTML = '<li>No recommendations available</li>';
     }
+    
+    // Attach click handlers to cards for modal interactions
+    setTimeout(attachCardClickHandlers, 100);
 }
 
 newAnalysisBtn.addEventListener('click', resetUpload);
@@ -635,6 +645,312 @@ function removeTypingIndicator(id) {
     if (indicator) {
         indicator.remove();
     }
+}
+
+// Modal Functions
+function openMetricModal(metricType, data) {
+    const titles = {
+        'tam': 'Total Addressable Market (TAM)',
+        'sam': 'Serviceable Available Market (SAM)',
+        'som': 'Serviceable Obtainable Market (SOM)',
+        'roi': 'Return on Investment (ROI)',
+        'turnover': 'Revenue & Turnover',
+        'volume': 'Volume Metrics',
+        'unit_economics': 'Unit Economics',
+        'ebit': 'EBIT Analysis',
+        'cogs': 'Cost of Goods Sold',
+        'market_potential': 'Market Potential'
+    };
+    
+    modalTitle.textContent = titles[metricType] || 'Metric Details';
+    modalBody.innerHTML = generateModalContent(metricType, data);
+    metricModal.classList.add('active');
+    
+    // Render charts if data has yearly projections
+    if (data.numbers) {
+        setTimeout(() => renderYearlyChart(metricType, data.numbers), 100);
+    }
+}
+
+function closeMetricModal() {
+    metricModal.classList.remove('active');
+}
+
+function generateModalContent(metricType, data) {
+    let html = '';
+    
+    // Overview Section
+    html += `<div class="detail-section">`;
+    html += `<h3>Overview</h3>`;
+    if (data.description_of_public) {
+        html += `<p style="font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 16px;">${data.description_of_public}</p>`;
+    }
+    
+    // Key Metrics Grid
+    html += `<div class="metric-stat-grid">`;
+    
+    // Add relevant stats based on metric type
+    if (data.market_size) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Market Size</div>
+            <div class="value">${formatCurrency(data.market_size)}</div>
+        </div>`;
+    }
+    if (data.growth_rate) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Growth Rate (CAGR)</div>
+            <div class="value">${data.growth_rate.toFixed(1)}%</div>
+        </div>`;
+    }
+    if (data.confidence) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Confidence</div>
+            <div class="value" style="color: ${getConfidenceColor(data.confidence)}">${data.confidence}%</div>
+        </div>`;
+    }
+    if (data.penetration_rate) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Penetration Rate</div>
+            <div class="value">${data.penetration_rate.toFixed(1)}%</div>
+        </div>`;
+    }
+    if (data.roi_percentage) {
+        html += `<div class="metric-stat-card">
+            <div class="label">ROI Percentage</div>
+            <div class="value">${data.roi_percentage.toFixed(1)}%</div>
+        </div>`;
+    }
+    if (data.payback_period_months) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Payback Period</div>
+            <div class="value">${data.payback_period_months} months</div>
+        </div>`;
+    }
+    
+    html += `</div></div>`;
+    
+    // Justification
+    if (data.justification) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Justification</h3>`;
+        html += `<p style="font-size: 14px; line-height: 1.7; color: var(--text-primary);">${data.justification}</p>`;
+        html += `</div>`;
+    }
+    
+    // Yearly Projections Table
+    if (data.numbers) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Yearly Projections</h3>`;
+        html += `<table class="detail-table">`;
+        html += `<thead><tr><th>Year</th><th>Value</th><th>YoY Change</th></tr></thead>`;
+        html += `<tbody>`;
+        
+        const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+        let prevValue = null;
+        
+        years.forEach(year => {
+            const value = data.numbers[year];
+            if (value !== null && value !== undefined) {
+                let changeHtml = '-';
+                if (prevValue !== null) {
+                    const change = ((value - prevValue) / prevValue * 100);
+                    const changeColor = change >= 0 ? 'var(--success)' : 'var(--error)';
+                    changeHtml = `<span style="color: ${changeColor}">${change >= 0 ? '+' : ''}${change.toFixed(1)}%</span>`;
+                }
+                html += `<tr>
+                    <td><strong>${year}</strong></td>
+                    <td>${formatCurrency(value)}</td>
+                    <td>${changeHtml}</td>
+                </tr>`;
+                prevValue = value;
+            }
+        });
+        
+        html += `</tbody></table>`;
+        html += `<div class="chart-container"><canvas id="yearlyChart"></canvas></div>`;
+        html += `</div>`;
+    }
+    
+    // Breakdown
+    if (data.breakdown || data.revenue_streams || data.cost_breakdown || data.opex_breakdown || data.cost_components) {
+        const breakdown = data.breakdown || data.revenue_streams || data.cost_breakdown || data.opex_breakdown || data.cost_components;
+        html += `<div class="detail-section">`;
+        html += `<h3>Breakdown</h3>`;
+        html += `<table class="detail-table">`;
+        html += `<thead><tr><th>Category</th><th>Value</th></tr></thead>`;
+        html += `<tbody>`;
+        
+        Object.entries(breakdown).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+                html += `<tr>
+                    <td>${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+                    <td><strong>${formatCurrency(value)}</strong></td>
+                </tr>`;
+            }
+        });
+        
+        html += `</tbody></table></div>`;
+    }
+    
+    // Industry Example
+    if (data.industry_example && data.industry_example.name) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Industry Example</h3>`;
+        html += `<div class="industry-example-card">`;
+        html += `<h4>${data.industry_example.name}</h4>`;
+        html += `<p>${data.industry_example.description}</p>`;
+        if (data.industry_example.metric_value) {
+            html += `<p><strong>Metric: </strong>${data.industry_example.metric_value}</p>`;
+        }
+        if (data.industry_example.link) {
+            html += `<a href="${data.industry_example.link}" target="_blank" rel="noopener noreferrer">View Source →</a>`;
+        }
+        html += `</div></div>`;
+    }
+    
+    // Additional Lists
+    if (data.market_drivers && data.market_drivers.length > 0) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Market Drivers</h3>`;
+        html += `<ul style="margin-left: 20px; line-height: 1.8;">`;
+        data.market_drivers.forEach(driver => {
+            html += `<li style="margin-bottom: 8px; color: var(--text-primary);">${driver}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    if (data.barriers_to_entry && data.barriers_to_entry.length > 0) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Barriers to Entry</h3>`;
+        html += `<ul style="margin-left: 20px; line-height: 1.8;">`;
+        data.barriers_to_entry.forEach(barrier => {
+            html += `<li style="margin-bottom: 8px; color: var(--text-primary);">${barrier}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    if (data.growth_drivers && data.growth_drivers.length > 0) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Growth Drivers</h3>`;
+        html += `<ul style="margin-left: 20px; line-height: 1.8;">`;
+        data.growth_drivers.forEach(driver => {
+            html += `<li style="margin-bottom: 8px; color: var(--text-primary);">${driver}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    return html;
+}
+
+function renderYearlyChart(metricType, numbersData) {
+    const canvas = document.getElementById('yearlyChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const values = years.map(year => numbersData[year] || 0);
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [{
+                label: 'Projected Value',
+                data: values,
+                borderColor: '#1C69D4',
+                backgroundColor: 'rgba(28, 105, 212, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#1C69D4',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    callbacks: {
+                        label: function(context) {
+                            return formatCurrency(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatCurrency(value);
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getConfidenceColor(confidence) {
+    if (confidence >= 80) return 'var(--success)';
+    if (confidence >= 60) return 'var(--warning)';
+    return 'var(--error)';
+}
+
+// Modal Event Listeners
+if (closeModal) {
+    closeModal.addEventListener('click', closeMetricModal);
+}
+
+if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', closeMetricModal);
+}
+
+// Attach click handlers to financial cards
+function attachCardClickHandlers() {
+    const cardMap = {
+        'tamCard': 'tam',
+        'samCard': 'sam',
+        'somCard': 'som',
+        'roiCard': 'roi',
+        'turnoverCard': 'turnover',
+        'volumeCard': 'volume',
+        'unitEconomicsCard': 'unit_economics',
+        'ebitCard': 'ebit',
+        'cogsCard': 'cogs',
+        'marketPotentialCard': 'market_potential'
+    };
+    
+    Object.entries(cardMap).forEach(([cardId, metricType]) => {
+        const card = document.getElementById(cardId);
+        if (card && analysisContext) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                if (analysisContext[metricType]) {
+                    openMetricModal(metricType, analysisContext[metricType]);
+                }
+            });
+        }
+    });
 }
 
 // Initialize settings on load
