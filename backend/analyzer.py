@@ -292,7 +292,6 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
         "top_p": 0.95,
         "top_k": 40,
         "max_output_tokens": 8192,
-        "response_mime_type": "application/json",  # Enforce JSON output
     }
     
     model = genai.GenerativeModel(
@@ -301,6 +300,9 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
     )
     
     prompt = get_analysis_prompt(text, settings)
+    
+    # Add explicit JSON-only instruction at the end
+    prompt += "\n\nIMPORTANT: Return ONLY the JSON object. Do not include any explanations, markdown formatting, or additional text. Start directly with { and end with }."
     
     try:
         response = model.generate_content(prompt)

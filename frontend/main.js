@@ -24,12 +24,13 @@ const confidenceValue = document.getElementById('confidenceValue');
 const resetSettings = document.getElementById('resetSettings');
 
 // Chat elements
-const chatToggle = document.getElementById('chatToggle');
-const chatContainer = document.getElementById('chatContainer');
-const closeChat = document.getElementById('closeChat');
+const toggleChatBtn = document.getElementById('toggleChatBtn');
+const chatSidebar = document.getElementById('chatSidebar');
+const closeChatSidebar = document.getElementById('closeChatSidebar');
 const chatInput = document.getElementById('chatInput');
 const sendChat = document.getElementById('sendChat');
 const chatMessages = document.getElementById('chatMessages');
+const resultsMainContent = document.getElementById('resultsMainContent');
 
 let selectedFile = null;
 let selectedProvider = 'gemini'; // Default provider
@@ -151,9 +152,7 @@ uploadBtn.addEventListener('click', async () => {
         analysisContext = data.analysis; // Save for chat
         displayResults(data.analysis);
         
-        // Enable chat after successful analysis
-        if (chatInput) chatInput.disabled = false;
-        if (sendChat) sendChat.disabled = false;
+        // Chat is now ready (user can click "Chat with AI" button)
         
     } catch (error) {
         alert('Error: ' + error.message);
@@ -358,25 +357,26 @@ function resetUpload() {
     resultsSection.style.display = 'none';
     uploadSection.style.display = 'block';
     
-    // Reset chat
-    if (chatInput) {
-        chatInput.disabled = true;
-        chatInput.value = '';
+    // Reset and close chat
+    if (chatSidebar) {
+        chatSidebar.classList.remove('active');
     }
-    if (sendChat) {
-        sendChat.disabled = true;
+    if (resultsMainContent) {
+        resultsMainContent.classList.remove('chat-open');
+    }
+    if (chatInput) {
+        chatInput.value = '';
     }
     if (chatMessages) {
         chatMessages.innerHTML = `
-            <div class="chat-message assistant">
-                <div class="message-avatar">
+            <div class="chat-welcome">
+                <div class="welcome-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                     </svg>
                 </div>
-                <div class="message-content">
-                    <p>Hi! I'm ProspectAI. Upload and analyze a document first, then ask me questions about your analysis.</p>
-                </div>
+                <h4>Chat with ProspectAI</h4>
+                <p>Ask questions about your analysis results, request clarifications, or explore insights in more detail.</p>
             </div>
         `;
     }
@@ -508,21 +508,28 @@ if (textInput) {
 }
 
 // Chat Handlers
-if (chatToggle) {
-    chatToggle.addEventListener('click', () => {
-        if (chatContainer) chatContainer.classList.toggle('active');
+if (toggleChatBtn) {
+    toggleChatBtn.addEventListener('click', () => {
+        if (chatSidebar) {
+            chatSidebar.classList.toggle('active');
+            if (resultsMainContent) {
+                resultsMainContent.classList.toggle('chat-open');
+            }
+        }
     });
 }
 
-if (closeChat) {
-    closeChat.addEventListener('click', () => {
-        if (chatContainer) chatContainer.classList.remove('active');
+if (closeChatSidebar) {
+    closeChatSidebar.addEventListener('click', () => {
+        if (chatSidebar) chatSidebar.classList.remove('active');
+        if (resultsMainContent) resultsMainContent.classList.remove('chat-open');
     });
 }
 
 if (chatInput) {
     chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !chatInput.disabled) {
+        if (e.key === 'Enter' && e.shiftKey === false) {
+            e.preventDefault();
             sendChatMessage();
         }
     });
@@ -530,9 +537,7 @@ if (chatInput) {
 
 if (sendChat) {
     sendChat.addEventListener('click', () => {
-        if (!sendChat.disabled) {
-            sendChatMessage();
-        }
+        sendChatMessage();
     });
 }
 
