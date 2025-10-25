@@ -243,13 +243,88 @@ def analyze_costs_with_llm(pdf_text):
         return {"error": str(e)}
 
 
-def process_bmw_pdf(pdf_path, output_path=None):
+def calculate_yearly_costs(cost_data, volume_projections=None):
+    """
+    Calculate year-by-year costs from 2024-2030 based on volume projections.
+    
+    Args:
+        cost_data (dict): Cost analysis data from LLM
+        volume_projections (dict): Projected sales volumes for each year
+        
+    Returns:
+        dict: Updated cost data with yearly breakdown
+    """
+    # Default sample volume projections (progressive growth)
+    if volume_projections is None:
+        volume_projections = {
+            "2024": 5000,   # Launch year - conservative
+            "2025": 12000,  # Growth as market awareness increases
+            "2026": 18000,  # Strong adoption
+            "2027": 22000,  # Market maturity
+            "2028": 25000,  # Peak growth
+            "2029": 27000,  # Continued growth
+            "2030": 30000   # Mature market
+        }
+    
+    # Extract cost components
+    one_time_dev = cost_data.get('total_development_cost', 0)
+    annual_cac = cost_data.get('total_customer_acquisition_cost', 0)
+    annual_ops = cost_data.get('total_distribution_operations_cost', 0)
+    annual_after_sales = cost_data.get('total_after_sales_cost', 0)
+    cogs_per_unit = cost_data.get('average_cogs_per_bundle', 0)
+    
+    yearly_breakdown = {}
+    years = ["2024", "2025", "2026", "2027", "2028", "2029", "2030"]
+    
+    for year in years:
+        volume = volume_projections.get(year, 0)
+        
+        # First year includes one-time development cost
+        dev_cost = one_time_dev if year == "2024" else 0
+        
+        # Calculate total COGS based on volume
+        total_cogs = volume * cogs_per_unit
+        
+        # Total cost for the year
+        total_cost = dev_cost + annual_cac + annual_ops + annual_after_sales + total_cogs
+        
+        yearly_breakdown[year] = {
+            "projected_volume": volume,
+            "one_time_development": dev_cost,
+            "customer_acquisition": annual_cac,
+            "distribution_operations": annual_ops,
+            "after_sales": annual_after_sales,
+            "total_cogs": round(total_cogs, 2),
+            "cogs_per_unit": cogs_per_unit,
+            "total_cost": round(total_cost, 2),
+            "currency": "EUR"
+        }
+    
+    # Calculate cumulative totals
+    total_7_years = sum(yearly_breakdown[year]["total_cost"] for year in years)
+    total_volume_7_years = sum(volume_projections[year] for year in years)
+    
+    # Add to cost_data
+    cost_data["volume_projections"] = volume_projections
+    cost_data["yearly_cost_breakdown"] = yearly_breakdown
+    cost_data["seven_year_summary"] = {
+        "total_cost_2024_2030": round(total_7_years, 2),
+        "total_volume_2024_2030": total_volume_7_years,
+        "average_cost_per_unit": round(total_7_years / total_volume_7_years, 2) if total_volume_7_years > 0 else 0,
+        "currency": "EUR"
+    }
+    
+    return cost_data
+
+
+def process_bmw_pdf(pdf_path, output_path=None, volume_projections=None):
     """
     Main function to process a BMW Group PDF and generate cost analysis.
     
     Args:
         pdf_path (str): Path to the BMW PDF file
         output_path (str, optional): Path to save the output JSON. If None, returns the data.
+        volume_projections (dict, optional): Projected sales volumes by year. If None, uses default projections.
         
     Returns:
         dict: Cost analysis data
@@ -267,6 +342,10 @@ def process_bmw_pdf(pdf_path, output_path=None):
     # Analyze costs with LLM
     print("Analyzing costs with LLM...")
     cost_data = analyze_costs_with_llm(pdf_text)
+    
+    # Calculate yearly costs
+    print("Calculating yearly cost breakdown (2024-2030)...")
+    cost_data = calculate_yearly_costs(cost_data, volume_projections)
     
     # Save to file if output path is provided
     if output_path:
@@ -298,4 +377,31 @@ if __name__ == "__main__":
     print("\n" + "="*50)
     print("Cost Analysis Complete!")
     print("="*50)
+    
+    # Print yearly breakdown summary
+    if "yearly_cost_breakdown" in result:
+        print("\n📊 YEARLY COST BREAKDOWN (2024-2030):")
+        print("-" * 50)
+        for year, data in result["yearly_cost_breakdown"].items():
+            print(f"\n{year}:")
+            print(f"  Volume: {data['projected_volume']:,} units")
+            if data['one_time_development'] > 0:
+                print(f"  Development: €{data['one_time_development']:,.2f}")
+            print(f"  CAC: €{data['customer_acquisition']:,.2f}")
+            print(f"  Operations: €{data['distribution_operations']:,.2f}")
+            print(f"  After-sales: €{data['after_sales']:,.2f}")
+            print(f"  COGS: €{data['total_cogs']:,.2f} ({data['projected_volume']:,} × €{data['cogs_per_unit']:.2f})")
+            print(f"  ➜ Total: €{data['total_cost']:,.2f}")
+        
+        if "seven_year_summary" in result:
+            summary = result["seven_year_summary"]
+            print("\n" + "="*50)
+            print("7-YEAR SUMMARY (2024-2030):")
+            print(f"  Total Cost: €{summary['total_cost_2024_2030']:,.2f}")
+            print(f"  Total Volume: {summary['total_volume_2024_2030']:,} units")
+            print(f"  Average Cost/Unit: €{summary['average_cost_per_unit']:,.2f}")
+            print("="*50)
+    
+    # Print full JSON
+    print("\n📄 Full JSON output:")
     print(json.dumps(result, indent=2))
