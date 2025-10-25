@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant - AI Market Intelligence Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1C69D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0A4BA0;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="24" cy="24" r="22" fill="url(#logoGrad)" stroke="white" stroke-width="1.5"/>
+                        <circle cx="24" cy="24" r="14" fill="none" stroke="white" stroke-width="3"/>
+                        <path d="M 32 32 L 37 37" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="37" cy="37" r="2" fill="white"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Quant</span>
+                    <span class="brand-subtitle">Market Intelligence</span>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>Analysis Dashboard</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Powered by BMW Innovation</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-content">
+                    <div class="page-title">
+                        <h1>Market Intelligence & Analysis</h1>
+                        <p>AI-powered quantitative insights for strategic decision-making</p>
+                    </div>
+                    <button id="settingsBtn" class="settings-btn" title="Advanced Settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <section class="upload-section" id="uploadSection">
+                    <div class="upload-card">
+                        <div class="upload-instructions">
+                            <div class="step-indicator">
+                                <div class="step">1</div>
+                                <span>Choose your AI provider</span>
+                            </div>
+                        </div>
+                        
+                        <!-- LLM Provider Switcher -->
+                        <div class="llm-switcher">
+                            <div class="llm-option" data-provider="gemini" id="geminiOption">
+                                <div class="llm-icon-wrapper">
+                                    <img src="icons/gemini.svg" alt="Google Gemini" class="llm-icon">
+                                </div>
+                                <div class="llm-info">
+                                    <h4>Google Gemini</h4>
+                                    <p>Gemini 2.5 Flash</p>
+                                </div>
+                                <div class="llm-check">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="llm-option" data-provider="openai" id="openaiOption">
+                                <div class="llm-icon-wrapper">
+                                    <img src="icons/openai.svg" alt="OpenAI" class="llm-icon">
+                                </div>
+                                <div class="llm-info">
+                                    <h4>OpenAI</h4>
+                                    <p>GPT-5</p>
+                                </div>
+                                <div class="llm-check">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upload-instructions" style="margin-top: 32px;">
+                            <div class="step-indicator">
+                                <div class="step">2</div>
+                                <span>Upload document or paste description</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Input Mode Tabs -->
+                        <div class="input-mode-tabs">
+                            <button class="tab-btn active" data-mode="file">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                Upload File
+                            </button>
+                            <button class="tab-btn" data-mode="text">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Paste Text
+                            </button>
+                        </div>
+                        
+                        <!-- File Upload Box -->
+                        <div class="upload-box" id="uploadBox">
+                            <div class="upload-icon-wrapper">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                            </div>
+                            <h3>Drop your document here</h3>
+                            <p class="upload-hint">or click to browse files</p>
+                            <div class="file-types">
+                                <span class="file-badge">PDF</span>
+                                <span class="file-badge">DOCX</span>
+                            </div>
+                            <input type="file" id="fileInput" accept=".pdf,.docx" hidden>
+                        </div>
+                        
+                        <!-- Text Input Box -->
+                        <div class="text-input-box" id="textInputBox" style="display: none;">
+                            <textarea 
+                                id="textInput" 
+                                placeholder="Paste your business description, market overview, or innovation concept here...&#10;&#10;Include details about:&#10;• Target market and customers&#10;• Product/service description&#10;• Pricing strategy&#10;• Revenue model&#10;• Competition and market size&#10;• Business goals and timeline"
+                                rows="12"
+                            ></textarea>
+                            <div class="text-input-footer">
+                                <span id="charCount">0 characters</span>
+                            </div>
+                        </div>
+                        
+                        <button id="uploadBtn" class="btn-analyze" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Start Analysis
+                        </button>
+                    </div>
+                </section>
+
+                <section class="loading-section" id="loadingSection" style="display: none;">
+                    <div class="loading-card">
+                        <div class="loading-spinner"></div>
+                        <h3>Analyzing Your Document</h3>
+                        <p>Extracting insights and generating market potential assessment...</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="results-section" id="resultsSection" style="display: none;">
+                    <div class="results-header">
+                        <div class="results-toolbar">
+                            <h2>Analysis Complete</h2>
+                            <div class="toolbar-actions">
+                                <button id="toggleChatBtn" class="btn-chat">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                    </svg>
+                                    Chat with AI
+                                </button>
+                                <button id="newAnalysisBtn" class="btn-new">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    New Analysis
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="results-content-wrapper">
+                        <div class="results-main-content" id="resultsMainContent">
+
+                    <div class="executive-summary-card">
+                        <h3>Executive Summary</h3>
+                        <p id="executiveSummary"></p>
+                    </div>
+
+                    <!-- Key Metrics Overview -->
+                    <div class="metrics-overview-section">
+                        <h2 class="section-title">Key Financial Metrics</h2>
+                        <div class="financial-grid">
+                            <div class="financial-card" id="tamCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">TAM</span>
+                                    <span class="confidence-badge" id="tamConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="tamValue">-</div>
+                                <div class="financial-insight" id="tamInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="samCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">SAM</span>
+                                    <span class="confidence-badge" id="samConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="samValue">-</div>
+                                <div class="financial-insight" id="samInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="somCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">SOM</span>
+                                    <span class="confidence-badge" id="somConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="somValue">-</div>
+                                <div class="financial-insight" id="somInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="roiCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">ROI</span>
+                                    <span class="confidence-badge" id="roiConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="roiValue">-</div>
+                                <div class="financial-insight" id="roiInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="turnoverCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Turnover</span>
+                                    <span class="confidence-badge" id="turnoverConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="turnoverValue">-</div>
+                                <div class="financial-insight" id="turnoverInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="volumeCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Volume</span>
+                                    <span class="confidence-badge" id="volumeConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="volumeValue">-</div>
+                                <div class="financial-insight" id="volumeInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="unitEconomicsCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Unit Economics</span>
+                                    <span class="confidence-badge" id="unitEconomicsConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="unitEconomicsValue">-</div>
+                                <div class="financial-insight" id="unitEconomicsInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="ebitCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">EBIT</span>
+                                    <span class="confidence-badge" id="ebitConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="ebitValue">-</div>
+                                <div class="financial-insight" id="ebitInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="cogsCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">COGS</span>
+                                    <span class="confidence-badge" id="cogsConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="cogsValue">-</div>
+                                <div class="financial-insight" id="cogsInsight"></div>
+                            </div>
+
+                            <div class="financial-card" id="marketPotentialCard">
+                                <div class="financial-header">
+                                    <span class="financial-label">Market Potential</span>
+                                    <span class="confidence-badge" id="marketPotentialConfidence">--</span>
+                                </div>
+                                <div class="financial-value" id="marketPotentialValue">-</div>
+                                <div class="financial-insight" id="marketPotentialInsight"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <h2 class="section-title">Financial Projections & Analysis</h2>
+                        
+                        <!-- Market Growth Chart -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Market Size Projections (TAM/SAM/SOM)</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="marketGrowthChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Revenue & Cost Projections -->
+                        <div class="charts-grid">
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3>Revenue & Volume Growth</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3>Cost Breakdown by Year</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-wrapper">
+                                        <canvas id="costChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profitability Analysis -->
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Profitability Analysis (EBIT & ROI)</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="profitabilityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Details Section -->
+                    <div id="costDetailsSection" style="display: none;">
+                        <h2 class="section-title">Detailed Cost Analysis</h2>
+                        
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Development Costs</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="developmentCostsContainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Customer Acquisition Costs</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="cacContainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Distribution & Operations</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="distributionCostsContainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>After-Sales Costs</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="afterSalesContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Market Potential Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-text" id="generatedText"></div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Improvement Recommendations</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul id="recommendationsList" class="assumptions-list"></ul>
+                        </div>
+                    </div>
+
+                    <div class="details-grid">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Key Variables</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="variablesContainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Calculations</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="formulasContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Business Assumptions</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul id="assumptionsList" class="assumptions-list"></ul>
+                        </div>
+                    </div>
+                        </div>
+
+                        <!-- Chat Sidebar -->
+                        <div class="chat-sidebar" id="chatSidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                    </svg>
+                                    Quant AI Assistant
+                                </h3>
+                                <button class="close-btn" id="closeChatSidebar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="chat-welcome">
+                                    <div class="welcome-icon">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                        </svg>
+                                    </div>
+                                    <h4>Chat with Quant AI</h4>
+                                    <p>Ask questions about your analysis, request detailed breakdowns, or explore insights with interactive data visualizations.</p>
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <textarea 
+                                    id="chatInput" 
+                                    placeholder="Ask about the analysis..." 
+                                    rows="3"
+                                ></textarea>
+                                <button id="sendChat" class="btn-send-chat">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Advanced Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3>Advanced Settings</h3>
+            <button class="close-btn" id="closeSettings">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="settings-body">
+            <div class="setting-group">
+                <label for="temperatureSlider">AI Creativity (Temperature)</label>
+                <input type="range" id="temperatureSlider" min="0" max="1" step="0.1" value="0.7">
+                <span class="setting-value" id="temperatureValue">0.7</span>
+                <p class="setting-hint">Higher values produce more creative, varied responses</p>
+            </div>
+            
+            <div class="setting-group">
+                <label for="industrySelect">Industry Focus</label>
+                <select id="industrySelect">
+                    <option value="general" selected>General</option>
+                    <option value="automotive">Automotive</option>
+                    <option value="technology">Technology</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="retail">Retail</option>
+                    <option value="fintech">FinTech</option>
+                </select>
+                <p class="setting-hint">Industry-specific context for better insights</p>
+            </div>
+            
+            <div class="setting-group">
+                <label>Currency</label>
+                <div class="currency-options">
+                    <label class="radio-label">
+                        <input type="radio" name="currency" value="USD" checked>
+                        <span>USD ($)</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="currency" value="EUR">
+                        <span>EUR (€)</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="currency" value="GBP">
+                        <span>GBP (£)</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button class="btn-reset" id="resetSettings">Reset to Defaults</button>
+        </div>
+    </div>
+
+    <!-- Metric Detail Modal -->
+    <div class="metric-modal" id="metricModal">
+        <div class="modal-backdrop" id="modalBackdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" id="closeModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="charts.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

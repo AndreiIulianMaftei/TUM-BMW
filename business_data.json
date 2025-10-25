@@ -1,0 +1,80 @@
+{
+  "business_name": "Your Business Name Here",
+  "business_description": "Brief description of your business idea",
+  "year": 2025,
+  "currency": "USD",
+  "metrics": {
+    "TAM": {
+      "value": 100000000000,
+      "description": "Total Addressable Market - Description",
+      "confidence": 0.85,
+      "details": "Detailed explanation of how you calculated TAM"
+    },
+    "SAM": {
+      "value": 15000000000,
+      "description": "Serviceable Available Market - Description",
+      "confidence": 0.78,
+      "details": "Detailed explanation of your serviceable market"
+    },
+    "SOM": {
+      "value": 500000000,
+      "description": "Serviceable Obtainable Market - Description",
+      "confidence": 0.70,
+      "details": "Market share you can realistically capture"
+    },
+    "REVENUE": {
+      "value": 30000000,
+      "description": "Annual Revenue - Projection",
+      "confidence": 0.75,
+      "details": "Revenue streams and calculations"
+    },
+    "ROI": {
+      "value": 250,
+      "description": "Return on Investment (%)",
+      "confidence": 0.72,
+      "details": "Expected ROI calculation details"
+    },
+    "TURNOVER": {
+      "value": 30000000,
+      "description": "Annual Turnover",
+      "confidence": 0.75,
+      "details": "Total sales volume details"
+    },
+    "VOLUME": {
+      "value": 3000000,
+      "description": "Annual Transaction Volume",
+      "confidence": 0.80,
+      "details": "Number of transactions/units"
+    },
+    "UNIT_ECONOMICS": {
+      "value": 8.50,
+      "description": "Unit Economics - Profit per unit",
+      "confidence": 0.82,
+      "details": "Revenue per unit minus variable cost per unit"
+    },
+    "EBIT": {
+      "value": 9000000,
+      "description": "Earnings Before Interest and Tax",
+      "confidence": 0.68,
+      "details": "EBIT margin and calculation"
+    },
+    "COGS": {
+      "value": 12000000,
+      "description": "Cost of Goods Sold",
+      "confidence": 0.85,
+      "details": "Direct costs breakdown"
+    },
+    "MARKET_POTENTIAL": {
+      "value": 90,
+      "description": "Market Potential Score (0-100)",
+      "confidence": 0.80,
+      "details": "Market attractiveness factors"
+    }
+  },
+  "market_valuation": {
+    "pre_money": 50000000,
+    "post_money": 65000000,
+    "valuation_method": "Revenue Multiple + DCF",
+    "comparable_multiples": "Comp1: 4.5x, Comp2: 3.8x"
+  }
+}

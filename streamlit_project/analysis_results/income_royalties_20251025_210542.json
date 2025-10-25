@@ -1,0 +1,84 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 2550000,
+      "yearly_income": 3060000
+    },
+    {
+      "year": 2025,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 2700000,
+      "yearly_income": 3240000
+    },
+    {
+      "year": 2026,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 2850000,
+      "yearly_income": 3420000
+    },
+    {
+      "year": 2027,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 3000000,
+      "yearly_income": 3600000
+    },
+    {
+      "year": 2028,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 3300000,
+      "yearly_income": 3960000
+    },
+    {
+      "year": 2029,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 3600000,
+      "yearly_income": 4320000
+    },
+    {
+      "year": 2030,
+      "royalty_percentage": 5,
+      "price_per_piece": 24.0,
+      "number_of_units": 3900000,
+      "yearly_income": 4680000
+    }
+  ],
+  "summary": {
+    "royalty_percentages": 5,
+    "market_assumptions": "The smart bottle market is growing due to increased awareness of health and sustainability. BMW EcoHydrate aims to capture a significant portion of this market, targeting students and institutions.",
+    "growth_projections_reasoning": "Annual sales volumes are expected to grow due to increased market penetration and brand awareness. The CAGR of 8.5% in the smart water bottle market supports these projections.",
+    "industry_standards": "Royalty rates in the automotive accessory industry typically range from 3% to 10%. A 5% rate is chosen as it balances competitive pricing with sufficient income for BMW."
+  },
+  "comparable_projects": [
+    {
+      "name": "LARQ Smart Bottle",
+      "url": "https://www.livelarq.com/",
+      "description": "A self-cleaning water bottle using UV-C LED technology to sanitize water and track hydration.",
+      "royalty_model_details": "Partnerships with retailers involve a royalty rate of approximately 5% on sales."
+    },
+    {
+      "name": "HydraSpark Smart Water Bottle",
+      "url": "https://hidratespark.com/",
+      "description": "A water bottle that tracks your water intake and syncs with fitness apps via Bluetooth.",
+      "royalty_model_details": "Typically operates on a licensing model with a 5-8% royalty rate for technology integration."
+    },
+    {
+      "name": "CamelBak All Clear Bottle",
+      "url": "https://www.camelbak.com/",
+      "description": "A UV purifier bottle designed to provide clean drinking water on the go.",
+      "royalty_model_details": "Utilizes a royalty-based model with manufacturers, typically around 6%."
+    }
+  ],
+  "methodology": {
+    "data_sources": "Market research reports on the smart water bottle industry, BMW's financial statements, and industry publications.",
+    "assumptions": "Assumes stable economic conditions and consistent growth in the lifestyle and well-being markets. The royalty percentage is based on industry standards for similar technological products."
+  },
+  "total_income": 26280000
+}

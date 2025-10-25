@@ -1,0 +1,85 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "monthly_cost": 15,
+      "number_of_subscribers": 1500000,
+      "yearly_income": 270000000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2025,
+      "monthly_cost": 15.5,
+      "number_of_subscribers": 1650000,
+      "yearly_income": 306900000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2026,
+      "monthly_cost": 16,
+      "number_of_subscribers": 1800000,
+      "yearly_income": 345600000,
+      "churn_rate": 6
+    },
+    {
+      "year": 2027,
+      "monthly_cost": 16.5,
+      "number_of_subscribers": 1950000,
+      "yearly_income": 385350000,
+      "churn_rate": 6
+    },
+    {
+      "year": 2028,
+      "monthly_cost": 17,
+      "number_of_subscribers": 2100000,
+      "yearly_income": 428400000,
+      "churn_rate": 7
+    },
+    {
+      "year": 2029,
+      "monthly_cost": 17.5,
+      "number_of_subscribers": 2250000,
+      "yearly_income": 472500000,
+      "churn_rate": 7
+    },
+    {
+      "year": 2030,
+      "monthly_cost": 18,
+      "number_of_subscribers": 2400000,
+      "yearly_income": 518400000,
+      "churn_rate": 8
+    }
+  ],
+  "summary": {
+    "pricing_choice": "The monthly costs are set to increase by approximately 0.5 EUR each year to account for inflation, increased value, and improved service offerings.",
+    "market_assumptions": "The motorcycle accessory market is growing with increased interest in customization and technology integration, particularly in developed markets.",
+    "growth_projections_reasoning": "Growth is driven by expanding market reach, increasing motorcycle ownership, and enhanced marketing strategies.",
+    "churn_rate_assumptions": "Churn rate is estimated to initially start low due to novelty and customer engagement, gradually increasing as market penetration grows.",
+    "customer_lifetime_value_considerations": "With a low churn rate and rising subscription costs, the customer lifetime value is anticipated to increase over time, enhancing overall profitability."
+  },
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson H-D Connect",
+      "url": "https://www.harley-davidson.com/us/en/content/hd-connect.html",
+      "description": "Harley-Davidson offers a subscription service that provides connectivity features to riders, including vehicle status and alerts.",
+      "subscription_model_details": "Monthly subscription fee of approximately 14.99 USD, offering connected services and data access."
+    },
+    {
+      "name": "Indian Motorcycle Ride Command",
+      "url": "https://www.indianmotorcycle.com/en-us/ride-command/",
+      "description": "Indian Motorcycle's Ride Command offers navigation, ride planning, and connected features via subscription.",
+      "subscription_model_details": "Various subscription tiers starting at 9.99 USD/month, with options for enhanced navigation and community features."
+    },
+    {
+      "name": "Ducati Connect",
+      "url": "https://www.ducati.com/ww/en/service-maintenance/ducati-connect",
+      "description": "Ducati Connect integrates smartphone connectivity with the motorcycle's dashboard for an enhanced riding experience.",
+      "subscription_model_details": "Subscription costs vary, with basic connectivity features included in the initial purchase and premium services available."
+    }
+  ],
+  "methodology": {
+    "data_sources": "Industry reports, market analysis, and comparable project data were used to estimate subscriber numbers and pricing.",
+    "assumptions": "Assumed a constant growth rate in subscribers based on industry trends and the potential expansion of motorcycle accessory markets."
+  },
+  "total_income": 2724150000
+}

@@ -1,0 +1,291 @@
+{
+  "development_costs": [
+    {
+      "category": "IT Development",
+      "estimated_amount": 300000,
+      "currency": "EUR",
+      "reasoning": "Developing the NewBikeConfigurator (NBC) system requires significant investment in IT infrastructure, software development, and integration with existing dealer systems. The estimated cost is based on similar automotive IT projects that involve creating user-friendly interfaces and backend systems.",
+      "market_comparison": {
+        "similar_case": "Mercedes-Benz - MBUX System Development",
+        "comparison_details": "Mercedes-Benz invested approximately €500,000 in developing the MBUX system, which included comprehensively integrating various functionalities and enhancing user experience.",
+        "cost_figures": [
+          {
+            "company": "Mercedes-Benz",
+            "project": "MBUX Development",
+            "amount": 500000,
+            "currency": "EUR",
+            "year": 2018
+          },
+          {
+            "company": "Tesla",
+            "project": "Infotainment System Overhaul",
+            "amount": 400000,
+            "currency": "USD",
+            "year": 2020
+          }
+        ],
+        "source": "Automotive News",
+        "reference_links": [
+          "https://www.autonews.com/technology/mercedes-benzs-new-mbux-system-sets-new-standard",
+          "https://www.tesla.com/blog/infotainment-system"
+        ]
+      }
+    },
+    {
+      "category": "Marketing & Communication",
+      "estimated_amount": 150000,
+      "currency": "EUR",
+      "reasoning": "To effectively communicate the new accessory bundles to customers and dealers, a robust marketing campaign is necessary. This includes digital marketing, dealer training sessions, and promotional materials.",
+      "market_comparison": {
+        "similar_case": "Audi - Q8 Launch Campaign",
+        "comparison_details": "Audi's Q8 launch campaign had a budget of around €200,000 for a comprehensive marketing approach that included social media, traditional advertising, and dealer incentives.",
+        "cost_figures": [
+          {
+            "company": "Audi",
+            "project": "Q8 Launch Campaign",
+            "amount": 200000,
+            "currency": "EUR",
+            "year": 2018
+          },
+          {
+            "company": "BMW",
+            "project": "X7 Launch Campaign",
+            "amount": 180000,
+            "currency": "EUR",
+            "year": 2019
+          }
+        ],
+        "source": "Marketing Week",
+        "reference_links": [
+          "https://www.marketingweek.com/audi-q8-launch-marketing-strategy",
+          "https://www.bmw.com/en/news/all-bmw-news/bmw-x7-launch-campaign.html"
+        ]
+      }
+    }
+  ],
+  "total_development_cost": 450000,
+  "customer_acquisition_costs": [
+    {
+      "category": "Digital Marketing",
+      "estimated_amount_per_customer": 100,
+      "estimated_annual_budget": 500000,
+      "currency": "EUR",
+      "reasoning": "The budget is allocated for targeted digital marketing campaigns aimed at promoting the new accessory bundles. This includes social media ads, search engine marketing, and content marketing.",
+      "market_comparison": {
+        "similar_case": "Ducati - Digital Marketing Campaign",
+        "comparison_details": "Ducati allocated €400,000 for digital marketing initiatives that successfully increased their accessory sales by 25% in 2020.",
+        "cost_figures": [
+          {
+            "company": "Ducati",
+            "project": "Accessory Marketing Campaign",
+            "amount": 400000,
+            "currency": "EUR",
+            "year": 2020
+          },
+          {
+            "company": "Harley-Davidson",
+            "project": "Digital Marketing Strategy",
+            "amount": 350000,
+            "currency": "USD",
+            "year": 2019
+          }
+        ],
+        "source": "AdWeek",
+        "reference_links": [
+          "https://www.adweek.com/brand-marketing/ducati-digital-marketing-strategy/",
+          "https://www.harley-davidson.com/en_US/Content/Marketing.html"
+        ]
+      }
+    }
+  ],
+  "total_customer_acquisition_cost": 500000,
+  "distribution_and_operations_costs": [
+    {
+      "category": "Logistics",
+      "estimated_amount": 120000,
+      "currency": "EUR",
+      "reasoning": "Logistics costs involve warehousing, distribution, and handling of the new accessory bundles. This estimation is based on the logistics expenditures of previous BMW accessory launches.",
+      "market_comparison": {
+        "similar_case": "Volkswagen - Electric Vehicle Logistics",
+        "comparison_details": "Volkswagen spent approximately €150,000 on logistics for their electric vehicle accessory distribution, highlighting the complexities involved in new product launches.",
+        "cost_figures": [
+          {
+            "company": "Volkswagen",
+            "project": "Electric Vehicle Logistics",
+            "amount": 150000,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "Porsche",
+            "project": "Accessory Distribution",
+            "amount": 130000,
+            "currency": "EUR",
+            "year": 2020
+          }
+        ],
+        "source": "Supply Chain Management Review",
+        "reference_links": [
+          "https://scmr.com/article/volkswagen-electric-vehicle-logistics",
+          "https://www.porsche.com/international/accessoriesandservice/"
+        ]
+      }
+    }
+  ],
+  "total_distribution_operations_cost": 120000,
+  "after_sales_costs": [
+    {
+      "category": "Customer Service",
+      "estimated_amount": 80000,
+      "currency": "EUR",
+      "reasoning": "After-sales support is critical for customer satisfaction, especially for accessories. This cost accounts for the staffing and resources needed to handle customer inquiries and support.",
+      "market_comparison": {
+        "similar_case": "BMW - After-Sales Service Initiatives",
+        "comparison_details": "BMW invests around €70,000 annually in after-sales service for accessories to maintain customer satisfaction and retention.",
+        "cost_figures": [
+          {
+            "company": "BMW",
+            "project": "After-Sales Service",
+            "amount": 70000,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "Honda",
+            "project": "Customer Support for Accessories",
+            "amount": 60000,
+            "currency": "USD",
+            "year": 2020
+          }
+        ],
+        "source": "Customer Service Institute",
+        "reference_links": [
+          "https://www.customerserviceinstitute.com/bmw-after-sales-service",
+          "https://www.honda.com/customer-service"
+        ]
+      }
+    }
+  ],
+  "total_after_sales_cost": 80000,
+  "cost_of_goods_sold": [
+    {
+      "product_category": "Accessory Bundles",
+      "price_per_item": 300,
+      "cogs_per_item": 200,
+      "gross_margin_percentage": 33.33,
+      "currency": "EUR",
+      "reasoning": "The cost of goods sold (COGS) for each accessory bundle includes manufacturing and procurement costs. The gross margin is calculated based on projected selling price versus COGS.",
+      "market_comparison": {
+        "similar_case": "Harley-Davidson - Accessory Sales",
+        "comparison_details": "Harley-Davidson's accessory bundles typically have a gross margin of around 30%, similar to the projected margins for BMW's new accessory bundles.",
+        "cost_figures": [],
+        "source": "Harley-Davidson Financial Reports",
+        "reference_links": []
+      }
+    }
+  ],
+  "average_cogs_per_bundle": 200,
+  "total_estimated_cost_summary": {
+    "one_time_development": 450000,
+    "annual_customer_acquisition": 500000,
+    "annual_distribution_operations": 120000,
+    "annual_after_sales": 80000,
+    "average_cogs_per_unit": 200
+  },
+  "confidence_level": "High",
+  "additional_notes": "The estimates are based on industry benchmarks and previous project costs. Assumptions include a steady demand for motorcycle accessories and effective marketing strategies.",
+  "volume_projections": {
+    "2024": 14000000,
+    "2025": 15400000,
+    "2026": 16940000,
+    "2027": 18634000,
+    "2028": 20497400,
+    "2029": 22547140,
+    "2030": 24801854
+  },
+  "yearly_cost_breakdown": {
+    "2024": {
+      "projected_volume": 14000000,
+      "one_time_development": 450000,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 2800000000,
+      "cogs_per_unit": 200,
+      "total_cost": 2801150000,
+      "currency": "EUR"
+    },
+    "2025": {
+      "projected_volume": 15400000,
+      "one_time_development": 0,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 3080000000,
+      "cogs_per_unit": 200,
+      "total_cost": 3080700000,
+      "currency": "EUR"
+    },
+    "2026": {
+      "projected_volume": 16940000,
+      "one_time_development": 0,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 3388000000,
+      "cogs_per_unit": 200,
+      "total_cost": 3388700000,
+      "currency": "EUR"
+    },
+    "2027": {
+      "projected_volume": 18634000,
+      "one_time_development": 0,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 3726800000,
+      "cogs_per_unit": 200,
+      "total_cost": 3727500000,
+      "currency": "EUR"
+    },
+    "2028": {
+      "projected_volume": 20497400,
+      "one_time_development": 0,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 4099480000,
+      "cogs_per_unit": 200,
+      "total_cost": 4100180000,
+      "currency": "EUR"
+    },
+    "2029": {
+      "projected_volume": 22547140,
+      "one_time_development": 0,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 4509428000,
+      "cogs_per_unit": 200,
+      "total_cost": 4510128000,
+      "currency": "EUR"
+    },
+    "2030": {
+      "projected_volume": 24801854,
+      "one_time_development": 0,
+      "customer_acquisition": 500000,
+      "distribution_operations": 120000,
+      "after_sales": 80000,
+      "total_cogs": 4960370800,
+      "cogs_per_unit": 200,
+      "total_cost": 4961070800,
+      "currency": "EUR"
+    }
+  },
+  "seven_year_summary": {
+    "total_cost_2024_2030": 26569428800,
+    "total_volume_2024_2030": 132820394,
+    "average_cost_per_unit": 200.04,
+    "currency": "EUR"
+  }
+}

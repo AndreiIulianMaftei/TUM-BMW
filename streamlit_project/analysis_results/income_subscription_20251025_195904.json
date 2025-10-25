@@ -1,0 +1,85 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "monthly_cost": 10,
+      "number_of_subscribers": 1500000,
+      "yearly_income": 180000000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2025,
+      "monthly_cost": 11,
+      "number_of_subscribers": 1650000,
+      "yearly_income": 217800000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2026,
+      "monthly_cost": 12,
+      "number_of_subscribers": 1800000,
+      "yearly_income": 259200000,
+      "churn_rate": 6
+    },
+    {
+      "year": 2027,
+      "monthly_cost": 13,
+      "number_of_subscribers": 1950000,
+      "yearly_income": 304200000,
+      "churn_rate": 6
+    },
+    {
+      "year": 2028,
+      "monthly_cost": 14,
+      "number_of_subscribers": 2100000,
+      "yearly_income": 352800000,
+      "churn_rate": 7
+    },
+    {
+      "year": 2029,
+      "monthly_cost": 15,
+      "number_of_subscribers": 2250000,
+      "yearly_income": 405000000,
+      "churn_rate": 7
+    },
+    {
+      "year": 2030,
+      "monthly_cost": 16,
+      "number_of_subscribers": 2400000,
+      "yearly_income": 460800000,
+      "churn_rate": 8
+    }
+  ],
+  "summary": {
+    "pricing_choice": "The pricing was chosen based on industry standards for motorcycle accessories, providing perceived value while remaining competitive.",
+    "market_assumptions": "The market is expected to grow due to increased motorcycle sales and a rising demand for customization and accessories.",
+    "growth_projections_reasoning": "Subscriber growth aligns with industry trends and projected market expansion in motorcycle sales.",
+    "churn_rate_assumptions": "Churn rates are estimated based on typical industry averages for subscription models, with a slight increase as user base expands.",
+    "customer_lifetime_value_considerations": "With a stable churn rate and increasing subscriber base, customer lifetime value increases through consistent engagement and upselling opportunities."
+  },
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson Genuine Motor Parts & Accessories Subscription",
+      "description": "A subscription model offering various accessory packages tailored for Harley-Davidson motorcycle enthusiasts.",
+      "subscription_model": "Monthly subscription with tiered pricing based on accessory bundle size and customization.",
+      "link": "https://www.harley-davidson.com"
+    },
+    {
+      "name": "Cycle Gear's RPM Membership",
+      "description": "A membership service providing discounts, exclusive deals, and early access to new products for motorcycle gear and accessories.",
+      "subscription_model": "Annual membership fee providing ongoing discounts and benefits.",
+      "link": "https://www.cyclegear.com"
+    },
+    {
+      "name": "RevZilla's ZillaCash Rewards Program",
+      "description": "A loyalty program where customers earn cash rewards on purchases, applicable towards future orders.",
+      "subscription_model": "No direct subscription fee, but a loyalty points system that incentivizes repeat purchases.",
+      "link": "https://www.revzilla.com"
+    }
+  ],
+  "methodology": {
+    "data_sources": "Industry reports, competitor analysis, and internal BMW Motorrad sales data.",
+    "assumptions": "Projections assume steady market growth, effective marketing strategies, and successful implementation of the subscription model."
+  },
+  "total_income": 2176800000
+}

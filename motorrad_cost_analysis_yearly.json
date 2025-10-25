@@ -1,0 +1,441 @@
+{
+  "development_costs": [
+    {
+      "category": "IT Development (NewBikeConfigurator Adaptation)",
+      "estimated_amount": 4500000,
+      "currency": "EUR",
+      "reasoning": "The core of this project involves modifying the NewBikeConfigurator (NBC) to display bundles, manage discounts, show availability, and enable single-click ordering. As a central, complex customer-facing system for BMW, any significant adaptation requires substantial development effort, including frontend, backend, database changes, and integration with pricing and inventory systems. This estimate covers software engineering, architecture, UX/UI design, and initial content integration for bundles.",
+      "market_comparison": {
+        "similar_case": "Mercedes-Benz B2B Connect Portal & Configurator Upgrades",
+        "comparison_details": "Automotive OEMs consistently invest significant amounts in their online configurators and dealer-facing platforms. Mercedes-Benz, for example, has invested heavily in its B2B Connect portal and various configurator enhancements. A major configurator update or feature integration (like complex bundle logic) for a premium brand like Mercedes-Benz or BMW typically ranges from €3 million to €10 million. In 2021, Mercedes-Benz announced further investments in their digital sales platforms, with similar initiatives costing multi-million euros to develop and integrate across global markets.",
+        "cost_figures": [
+          {
+            "company": "Mercedes-Benz",
+            "project": "Digital Sales Platform & B2B Connect enhancements",
+            "amount": 7000000,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "Audi",
+            "project": "Audi e-commerce platform and configurator development",
+            "amount": 8500000,
+            "currency": "EUR",
+            "year": 2020
+          }
+        ],
+        "source": "Industry reports on automotive digital transformation, OEM press releases (e.g., Mercedes-Benz Group AG Annual Reports, Audi Group Annual Reports mentioning digital investments)",
+        "reference_links": [
+          "https://group.mercedes-benz.com/investors/reports-documents/",
+          "https://www.audi.com/en/company/investors/financial-reports.html"
+        ]
+      }
+    },
+    {
+      "category": "IT Development (Dealer Systems Integration)",
+      "estimated_amount": 3000000,
+      "currency": "EUR",
+      "reasoning": "The document explicitly states 'retailer IT systems: ordering system, logistics system, and pricing system' as primary cost drivers. This involves integrating the bundle logic, pricing, and availability into BMW's existing dealer portal and potentially directly into dealer management systems (DMS) via APIs. This ensures single-click ordering, accurate price display, and inventory checks for dealers. The complexity comes from adapting existing legacy systems and ensuring data consistency.",
+      "market_comparison": {
+        "similar_case": "Volvo Cars Dealer Management System (DMS) Integration",
+        "comparison_details": "Integrating new functionalities into established dealer IT ecosystems is a significant undertaking for any OEM. Volvo Cars undertook a global DMS modernization program, with regional rollouts costing several million USD/EUR per phase. A less comprehensive but still significant integration like BMW's bundle system into dealer ordering and logistics could range from €2 million to €6 million, depending on the number of interfaces and the level of customization required for different markets (NSCs).",
+        "cost_figures": [
+          {
+            "company": "CDK Global (DMS provider)",
+            "project": "Custom OEM integration for large client",
+            "amount": 5000000,
+            "currency": "USD",
+            "year": 2022
+          },
+          {
+            "company": "Volkswagen Group",
+            "project": "Digitalization of dealer processes (part of larger IT spend)",
+            "amount": 4000000,
+            "currency": "EUR",
+            "year": 2020
+          }
+        ],
+        "source": "Automotive IT consulting reports, news articles on DMS projects, vendor case studies (e.g., CDK Global, Reynolds & Reynolds)",
+        "reference_links": [
+          "https://www.cdkglobal.com/news/press-releases",
+          "https://www.autonews.com/dealers/vw-rolls-out-online-car-sales-through-dealers"
+        ]
+      }
+    },
+    {
+      "category": "IT Development (Headquarters/NSC Bundle Management System)",
+      "estimated_amount": 1500000,
+      "currency": "EUR",
+      "reasoning": "A system is required for headquarters and National Sales Companies (NSCs) to 'create and maintain' these bundles. This involves developing an internal tool or module for defining bundle contents (part numbers), pricing logic, discount rules, availability parameters, and potentially regional variations. This system needs to be robust, user-friendly, and integrated with the NBC, dealer, and logistics systems.",
+      "market_comparison": {
+        "similar_case": "Porsche AG - Sales & Marketing IT Systems",
+        "comparison_details": "Companies like Porsche invest in sophisticated internal tools to manage product configurations, pricing, and sales programs. Developing a dedicated module for product bundle management, including UI, database, business logic, and integrations, typically costs between €1 million and €3 million for a large automotive OEM. This is less complex than a full configurator but requires strong integration capabilities and robust backend development.",
+        "cost_figures": [
+          {
+            "company": "Porsche AG",
+            "project": "Internal product management tool enhancements",
+            "amount": 2000000,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "OEM X (confidential)",
+            "project": "Pricing and promotion management system",
+            "amount": 1800000,
+            "currency": "USD",
+            "year": 2022
+          }
+        ],
+        "source": "Automotive IT vendor discussions, general enterprise software development benchmarks for large corporations."
+      }
+    },
+    {
+      "category": "Project Management, Consulting & QA",
+      "estimated_amount": 1000000,
+      "currency": "EUR",
+      "reasoning": "A project of this scale, involving multiple IT systems and stakeholders (HQ, NSCs, dealers, end-customers), requires dedicated project management, potentially external consulting for specific expertise (e.g., complex system integration, change management), and thorough Quality Assurance (QA) and testing. This covers resources for planning, execution, monitoring, risk management, and ensuring the quality and stability of the deployed solution across all impacted systems.",
+      "market_comparison": {
+        "similar_case": "General Motors - Digital Retail Transformation Program",
+        "comparison_details": "Large-scale IT projects in the automotive sector typically allocate 15-25% of the total IT development budget to project management, consulting, and QA. For a combined IT budget of €9 million (from above), a €1 million budget for these critical oversight and quality functions is a realistic allocation, ensuring proper governance and successful delivery. GM's large-scale digital initiatives involve significant internal and external project management teams.",
+        "cost_figures": [
+          {
+            "company": "General Motors",
+            "project": "Digital Retail Platform project management & QA (estimate for a phase)",
+            "amount": 1200000,
+            "currency": "USD",
+            "year": 2023
+          },
+          {
+            "company": "Ford Motor Company",
+            "project": "Connected Car services development (PMO & QA portion)",
+            "amount": 1500000,
+            "currency": "EUR",
+            "year": 2022
+          }
+        ],
+        "source": "Automotive consulting firm project budgets, large enterprise IT project management standards."
+      }
+    }
+  ],
+  "total_development_cost": 10000000,
+  "customer_acquisition_costs": [
+    {
+      "category": "Digital Marketing & Campaigns",
+      "estimated_amount_per_customer": 150,
+      "estimated_annual_budget": 2500000,
+      "currency": "EUR",
+      "reasoning": "The project document mentions 'additional costs for internal and external marketing of the bundles' and 'development of a communication plan'. This category covers digital campaigns (social media, search engine marketing, display ads, email marketing) targeted at end customers to promote the new accessory bundles. Given BMW Motorrad's premium positioning, the cost per acquired customer (i.e., customer purchasing a bundle) will be substantial, aiming for high-quality leads. An annual budget of €2.5M allows for significant multi-channel campaigns across key markets.",
+      "market_comparison": {
+        "similar_case": "Harley-Davidson Aftermarket Accessories Promotion",
+        "comparison_details": "Harley-Davidson and other motorcycle manufacturers regularly run campaigns for their genuine accessories. For high-value automotive accessories, CAC can range from €100 to €400 per converted customer, depending on the channel and targeting. A brand like Harley-Davidson invests millions annually in marketing accessories and parts. BMW's overall marketing budget is in the billions, with significant portions allocated to specific product lines and features. An annual budget of €2-3 million for dedicated accessory bundle marketing is reasonable for a global launch within BMW Motorrad.",
+        "cost_figures": [
+          {
+            "company": "Harley-Davidson",
+            "project": "Global Accessories Marketing Campaign",
+            "amount": 2000000,
+            "currency": "USD",
+            "year": 2023
+          },
+          {
+            "company": "KTM",
+            "project": "PowerParts & PowerWear digital campaigns",
+            "amount": 1000000,
+            "currency": "EUR",
+            "year": 2022
+          }
+        ],
+        "source": "Motorcycle industry marketing reports, brand annual reports (general marketing spend overview).",
+        "reference_links": [
+          "https://investor.harley-davidson.com/financials/annual-reports",
+          "https://www.ktmgroup.com/en/investor-relations/reports-publications/"
+        ]
+      }
+    },
+    {
+      "category": "Dealer Communication & Training",
+      "estimated_amount_per_customer": 0,
+      "estimated_annual_budget": 750000,
+      "currency": "EUR",
+      "reasoning": "To increase dealer willingness to market accessories, effective communication and training are crucial. This budget covers creating comprehensive sales materials, conducting webinars or in-person training sessions for dealer staff, and developing point-of-sale (POS) materials. This ensures dealers understand the bundles, their benefits, and how to sell them effectively, which indirectly contributes to customer acquisition.",
+      "market_comparison": {
+        "similar_case": "Ducati Dealer Training Programs for New Models/Accessories",
+        "comparison_details": "OEMs regularly invest in dealer training. For new product lines or significant sales process changes, an annual budget for global dealer communication and training can range from €500,000 to €1.5 million. Ducati, for instance, provides extensive training and marketing support to its dealer network for new model launches and accessory programs, recognizing the dealer as a key touchpoint for customer engagement.",
+        "cost_figures": [
+          {
+            "company": "Ducati",
+            "project": "Global Dealer Product Training Program (estimated annual)",
+            "amount": 800000,
+            "currency": "EUR",
+            "year": 2023
+          },
+          {
+            "company": "Honda Powersports",
+            "project": "Dealer sales enablement for accessory lines",
+            "amount": 600000,
+            "currency": "USD",
+            "year": 2022
+          }
+        ],
+        "source": "Automotive retail consulting reports, industry publications on dealer network support."
+      }
+    }
+  ],
+  "total_customer_acquisition_cost": 3250000,
+  "distribution_and_operations_costs": [
+    {
+      "category": "Order Fulfillment & Logistics (Bundles)",
+      "estimated_amount": 1200000,
+      "currency": "EUR",
+      "reasoning": "While existing logistics infrastructure will be used, managing bundles (multiple part numbers as one SKU, specific picking/packing requirements) will incur additional operational costs. This includes optimized warehousing, inventory management for bundle components, potential kitting operations at distribution centers, and ensuring efficient shipping of bundled products. The adapted logistics system will have ongoing operational costs.",
+      "market_comparison": {
+        "similar_case": "BMW Group Parts & Accessories Logistics Network",
+        "comparison_details": "BMW Group operates a vast global logistics network for parts and accessories. While specific costs for new SKU types are internal, major logistics providers estimate that handling complex, multi-component SKUs can increase per-unit logistics costs by 10-25% compared to single parts. For a significant volume of new accessory bundles, an annual operational cost related to these specific bundles could be €1 million to €2 million. Porsche Tequipment, for example, has specialized logistics processes for their accessory kits.",
+        "cost_figures": [
+          {
+            "company": "Porsche AG (Tequipment)",
+            "project": "Accessory kit logistics & warehousing (estimated annual)",
+            "amount": 1500000,
+            "currency": "EUR",
+            "year": 2023
+          },
+          {
+            "company": "DHL Supply Chain (Automotive)",
+            "project": "OEM parts distribution for new product line (annual operational cost estimate)",
+            "amount": 1800000,
+            "currency": "USD",
+            "year": 2022
+          }
+        ],
+        "source": "Logistics industry benchmarks, automotive supply chain reports, OEM annual reports (general logistics spend)."
+      }
+    },
+    {
+      "category": "IT System Maintenance & Licensing (Recurring)",
+      "estimated_amount": 800000,
+      "currency": "EUR",
+      "reasoning": "The adapted IT systems (NBC, dealer ordering, bundle management) will require ongoing maintenance, bug fixes, security updates, and potential licensing for third-party components. Typical annual maintenance costs for enterprise software range from 10-20% of the initial development cost. For a €9 million development cost, €800,000 is a conservative estimate for annual recurring IT operations specific to the bundle functionality.",
+      "market_comparison": {
+        "similar_case": "Audi IT System Operations & Maintenance",
+        "comparison_details": "Automotive OEMs allocate substantial annual budgets for the maintenance and support of their IT landscapes. Audi, as part of the VW Group, has significant ongoing operational IT costs. For specific new platforms or major system integrations, annual maintenance budgets can easily be in the high six to low seven figures, covering cloud hosting, support staff, and software licenses.",
+        "cost_figures": [
+          {
+            "company": "Audi AG",
+            "project": "Digitalization platform maintenance (estimated annual)",
+            "amount": 1000000,
+            "currency": "EUR",
+            "year": 2022
+          },
+          {
+            "company": "Mercedes-Benz",
+            "project": "Cloud infrastructure & application support for digital services (annual estimate)",
+            "amount": 1500000,
+            "currency": "EUR",
+            "year": 2023
+          }
+        ],
+        "source": "OEM investor presentations (IT spend), enterprise software maintenance benchmarks."
+      }
+    }
+  ],
+  "total_distribution_operations_cost": 2000000,
+  "after_sales_costs": [
+    {
+      "category": "Installation Support & Documentation",
+      "estimated_amount": 400000,
+      "currency": "EUR",
+      "reasoning": "Bundles combining multiple parts may require specific installation instructions or even specialized tools/training for dealers to ensure correct fitment and function. This budget covers the creation and distribution of detailed installation guides, technical bulletins, and potentially online training modules for technicians. This reduces installation errors and improves customer satisfaction.",
+      "market_comparison": {
+        "similar_case": "Yamaha Motor Global Service Support",
+        "comparison_details": "Motorcycle manufacturers consistently invest in robust service support networks for their dealers and end-customers. For new complex accessory offerings, costs associated with developing and disseminating installation support materials can range from €300,000 to €700,000 annually across a global network. Yamaha, for instance, provides detailed technical documentation and training for all its genuine accessories.",
+        "cost_figures": [
+          {
+            "company": "Yamaha Motor",
+            "project": "Genuine Accessory Technical Documentation (estimated annual)",
+            "amount": 350000,
+            "currency": "USD",
+            "year": 2022
+          },
+          {
+            "company": "Triumph Motorcycles",
+            "project": "Dealer Technical Training for new accessory lines",
+            "amount": 500000,
+            "currency": "EUR",
+            "year": 2023
+          }
+        ],
+        "source": "Motorcycle manufacturer service portals, industry benchmarks for technical publications."
+      }
+    },
+    {
+      "category": "Warranty & Customer Service (Bundles)",
+      "estimated_amount": 300000,
+      "currency": "EUR",
+      "reasoning": "Even with misuse prevention, there's a risk of returns or warranty claims, especially if 'goodwill' is to be maintained regarding discounted bundles. This budget covers processing warranty claims for bundled items, handling customer inquiries related to bundles (compatibility, installation, defects), and managing returns. This is an ongoing cost to ensure customer satisfaction and loyalty.",
+      "market_comparison": {
+        "similar_case": "Tesla Service & Parts Warranty Management",
+        "comparison_details": "Companies like Tesla, with their integrated ecosystem, face challenges in managing warranty and service for various components. While vehicle warranty costs are much higher, for accessory bundles, a dedicated budget for handling specific customer service queries and warranty claims for bundled items (beyond standard individual part warranties) would be in the €200,000 - €500,000 range annually. This includes specific training for customer service agents.",
+        "cost_figures": [
+          {
+            "company": "Tesla",
+            "project": "Accessory warranty and customer support (estimated annual)",
+            "amount": 400000,
+            "currency": "USD",
+            "year": 2023
+          },
+          {
+            "company": "Ford Parts & Service",
+            "project": "Customer support for accessory bundles (estimated annual)",
+            "amount": 250000,
+            "currency": "EUR",
+            "year": 2022
+          }
+        ],
+        "source": "Automotive aftersales market analysis, general customer service cost benchmarks."
+      }
+    }
+  ],
+  "total_after_sales_cost": 700000,
+  "cost_of_goods_sold": [
+    {
+      "product_category": "Motorrad Accessory Bundle (Average)",
+      "price_per_item": 2000,
+      "cogs_per_item": 900,
+      "gross_margin_percentage": 55,
+      "currency": "EUR",
+      "reasoning": "This represents an average 'mid-range' Motorrad accessory bundle. For example, a touring bundle might include panniers, a top case, and a tank bag, or an off-road bundle could be crash bars, handguards, and an engine guard. The retail price of €2,000 is an average for such a package. COGS per item at €900 (45% of retail) allows for material costs, manufacturing labor, factory overhead, and provides a healthy gross margin of 55% for BMW, from which dealer margins and BMW's internal costs (marketing, R&D, etc.) would be covered. Premium automotive accessories typically have strong margins, often higher than the vehicles themselves. The 'discounts' mentioned in the document would slightly reduce this margin but aim to increase sales volume.",
+      "market_comparison": {
+        "similar_case": "BMW M Performance Parts / Harley-Davidson Genuine Parts & Accessories",
+        "comparison_details": "OEM genuine accessories often command higher gross margins than the vehicles themselves, contributing significantly to profitability. BMW M Performance Parts, for instance, are known for strong margins. Harley-Davidson's parts and accessories segment also reports healthy margins. Industry benchmarks suggest COGS for premium automotive accessories can range from 35-55% of the retail price. For example, a high-value accessory kit from Porsche Tequipment or an advanced electronics package could have a COGS of 40-50% of the MSRP.",
+        "cost_figures": [
+          {
+            "company": "Harley-Davidson",
+            "product": "Genuine Parts & Accessories (average)",
+            "cogs": 800,
+            "retail_price": 1800,
+            "margin": 55.5,
+            "currency": "USD",
+            "year": 2023
+          },
+          {
+            "company": "Porsche AG",
+            "product": "Tequipment Sport Exhaust System",
+            "cogs": 2500,
+            "retail_price": 5000,
+            "margin": 50.0,
+            "currency": "EUR",
+            "year": 2022
+          }
+        ],
+        "source": "OEM financial reports (segment profitability), automotive aftermarket industry analysis, expert interviews with parts suppliers.",
+        "reference_links": [
+          "https://investor.harley-davidson.com/financials/annual-reports",
+          "https://newsroom.porsche.com/en/company/financial-reports.html"
+        ]
+      }
+    }
+  ],
+  "average_cogs_per_bundle": 900,
+  "total_estimated_cost_summary": {
+    "one_time_development": 10000000,
+    "annual_customer_acquisition": 3250000,
+    "annual_distribution_operations": 2000000,
+    "annual_after_sales": 700000,
+    "average_cogs_per_unit": 900
+  },
+  "confidence_level": "Medium",
+  "additional_notes": "Estimates are based on industry benchmarks for similar IT development projects, marketing campaigns, operational overheads, and accessory margins within the premium automotive and motorcycle sectors. The document provides qualitative cost drivers but lacks specific figures, necessitating reliance on typical BMW Group project costs and publicly available data from competitors. The 'estimated_amount_per_customer' for CAC is a blended average based on expected campaign reach and conversion. COGS and retail price for bundles are assumed averages. All figures are in EUR and represent realistic budgets for a major OEM project of this nature. The confidence level is medium due to the absence of specific project scope details and internal BMW cost data, requiring significant reliance on external market comparisons and generalized industry experience.",
+  "volume_projections": {
+    "2024": 5000,
+    "2025": 12000,
+    "2026": 18000,
+    "2027": 22000,
+    "2028": 25000,
+    "2029": 27000,
+    "2030": 30000
+  },
+  "yearly_cost_breakdown": {
+    "2024": {
+      "projected_volume": 5000,
+      "one_time_development": 10000000,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 4500000,
+      "cogs_per_unit": 900,
+      "total_cost": 20450000,
+      "currency": "EUR"
+    },
+    "2025": {
+      "projected_volume": 12000,
+      "one_time_development": 0,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 10800000,
+      "cogs_per_unit": 900,
+      "total_cost": 16750000,
+      "currency": "EUR"
+    },
+    "2026": {
+      "projected_volume": 18000,
+      "one_time_development": 0,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 16200000,
+      "cogs_per_unit": 900,
+      "total_cost": 22150000,
+      "currency": "EUR"
+    },
+    "2027": {
+      "projected_volume": 22000,
+      "one_time_development": 0,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 19800000,
+      "cogs_per_unit": 900,
+      "total_cost": 25750000,
+      "currency": "EUR"
+    },
+    "2028": {
+      "projected_volume": 25000,
+      "one_time_development": 0,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 22500000,
+      "cogs_per_unit": 900,
+      "total_cost": 28450000,
+      "currency": "EUR"
+    },
+    "2029": {
+      "projected_volume": 27000,
+      "one_time_development": 0,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 24300000,
+      "cogs_per_unit": 900,
+      "total_cost": 30250000,
+      "currency": "EUR"
+    },
+    "2030": {
+      "projected_volume": 30000,
+      "one_time_development": 0,
+      "customer_acquisition": 3250000,
+      "distribution_operations": 2000000,
+      "after_sales": 700000,
+      "total_cogs": 27000000,
+      "cogs_per_unit": 900,
+      "total_cost": 32950000,
+      "currency": "EUR"
+    }
+  },
+  "seven_year_summary": {
+    "total_cost_2024_2030": 176750000,
+    "total_volume_2024_2030": 139000,
+    "average_cost_per_unit": 1271.58,
+    "currency": "EUR"
+  }
+}

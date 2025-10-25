@@ -1,0 +1,84 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "royalty_percentage": 10,
+      "price_per_piece": 150,
+      "number_of_units": 15000,
+      "yearly_income": 225000
+    },
+    {
+      "year": 2025,
+      "royalty_percentage": 10,
+      "price_per_piece": 155,
+      "number_of_units": 15750,
+      "yearly_income": 244125
+    },
+    {
+      "year": 2026,
+      "royalty_percentage": 10,
+      "price_per_piece": 160,
+      "number_of_units": 16537,
+      "yearly_income": 265672
+    },
+    {
+      "year": 2027,
+      "royalty_percentage": 10,
+      "price_per_piece": 165,
+      "number_of_units": 17364,
+      "yearly_income": 286506
+    },
+    {
+      "year": 2028,
+      "royalty_percentage": 10,
+      "price_per_piece": 170,
+      "number_of_units": 18232,
+      "yearly_income": 310944
+    },
+    {
+      "year": 2029,
+      "royalty_percentage": 10,
+      "price_per_piece": 175,
+      "number_of_units": 19144,
+      "yearly_income": 334020
+    },
+    {
+      "year": 2030,
+      "royalty_percentage": 10,
+      "price_per_piece": 180,
+      "number_of_units": 20101,
+      "yearly_income": 362218
+    }
+  ],
+  "summary": {
+    "chosen_percentages": "The 10% royalty rate is a standard in the automotive accessory industry, offering a balance between partner profitability and competitive pricing.",
+    "market_assumptions": "The automotive accessory market is expected to grow due to increased demand for sustainable and reusable components, aligning with global sustainability trends.",
+    "growth_projections_reasoning": "The projected growth in sales volume is based on increasing adoption rates of sustainability initiatives and advancements in circular economy practices.",
+    "industry_standards": "Royalty rates in the automotive accessory industry typically range from 5% to 15%. The chosen rate reflects a middle ground, ensuring competitiveness and fair profit sharing."
+  },
+  "comparable_projects": [
+    {
+      "name": "Bosch Automotive Accessories",
+      "url": "https://www.bosch.com",
+      "description": "Bosch engages in similar royalty-based agreements for its automotive accessory products, focusing on innovative technologies.",
+      "royalty_model_details": "Bosch typically uses a 10-12% royalty model for its accessory sales, depending on technology and market exclusivity."
+    },
+    {
+      "name": "Valeo Interior Components",
+      "url": "https://www.valeo.com",
+      "description": "Valeo has implemented a royalty-based model for its interior components focusing on smart and sustainable solutions.",
+      "royalty_model_details": "Valeo employs an 8-10% royalty rate for its products, leveraging its strong market presence."
+    },
+    {
+      "name": "Continental AG Sustainable Parts",
+      "url": "https://www.continental.com",
+      "description": "Continental AG has developed a royalty-based system for its sustainable parts offerings, emphasizing circular economy.",
+      "royalty_model_details": "Continental applies a 9-11% royalty rate, with adjustments based on the component's lifecycle impact."
+    }
+  ],
+  "methodology": {
+    "data_sources": "The projections are based on industry reports, market analyses, and historical data from similar projects.",
+    "assumptions": "Assumptions include stable economic conditions, consistent growth in sustainability demands, and strategic partnerships enhancing market penetration."
+  },
+  "total_income": 2021505
+}

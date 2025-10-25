@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market represents all motorcycle accessory sales globally, encompassing end customers looking for accessories and dealers who sell them. This market includes all brands but focuses on the motorcycle segment, particularly BMW.",
+    "numbers": {
+      "2024": 1500000000,
+      "2025": 1650000000,
+      "2026": 1815000000,
+      "2027": 1995000000,
+      "2028": 2180000000,
+      "2029": 2370000000,
+      "2030": 2570000000
+    },
+    "justification": "The numbers are based on the global motorcycle accessories market size which is projected to grow at a CAGR of approximately 10% from 2024 to 2030. This estimate is derived from the current market size of $1.5 billion in 2024, considering the expansion of motorcycle usage and the increasing demand for customized accessories. The assumptions include a rising interest in motorcycle riding due to urban mobility trends and increased disposable income in emerging markets.",
+    "industry_example": {
+      "name": "Harley-Davidson",
+      "description": "Harley-Davidson operates a successful business model around motorcycle accessories, with significant sales generated from their extensive accessory and apparel range, contributing to their overall revenue.",
+      "link": "https://www.harley-davidson.com/us/en/our-story/financials.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market focuses on the segment of motorcycle accessory sales that can realistically be targeted by BMW, particularly in regions where BMW motorcycles are prevalent and where direct sales channels are established.",
+    "numbers": {
+      "2024": 450000000,
+      "2025": 495000000,
+      "2026": 544500000,
+      "2027": 599500000,
+      "2028": 659500000,
+      "2029": 724500000,
+      "2030": 795000000
+    },
+    "justification": "SAM is estimated to be around 30% of TAM, focusing on BMW's target markets such as Europe, North America, and parts of Asia where BMW motorcycles are popular. The growth rate is assumed to be slightly lower than TAM due to competition and market saturation. This segment includes motorcycle dealers and end customers who are likely to purchase BMW-specific accessories.",
+    "industry_example": {
+      "name": "BMW Motorrad",
+      "description": "BMW Motorrad has established a strong presence in the motorcycle accessories market, selling a tailored range of products that cater specifically to their customers, enhancing their brand loyalty.",
+      "link": "https://www.bmw-motorrad.com/en/experience/accessories.html"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market represents the percentage of the SAM that BMW can realistically capture in the near term through effective marketing and streamlined processes for accessory bundles.",
+    "numbers": {
+      "2024": 90000000,
+      "2025": 99000000,
+      "2026": 108900000,
+      "2027": 119790000,
+      "2028": 131700000,
+      "2029": 144900000,
+      "2030": 159000000
+    },
+    "justification": "SOM is calculated as 20% of SAM initially, with growth anticipated as the brand builds recognition and optimizes its sales processes. The growth trajectory is expected to increase as customer satisfaction improves with better accessibility to bundled products. The assumptions include successful marketing campaigns and customer feedback leading to increased sales.",
+    "industry_example": {
+      "name": "Ducati",
+      "description": "Ducati has successfully captured a significant market share by focusing on branded accessories and apparel, leveraging its strong brand loyalty and effective marketing strategies to attract customers.",
+      "link": "https://www.ducati.com/us/en/experience/accessories"
+    }
+  },
+  "sources": [
+    "https://www.researchnester.com/reports/motorcycle-accessories-market/3046",
+    "https://www.statista.com/topics/1526/motorcycles/",
+    "https://www.mordorintelligence.com/industry-reports/motorcycle-accessories-market"
+  ]
+}

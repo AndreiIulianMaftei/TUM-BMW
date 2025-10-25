@@ -1,0 +1,78 @@
+{
+  "yearly_projections": {
+    "2024": {
+      "monthly_cost": 30,
+      "number_of_subscribers": 15000,
+      "yearly_income": 5400000,
+      "churn_rate": 5
+    },
+    "2025": {
+      "monthly_cost": 31,
+      "number_of_subscribers": 15750,
+      "yearly_income": 5869500,
+      "churn_rate": 5
+    },
+    "2026": {
+      "monthly_cost": 32,
+      "number_of_subscribers": 16537,
+      "yearly_income": 6353568,
+      "churn_rate": 5
+    },
+    "2027": {
+      "monthly_cost": 33,
+      "number_of_subscribers": 17364,
+      "yearly_income": 6864048,
+      "churn_rate": 5
+    },
+    "2028": {
+      "monthly_cost": 34,
+      "number_of_subscribers": 18232,
+      "yearly_income": 7406208,
+      "churn_rate": 5
+    },
+    "2029": {
+      "monthly_cost": 35,
+      "number_of_subscribers": 19144,
+      "yearly_income": 7978560,
+      "churn_rate": 5
+    },
+    "2030": {
+      "monthly_cost": 36,
+      "number_of_subscribers": 20101,
+      "yearly_income": 8692368,
+      "churn_rate": 5
+    }
+  },
+  "summary": {
+    "pricing_choice": "The monthly cost starts at €30 and increases by €1 each year to account for inflation and added value services.",
+    "market_assumptions": "The automotive industry is increasingly embracing circular business models, with a rising demand for sustainable and cost-efficient solutions.",
+    "growth_projections_reasoning": "Subscriber growth is projected at 5% annually, reflecting the trend towards eco-friendly practices and the value proposition of reduced development costs.",
+    "churn_rate_assumptions": "A standard churn rate of 5% is assumed due to the niche market and strong value proposition, which encourages customer retention.",
+    "customer_lifetime_value": "With a churn rate of 5% and increasing monthly costs, the customer lifetime value is expected to be substantial, supporting long-term revenue growth."
+  },
+  "comparable_projects": [
+    {
+      "project_name": "Volvo Cars Subscription Service",
+      "url": "https://www.volvocars.com/intl/v/cars/care-by-volvo",
+      "description": "An all-inclusive subscription service that allows users to access Volvo vehicles with a monthly fee covering insurance, maintenance, and wear.",
+      "subscription_model_details": "Monthly fees range from €500 to €700, with flexible terms and no long-term commitment."
+    },
+    {
+      "project_name": "Porsche Passport",
+      "url": "https://www.porsche.com/usa/accessoriesandservices/porschepassport/",
+      "description": "A subscription service providing access to a range of Porsche models with a monthly fee covering maintenance and insurance.",
+      "subscription_model_details": "Monthly fees start at €2,000, offering access to multiple vehicle models and includes comprehensive services."
+    },
+    {
+      "project_name": "Access by BMW",
+      "url": "https://www.bmwusa.com/vehicles/access-by-bmw.html",
+      "description": "A subscription service offering flexible access to BMW vehicles with a monthly rate covering insurance and maintenance.",
+      "subscription_model_details": "Pricing starts around €1,000 per month, providing a flexible option for accessing premium vehicles."
+    }
+  ],
+  "methodology": {
+    "data_sources": "Industry reports, competitor analysis, internal BMW project data.",
+    "assumptions": "The projections assume a stable economic environment and continuous demand for sustainable automotive solutions. Subscriber growth is based on historical data from similar subscription models."
+  },
+  "total_income": 48584252
+}
