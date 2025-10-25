@@ -8,11 +8,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configure the Google AI API
-API_KEY = os.getenv("GOOGLE_API_KEY")
-if not API_KEY:
-    raise ValueError("Please set GOOGLE_API_KEY environment variable in .env file")
+GEMINI_API_KEY = os.getenv("gemini_api_key")
+GEMINI_MODEL_NAME = os.getenv("gemini_model_name")
 
-genai.configure(api_key=API_KEY)
+if not GEMINI_API_KEY:
+    raise ValueError("Please set gemini_api_key environment variable in .env file")
+if not GEMINI_MODEL_NAME:
+    raise ValueError("Please set gemini_model_name environment variable in .env file")
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 # System prompt with specifications
 SYSTEM_PROMPT = """You are a data formatter.
@@ -114,11 +118,11 @@ def load_input_data(file_path="business_data.json"):
         return None
 
 def generate_formatted_json(input_data):
-    """Use Gemini 2.5 Flash to format the input data according to specifications"""
+    """Use Gemini to format the input data according to specifications"""
     
     # Initialize the model
     model = genai.GenerativeModel(
-        model_name='gemini-2.0-flash-exp',
+        model_name=GEMINI_MODEL_NAME,
         generation_config={
             "temperature": 0.1,  # Low temperature for consistent formatting
             "top_p": 0.95,
@@ -136,7 +140,7 @@ Please format this data according to the specifications and return ONLY the JSON
     full_prompt = f"{SYSTEM_PROMPT}\n\n{user_prompt}"
     
     try:
-        print("Sending request to Gemini 2.5 Flash...")
+        print("Sending request to Gemini...")
         response = model.generate_content(full_prompt)
         
         # Extract the text response
@@ -175,7 +179,7 @@ def save_output(data, output_file="formatted_output.json"):
 def main():
     """Main function to run the script"""
     print("=" * 60)
-    print("Google AI (Gemini 2.5 Flash) - JSON Data Formatter")
+    print("Google AI (Gemini) - JSON Data Formatter")
     print("=" * 60)
     
     # Load input data

@@ -1,12 +1,61 @@
 const uploadBox = document.getElementById('uploadBox');
+const textInputBox = document.getElementById('textInputBox');
 const fileInput = document.getElementById('fileInput');
+const textInput = document.getElementById('textInput');
+const charCount = document.getElementById('charCount');
 const uploadBtn = document.getElementById('uploadBtn');
 const uploadSection = document.getElementById('uploadSection');
 const loadingSection = document.getElementById('loadingSection');
 const resultsSection = document.getElementById('resultsSection');
 const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+const geminiOption = document.getElementById('geminiOption');
+const openaiOption = document.getElementById('openaiOption');
+
+// Settings elements
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const closeSettings = document.getElementById('closeSettings');
+const temperatureSlider = document.getElementById('temperatureSlider');
+const temperatureValue = document.getElementById('temperatureValue');
+const industrySelect = document.getElementById('industrySelect');
+const resetSettings = document.getElementById('resetSettings');
+
+// Chat elements
+const toggleChatBtn = document.getElementById('toggleChatBtn');
+const chatSidebar = document.getElementById('chatSidebar');
+const closeChatSidebar = document.getElementById('closeChatSidebar');
+const chatInput = document.getElementById('chatInput');
+const sendChat = document.getElementById('sendChat');
+const chatMessages = document.getElementById('chatMessages');
+const resultsMainContent = document.getElementById('resultsMainContent');
+
+// Modal elements
+const metricModal = document.getElementById('metricModal');
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const closeModal = document.getElementById('closeModal');
 
 let selectedFile = null;
+let selectedProvider = 'gemini'; // Default provider
+let inputMode = 'file'; // 'file' or 'text'
+let analysisContext = null;
+let settings = loadSettings();
+
+// LLM Provider Selection
+geminiOption.classList.add('active'); // Set Gemini as default
+
+geminiOption.addEventListener('click', () => {
+    selectedProvider = 'gemini';
+    geminiOption.classList.add('active');
+    openaiOption.classList.remove('active');
+});
+
+openaiOption.addEventListener('click', () => {
+    selectedProvider = 'openai';
+    openaiOption.classList.add('active');
+    geminiOption.classList.remove('active');
+});
 
 uploadBox.addEventListener('click', () => fileInput.click());
 
@@ -60,26 +109,54 @@ function handleFileSelect(file) {
 }
 
 uploadBtn.addEventListener('click', async () => {
-    if (!selectedFile) return;
-    
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    if (inputMode === 'file' && !selectedFile) return;
+    if (inputMode === 'text' && !textInput.value.trim()) return;
     
     uploadSection.style.display = 'none';
     loadingSection.style.display = 'flex';
     
+    // Update loading message based on provider
+    const loadingCard = document.querySelector('.loading-card h3');
+    const providerName = selectedProvider === 'gemini' ? 'Google Gemini 2.5 Flash' : 'OpenAI GPT-5';
+    loadingCard.textContent = `Analyzing with ${providerName}`;
+    
     try {
-        const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-        });
+        let response;
+        
+        if (inputMode === 'file') {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('provider', selectedProvider);
+            formData.append('settings_json', JSON.stringify(settings));
+            
+            response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+        } else {
+            response = await fetch('/api/analyze-text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    text: textInput.value,
+                    provider: selectedProvider,
+                    settings: settings
+                })
+            });
+        }
         
         if (!response.ok) {
-            throw new Error('Analysis failed');
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Analysis failed');
         }
         
         const data = await response.json();
+        analysisContext = data.analysis; // Save for chat
         displayResults(data.analysis);
+        
+        // Chat is now ready (user can click "Chat with AI" button)
         
     } catch (error) {
         alert('Error: ' + error.message);
@@ -252,6 +329,14 @@ function displayResults(analysis) {
     } else {
         recommendationsList.innerHTML = '<li>No recommendations available</li>';
     }
+    
+    // Render all charts and visualizations
+    if (typeof renderAllCharts === 'function') {
+        setTimeout(() => renderAllCharts(analysis), 200);
+    }
+    
+    // Attach click handlers to cards for modal interactions
+    setTimeout(attachCardClickHandlers, 100);
 }
 
 newAnalysisBtn.addEventListener('click', resetUpload);
@@ -259,6 +344,12 @@ newAnalysisBtn.addEventListener('click', resetUpload);
 function resetUpload() {
     selectedFile = null;
     fileInput.value = '';
+    if (textInput) {
+        textInput.value = '';
+        charCount.textContent = '0 characters';
+    }
+    analysisContext = null;
+    
     uploadBox.innerHTML = `
         <div class="upload-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -277,4 +368,568 @@ function resetUpload() {
     loadingSection.style.display = 'none';
     resultsSection.style.display = 'none';
     uploadSection.style.display = 'block';
+    
+    // Reset and close chat
+    if (chatSidebar) {
+        chatSidebar.classList.remove('active');
+    }
+    if (resultsMainContent) {
+        resultsMainContent.classList.remove('chat-open');
+    }
+    if (chatInput) {
+        chatInput.value = '';
+    }
+    if (chatMessages) {
+        chatMessages.innerHTML = `
+            <div class="chat-welcome">
+                <div class="welcome-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                </div>
+                <h4>Chat with Quant AI</h4>
+                <p>Ask questions about your analysis results, request clarifications, or explore insights in more detail.</p>
+            </div>
+        `;
+    }
 }
+
+// Settings Functions
+function loadSettings() {
+    const saved = localStorage.getItem('quant_settings');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    return {
+        temperature: 0.7,
+        industry_focus: 'general',
+        currency: 'EUR'
+    };
+}
+
+function saveSettings() {
+    localStorage.setItem('quant_settings', JSON.stringify(settings));
+}
+
+function applySettings() {
+    if (temperatureSlider) {
+        temperatureSlider.value = settings.temperature;
+        temperatureValue.textContent = settings.temperature.toFixed(1);
+    }
+    if (industrySelect) industrySelect.value = settings.industry_focus;
+    const currencyRadio = document.querySelector(`input[name="currency"][value="${settings.currency}"]`);
+    if (currencyRadio) currencyRadio.checked = true;
+}
+
+// Settings Panel Handlers
+if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+        if (settingsPanel) settingsPanel.classList.add('active');
+    });
+}
+
+if (closeSettings) {
+    closeSettings.addEventListener('click', () => {
+        if (settingsPanel) settingsPanel.classList.remove('active');
+    });
+}
+
+if (temperatureSlider) {
+    temperatureSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        temperatureValue.textContent = val.toFixed(1);
+        settings.temperature = val;
+        saveSettings();
+    });
+}
+
+if (industrySelect) {
+    industrySelect.addEventListener('change', (e) => {
+        settings.industry_focus = e.target.value;
+        saveSettings();
+    });
+}
+
+document.querySelectorAll('input[name="currency"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        settings.currency = e.target.value;
+        saveSettings();
+    });
+});
+
+if (resetSettings) {
+    resetSettings.addEventListener('click', () => {
+        settings = loadSettings();
+        applySettings();
+    });
+}
+
+// Input Mode Tabs
+const tabBtns = document.querySelectorAll('.tab-btn');
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        inputMode = mode;
+        
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        if (mode === 'file') {
+            if (uploadBox) uploadBox.style.display = 'block';
+            if (textInputBox) textInputBox.style.display = 'none';
+            uploadBtn.disabled = !selectedFile;
+        } else {
+            if (uploadBox) uploadBox.style.display = 'none';
+            if (textInputBox) textInputBox.style.display = 'block';
+            uploadBtn.disabled = !textInput.value.trim();
+        }
+    });
+});
+
+// Text Input Character Count
+if (textInput) {
+    textInput.addEventListener('input', () => {
+        const count = textInput.value.length;
+        if (charCount) charCount.textContent = `${count} characters`;
+        uploadBtn.disabled = !textInput.value.trim();
+    });
+}
+
+// Chat Handlers
+if (toggleChatBtn) {
+    toggleChatBtn.addEventListener('click', () => {
+        if (chatSidebar) {
+            chatSidebar.classList.toggle('active');
+            if (resultsMainContent) {
+                resultsMainContent.classList.toggle('chat-open');
+            }
+        }
+    });
+}
+
+if (closeChatSidebar) {
+    closeChatSidebar.addEventListener('click', () => {
+        if (chatSidebar) chatSidebar.classList.remove('active');
+        if (resultsMainContent) resultsMainContent.classList.remove('chat-open');
+    });
+}
+
+if (chatInput) {
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && e.shiftKey === false) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+}
+
+if (sendChat) {
+    sendChat.addEventListener('click', () => {
+        sendChatMessage();
+    });
+}
+
+async function sendChatMessage() {
+    const message = chatInput.value.trim();
+    if (!message || !analysisContext) return;
+    
+    addChatMessage(message, 'user');
+    chatInput.value = '';
+    
+    const typingId = addTypingIndicator();
+    
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                analysis_context: analysisContext,
+                provider: selectedProvider,
+                settings: settings
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Chat request failed');
+        }
+        
+        const data = await response.json();
+        
+        removeTypingIndicator(typingId);
+        addChatMessage(data.response, 'assistant');
+        
+    } catch (error) {
+        removeTypingIndicator(typingId);
+        addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+    }
+}
+
+function addChatMessage(text, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}`;
+    
+    messageDiv.innerHTML = `
+        <div class="message-avatar">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                ${sender === 'assistant' 
+                    ? '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>'
+                    : '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>'
+                }
+            </svg>
+        </div>
+        <div class="message-content">
+            <p>${text}</p>
+        </div>
+    `;
+    
+    if (chatMessages) {
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
+function addTypingIndicator() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'chat-message assistant';
+    typingDiv.id = 'typing-indicator';
+    
+    typingDiv.innerHTML = `
+        <div class="message-avatar">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+        </div>
+        <div class="message-content">
+            <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    `;
+    
+    if (chatMessages) {
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    return 'typing-indicator';
+}
+
+function removeTypingIndicator(id) {
+    const indicator = document.getElementById(id);
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Modal Functions
+function openMetricModal(metricType, data) {
+    const titles = {
+        'tam': 'Total Addressable Market (TAM)',
+        'sam': 'Serviceable Available Market (SAM)',
+        'som': 'Serviceable Obtainable Market (SOM)',
+        'roi': 'Return on Investment (ROI)',
+        'turnover': 'Revenue & Turnover',
+        'volume': 'Volume Metrics',
+        'unit_economics': 'Unit Economics',
+        'ebit': 'EBIT Analysis',
+        'cogs': 'Cost of Goods Sold',
+        'market_potential': 'Market Potential'
+    };
+    
+    modalTitle.textContent = titles[metricType] || 'Metric Details';
+    modalBody.innerHTML = generateModalContent(metricType, data);
+    metricModal.classList.add('active');
+    
+    // Render charts if data has yearly projections
+    if (data.numbers) {
+        setTimeout(() => renderYearlyChart(metricType, data.numbers), 100);
+    }
+}
+
+function closeMetricModal() {
+    metricModal.classList.remove('active');
+}
+
+function generateModalContent(metricType, data) {
+    let html = '';
+    
+    // Overview Section
+    html += `<div class="detail-section">`;
+    html += `<h3>Overview</h3>`;
+    if (data.description_of_public) {
+        html += `<p style="font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 16px;">${data.description_of_public}</p>`;
+    }
+    
+    // Key Metrics Grid
+    html += `<div class="metric-stat-grid">`;
+    
+    // Add relevant stats based on metric type
+    if (data.market_size) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Market Size</div>
+            <div class="value">${formatCurrency(data.market_size)}</div>
+        </div>`;
+    }
+    if (data.growth_rate) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Growth Rate (CAGR)</div>
+            <div class="value">${data.growth_rate.toFixed(1)}%</div>
+        </div>`;
+    }
+    if (data.confidence) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Confidence</div>
+            <div class="value" style="color: ${getConfidenceColor(data.confidence)}">${data.confidence}%</div>
+        </div>`;
+    }
+    if (data.penetration_rate) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Penetration Rate</div>
+            <div class="value">${data.penetration_rate.toFixed(1)}%</div>
+        </div>`;
+    }
+    if (data.roi_percentage) {
+        html += `<div class="metric-stat-card">
+            <div class="label">ROI Percentage</div>
+            <div class="value">${data.roi_percentage.toFixed(1)}%</div>
+        </div>`;
+    }
+    if (data.payback_period_months) {
+        html += `<div class="metric-stat-card">
+            <div class="label">Payback Period</div>
+            <div class="value">${data.payback_period_months} months</div>
+        </div>`;
+    }
+    
+    html += `</div></div>`;
+    
+    // Justification
+    if (data.justification) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Justification</h3>`;
+        html += `<p style="font-size: 14px; line-height: 1.7; color: var(--text-primary);">${data.justification}</p>`;
+        html += `</div>`;
+    }
+    
+    // Yearly Projections Table
+    if (data.numbers) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Yearly Projections</h3>`;
+        html += `<table class="detail-table">`;
+        html += `<thead><tr><th>Year</th><th>Value</th><th>YoY Change</th></tr></thead>`;
+        html += `<tbody>`;
+        
+        const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+        let prevValue = null;
+        
+        years.forEach(year => {
+            const value = data.numbers[year];
+            if (value !== null && value !== undefined) {
+                let changeHtml = '-';
+                if (prevValue !== null) {
+                    const change = ((value - prevValue) / prevValue * 100);
+                    const changeColor = change >= 0 ? 'var(--success)' : 'var(--error)';
+                    changeHtml = `<span style="color: ${changeColor}">${change >= 0 ? '+' : ''}${change.toFixed(1)}%</span>`;
+                }
+                html += `<tr>
+                    <td><strong>${year}</strong></td>
+                    <td>${formatCurrency(value)}</td>
+                    <td>${changeHtml}</td>
+                </tr>`;
+                prevValue = value;
+            }
+        });
+        
+        html += `</tbody></table>`;
+        html += `<div class="chart-container"><canvas id="yearlyChart"></canvas></div>`;
+        html += `</div>`;
+    }
+    
+    // Breakdown
+    if (data.breakdown || data.revenue_streams || data.cost_breakdown || data.opex_breakdown || data.cost_components) {
+        const breakdown = data.breakdown || data.revenue_streams || data.cost_breakdown || data.opex_breakdown || data.cost_components;
+        html += `<div class="detail-section">`;
+        html += `<h3>Breakdown</h3>`;
+        html += `<table class="detail-table">`;
+        html += `<thead><tr><th>Category</th><th>Value</th></tr></thead>`;
+        html += `<tbody>`;
+        
+        Object.entries(breakdown).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+                html += `<tr>
+                    <td>${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+                    <td><strong>${formatCurrency(value)}</strong></td>
+                </tr>`;
+            }
+        });
+        
+        html += `</tbody></table></div>`;
+    }
+    
+    // Industry Example
+    if (data.industry_example && data.industry_example.name) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Industry Example</h3>`;
+        html += `<div class="industry-example-card">`;
+        html += `<h4>${data.industry_example.name}</h4>`;
+        html += `<p>${data.industry_example.description}</p>`;
+        if (data.industry_example.metric_value) {
+            html += `<p><strong>Metric: </strong>${data.industry_example.metric_value}</p>`;
+        }
+        if (data.industry_example.link) {
+            html += `<a href="${data.industry_example.link}" target="_blank" rel="noopener noreferrer">View Source →</a>`;
+        }
+        html += `</div></div>`;
+    }
+    
+    // Additional Lists
+    if (data.market_drivers && data.market_drivers.length > 0) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Market Drivers</h3>`;
+        html += `<ul style="margin-left: 20px; line-height: 1.8;">`;
+        data.market_drivers.forEach(driver => {
+            html += `<li style="margin-bottom: 8px; color: var(--text-primary);">${driver}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    if (data.barriers_to_entry && data.barriers_to_entry.length > 0) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Barriers to Entry</h3>`;
+        html += `<ul style="margin-left: 20px; line-height: 1.8;">`;
+        data.barriers_to_entry.forEach(barrier => {
+            html += `<li style="margin-bottom: 8px; color: var(--text-primary);">${barrier}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    if (data.growth_drivers && data.growth_drivers.length > 0) {
+        html += `<div class="detail-section">`;
+        html += `<h3>Growth Drivers</h3>`;
+        html += `<ul style="margin-left: 20px; line-height: 1.8;">`;
+        data.growth_drivers.forEach(driver => {
+            html += `<li style="margin-bottom: 8px; color: var(--text-primary);">${driver}</li>`;
+        });
+        html += `</ul></div>`;
+    }
+    
+    return html;
+}
+
+function renderYearlyChart(metricType, numbersData) {
+    const canvas = document.getElementById('yearlyChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const values = years.map(year => numbersData[year] || 0);
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [{
+                label: 'Projected Value',
+                data: values,
+                borderColor: '#1C69D4',
+                backgroundColor: 'rgba(28, 105, 212, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#1C69D4',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 13 },
+                    callbacks: {
+                        label: function(context) {
+                            return formatCurrency(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatCurrency(value);
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getConfidenceColor(confidence) {
+    if (confidence >= 80) return 'var(--success)';
+    if (confidence >= 60) return 'var(--warning)';
+    return 'var(--error)';
+}
+
+// Modal Event Listeners
+if (closeModal) {
+    closeModal.addEventListener('click', closeMetricModal);
+}
+
+if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', closeMetricModal);
+}
+
+// Attach click handlers to financial cards
+function attachCardClickHandlers() {
+    const cardMap = {
+        'tamCard': 'tam',
+        'samCard': 'sam',
+        'somCard': 'som',
+        'roiCard': 'roi',
+        'turnoverCard': 'turnover',
+        'volumeCard': 'volume',
+        'unitEconomicsCard': 'unit_economics',
+        'ebitCard': 'ebit',
+        'cogsCard': 'cogs',
+        'marketPotentialCard': 'market_potential'
+    };
+    
+    Object.entries(cardMap).forEach(([cardId, metricType]) => {
+        const card = document.getElementById(cardId);
+        if (card && analysisContext) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                if (analysisContext[metricType]) {
+                    openMetricModal(metricType, analysisContext[metricType]);
+                }
+            });
+        }
+    });
+}
+
+// Initialize settings on load
+applySettings();
