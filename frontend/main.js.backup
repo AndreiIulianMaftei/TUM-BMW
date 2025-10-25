@@ -104,8 +104,11 @@ function handleFileSelect(file) {
 }
 
 uploadBtn.addEventListener('click', async () => {
-    if (inputMode === 'file' && !selectedFile) return;
-    if (inputMode === 'text' && !textInput.value.trim()) return;
+    if (!selectedFile) return;
+    
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('provider', selectedProvider);
     
     uploadSection.style.display = 'none';
     loadingSection.style.display = 'flex';
@@ -116,44 +119,17 @@ uploadBtn.addEventListener('click', async () => {
     loadingCard.textContent = `Analyzing with ${providerName}`;
     
     try {
-        let response;
-        
-        if (inputMode === 'file') {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            formData.append('provider', selectedProvider);
-            formData.append('settings_json', JSON.stringify(settings));
-            
-            response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-        } else {
-            response = await fetch('/api/analyze-text', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    text: textInput.value,
-                    provider: selectedProvider,
-                    settings: settings
-                })
-            });
-        }
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
         
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || 'Analysis failed');
+            throw new Error('Analysis failed');
         }
         
         const data = await response.json();
-        analysisContext = data.analysis; // Save for chat
         displayResults(data.analysis);
-        
-        // Enable chat after successful analysis
-        if (chatInput) chatInput.disabled = false;
-        if (sendChat) sendChat.disabled = false;
         
     } catch (error) {
         alert('Error: ' + error.message);
@@ -333,12 +309,6 @@ newAnalysisBtn.addEventListener('click', resetUpload);
 function resetUpload() {
     selectedFile = null;
     fileInput.value = '';
-    if (textInput) {
-        textInput.value = '';
-        charCount.textContent = '0 characters';
-    }
-    analysisContext = null;
-    
     uploadBox.innerHTML = `
         <div class="upload-icon-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -357,280 +327,4 @@ function resetUpload() {
     loadingSection.style.display = 'none';
     resultsSection.style.display = 'none';
     uploadSection.style.display = 'block';
-    
-    // Reset chat
-    if (chatInput) {
-        chatInput.disabled = true;
-        chatInput.value = '';
-    }
-    if (sendChat) {
-        sendChat.disabled = true;
-    }
-    if (chatMessages) {
-        chatMessages.innerHTML = `
-            <div class="chat-message assistant">
-                <div class="message-avatar">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                    </svg>
-                </div>
-                <div class="message-content">
-                    <p>Hi! I'm ProspectAI. Upload and analyze a document first, then ask me questions about your analysis.</p>
-                </div>
-            </div>
-        `;
-    }
 }
-
-// Settings Functions
-function loadSettings() {
-    const saved = localStorage.getItem('prospectai_settings');
-    if (saved) {
-        return JSON.parse(saved);
-    }
-    return {
-        temperature: 0.7,
-        analysis_depth: 'standard',
-        industry_focus: 'general',
-        currency: 'USD',
-        confidence_threshold: 70,
-        response_format: 'structured'
-    };
-}
-
-function saveSettings() {
-    localStorage.setItem('prospectai_settings', JSON.stringify(settings));
-}
-
-function applySettings() {
-    if (temperatureSlider) {
-        temperatureSlider.value = settings.temperature;
-        temperatureValue.textContent = settings.temperature.toFixed(1);
-    }
-    if (depthSelect) depthSelect.value = settings.analysis_depth;
-    if (industrySelect) industrySelect.value = settings.industry_focus;
-    if (confidenceSlider) {
-        confidenceSlider.value = settings.confidence_threshold;
-        confidenceValue.textContent = `${settings.confidence_threshold}%`;
-    }
-    const currencyRadio = document.querySelector(`input[name="currency"][value="${settings.currency}"]`);
-    if (currencyRadio) currencyRadio.checked = true;
-}
-
-// Settings Panel Handlers
-if (settingsBtn) {
-    settingsBtn.addEventListener('click', () => {
-        if (settingsPanel) settingsPanel.classList.add('active');
-    });
-}
-
-if (closeSettings) {
-    closeSettings.addEventListener('click', () => {
-        if (settingsPanel) settingsPanel.classList.remove('active');
-    });
-}
-
-if (temperatureSlider) {
-    temperatureSlider.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value);
-        temperatureValue.textContent = val.toFixed(1);
-        settings.temperature = val;
-        saveSettings();
-    });
-}
-
-if (confidenceSlider) {
-    confidenceSlider.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value);
-        confidenceValue.textContent = `${val}%`;
-        settings.confidence_threshold = val;
-        saveSettings();
-    });
-}
-
-if (depthSelect) {
-    depthSelect.addEventListener('change', (e) => {
-        settings.analysis_depth = e.target.value;
-        saveSettings();
-    });
-}
-
-if (industrySelect) {
-    industrySelect.addEventListener('change', (e) => {
-        settings.industry_focus = e.target.value;
-        saveSettings();
-    });
-}
-
-document.querySelectorAll('input[name="currency"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-        settings.currency = e.target.value;
-        saveSettings();
-    });
-});
-
-if (resetSettings) {
-    resetSettings.addEventListener('click', () => {
-        settings = loadSettings();
-        applySettings();
-    });
-}
-
-// Input Mode Tabs
-const tabBtns = document.querySelectorAll('.tab-btn');
-tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode;
-        inputMode = mode;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        if (mode === 'file') {
-            if (uploadBox) uploadBox.style.display = 'block';
-            if (textInputBox) textInputBox.style.display = 'none';
-            uploadBtn.disabled = !selectedFile;
-        } else {
-            if (uploadBox) uploadBox.style.display = 'none';
-            if (textInputBox) textInputBox.style.display = 'block';
-            uploadBtn.disabled = !textInput.value.trim();
-        }
-    });
-});
-
-// Text Input Character Count
-if (textInput) {
-    textInput.addEventListener('input', () => {
-        const count = textInput.value.length;
-        if (charCount) charCount.textContent = `${count} characters`;
-        uploadBtn.disabled = !textInput.value.trim();
-    });
-}
-
-// Chat Handlers
-if (chatToggle) {
-    chatToggle.addEventListener('click', () => {
-        if (chatContainer) chatContainer.classList.toggle('active');
-    });
-}
-
-if (closeChat) {
-    closeChat.addEventListener('click', () => {
-        if (chatContainer) chatContainer.classList.remove('active');
-    });
-}
-
-if (chatInput) {
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !chatInput.disabled) {
-            sendChatMessage();
-        }
-    });
-}
-
-if (sendChat) {
-    sendChat.addEventListener('click', () => {
-        if (!sendChat.disabled) {
-            sendChatMessage();
-        }
-    });
-}
-
-async function sendChatMessage() {
-    const message = chatInput.value.trim();
-    if (!message || !analysisContext) return;
-    
-    addChatMessage(message, 'user');
-    chatInput.value = '';
-    
-    const typingId = addTypingIndicator();
-    
-    try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: message,
-                analysis_context: analysisContext,
-                provider: selectedProvider,
-                settings: settings
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Chat request failed');
-        }
-        
-        const data = await response.json();
-        
-        removeTypingIndicator(typingId);
-        addChatMessage(data.response, 'assistant');
-        
-    } catch (error) {
-        removeTypingIndicator(typingId);
-        addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
-    }
-}
-
-function addChatMessage(text, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${sender}`;
-    
-    messageDiv.innerHTML = `
-        <div class="message-avatar">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                ${sender === 'assistant' 
-                    ? '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>'
-                    : '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>'
-                }
-            </svg>
-        </div>
-        <div class="message-content">
-            <p>${text}</p>
-        </div>
-    `;
-    
-    if (chatMessages) {
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-}
-
-function addTypingIndicator() {
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'chat-message assistant';
-    typingDiv.id = 'typing-indicator';
-    
-    typingDiv.innerHTML = `
-        <div class="message-avatar">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-            </svg>
-        </div>
-        <div class="message-content">
-            <div class="typing-indicator">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            </div>
-        </div>
-    `;
-    
-    if (chatMessages) {
-        chatMessages.appendChild(typingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    return 'typing-indicator';
-}
-
-function removeTypingIndicator(id) {
-    const indicator = document.getElementById(id);
-    if (indicator) {
-        indicator.remove();
-    }
-}
-
-// Initialize settings on load
-applySettings();
