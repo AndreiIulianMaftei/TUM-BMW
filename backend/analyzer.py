@@ -41,16 +41,16 @@ def get_analysis_prompt(text: str, settings: AnalysisSettings = None) -> str:
     
     # Depth requirements
     depth_instructions = {
-        "quick": "Provide high-level estimates with key assumptions. Focus on headline metrics and primary insights.",
-        "standard": "Balance detail with efficiency. Include main calculations and critical assumptions.",
-        "comprehensive": "Provide detailed analysis with multiple scenarios, sensitivity analysis, and thorough justification for all assumptions."
+        "quick": "High-level estimates only. Keep insights under 150 characters. Focus on numbers.",
+        "standard": "Balanced detail. Keep insights under 200 characters. Include key calculations.",
+        "comprehensive": "Detailed analysis. Keep insights under 250 characters. Show methodology."
     }
-    depth_instruction = depth_instructions.get(settings.analysis_depth, depth_instructions["comprehensive"])
+    depth_instruction = depth_instructions.get(settings.analysis_depth, depth_instructions["standard"])
     
     currency_symbol = {"EUR": "€", "USD": "$", "GBP": "£"}.get(settings.currency, "€")
     
     return f"""
-You are ProspectAI - an elite financial analyst and business strategist with deep expertise in market analysis, 
+You are Quant AI - an elite financial analyst and business strategist with deep expertise in market analysis, 
 financial modeling, and strategic planning. You combine rigorous analytical methods with practical business acumen.
 
 === ANALYSIS CONFIGURATION ===
@@ -190,12 +190,12 @@ CURRENCY FORMATTING:
 }}
 
 === CRITICAL OUTPUT REQUIREMENTS ===
-1. OUTPUT ONLY VALID JSON - no markdown, no explanations outside JSON
-2. ALL monetary values in {settings.currency}
-3. Insights must be specific, quantitative, and actionable
-4. Confidence scores must reflect data quality honestly
-5. Recommendations must be prioritized and implementable
-6. Use conservative assumptions (better to under-promise)
+1. OUTPUT ONLY VALID JSON - no markdown, no text outside JSON
+2. Keep ALL "insight" fields concise (under 200 chars each)
+3. Use proper JSON escaping - no unescaped quotes or line breaks in strings
+4. ALL monetary values in {settings.currency}
+5. Round numbers to 2 decimal places
+6. Be specific and quantitative
 
 Begin analysis now:
 """
@@ -219,6 +219,14 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
         # Replace smart quotes with regular quotes
         response_text = response_text.replace('"', '"').replace('"', '"')
         response_text = response_text.replace(''', "'").replace(''', "'")
+        
+        # Check if response was truncated (doesn't end with })
+        if not response_text.rstrip().endswith('}'):
+            print("WARNING: Response appears truncated, attempting to repair...")
+            # Find the last complete field and close the JSON
+            last_complete = response_text.rfind('",')
+            if last_complete > 0:
+                response_text = response_text[:last_complete + 1] + '\n    }\n  }\n}'
         
         # Attempt to parse JSON
         analysis_data = json.loads(response_text)
@@ -252,7 +260,8 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
     except json.JSONDecodeError as e:
         error_msg = f"JSON parsing failed at line {e.lineno}, column {e.colno}: {e.msg}"
         print(f"JSON Error: {error_msg}")
-        print(f"Response preview: {response_text[:500]}")
+        print(f"Response preview (first 1000 chars): {response_text[:1000]}")
+        print(f"Response ending (last 500 chars): {response_text[-500:]}")
     except Exception as e:
         error_msg = str(e)
         print(f"Analysis Error: {error_msg}")
@@ -291,42 +300,47 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
         "temperature": settings.temperature,
         "top_p": 0.95,
         "top_k": 40,
-        "max_output_tokens": 8192,
     }
     
     model = genai.GenerativeModel(
-        'gemini-2.5-flash',  # Latest Gemini 2.5 Flash model
+        'gemini-2.5-flash',  # Latest Gemini 2.5 Flash
         generation_config=generation_config
     )
     
     prompt = get_analysis_prompt(text, settings)
     
     # Add explicit JSON-only instruction at the end
-    prompt += "\n\nIMPORTANT: Return ONLY the JSON object. Do not include any explanations, markdown formatting, or additional text. Start directly with { and end with }."
+    prompt += "\n\nIMPORTANT: Return ONLY valid JSON. Keep all insight fields under 200 characters. Use concise language. Start with { and end with }."
     
     try:
         response = model.generate_content(prompt)
         return parse_analysis_response(response.text)
     except Exception as e:
-        print(f"Gemini API Error: {str(e)}")
+        error_msg = str(e)
+        print(f"Gemini API Error: {error_msg}")
+        
+        # Provide helpful error message
+        if "timeout" in error_msg.lower() or "504" in error_msg:
+            error_msg = "Request timed out. Try using 'Quick' analysis mode or the OpenAI provider."
+        
         # Return error structure
         return ComprehensiveAnalysis(
-            tam=TAMMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            sam=SAMMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            som=SOMMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            roi=ROIMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            turnover=TurnoverMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            volume=VolumeMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            unit_economics=UnitEconomics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            ebit=EBITMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            cogs=COGSMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
-            market_potential=MarketPotential(insight=f"Gemini API error: {str(e)}", confidence=0),
+            tam=TAMMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            sam=SAMMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            som=SOMMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            roi=ROIMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            turnover=TurnoverMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            volume=VolumeMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            unit_economics=UnitEconomics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            ebit=EBITMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            cogs=COGSMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            market_potential=MarketPotential(insight=f"Analysis failed. {error_msg}", confidence=0),
             identified_variables=[],
             formulas=[],
-            business_assumptions=["API Error occurred"],
-            improvement_recommendations=["Try again", "Use OpenAI provider"],
-            value_market_potential_text=f"Error: {str(e)}",
-            executive_summary=f"Analysis failed: {str(e)}"
+            business_assumptions=["Analysis failed due to API timeout or error"],
+            improvement_recommendations=["Use 'Quick' analysis depth in settings", "Try OpenAI provider", "Simplify your input document"],
+            value_market_potential_text=f"Analysis could not be completed: {error_msg}",
+            executive_summary=f"Analysis failed: {error_msg}"
         )
 
 

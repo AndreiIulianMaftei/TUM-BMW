@@ -5,9 +5,9 @@ from backend.database import Database
 from backend.routes import router
 
 app = FastAPI(
-    title="BMW 1-Pager Analyzer",
-    description="AI-powered Value | Market Potential Generator",
-    version="1.0.0"
+    title="Quant - Market Intelligence Platform",
+    description="AI-powered quantitative market analysis and intelligence",
+    version="2.0.0"
 )
 
 app.add_middleware(
@@ -21,7 +21,7 @@ app.add_middleware(
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "BMW 1-Pager Analyzer"}
+    return {"status": "healthy", "service": "Quant Market Intelligence"}
 
 # Include API routes
 app.include_router(router)
