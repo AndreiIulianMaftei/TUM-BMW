@@ -9,11 +9,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configure the Google AI API
-API_KEY = os.getenv("GOOGLE_API_KEY")
-if not API_KEY:
-    raise ValueError("Please set GOOGLE_API_KEY environment variable in .env file")
+GEMINI_API_KEY = os.getenv("gemini_api_key")
+GEMINI_MODEL_NAME = os.getenv("gemini_model_name")
 
-genai.configure(api_key=API_KEY)
+if not GEMINI_API_KEY:
+    raise ValueError("Please set gemini_api_key environment variable in .env file")
+if not GEMINI_MODEL_NAME:
+    raise ValueError("Please set gemini_model_name environment variable in .env file")
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 # System prompt for question generation
 SYSTEM_PROMPT = """You are a business analyst expert who creates specific, targeted questions to gather missing information from human experts.
@@ -88,7 +92,7 @@ def generate_questions(business_data):
     
     # Initialize the model
     model = genai.GenerativeModel(
-        model_name='gemini-2.5-flash-exp',
+        model_name=GEMINI_MODEL_NAME,
         generation_config={
             "temperature": 0.7,  # Moderate temperature for creative but focused questions
             "top_p": 0.95,

@@ -9,8 +9,15 @@ import google.generativeai as genai
 load_dotenv()
 
 # Configure Google Gemini
-GOOGLE_API_KEY = os.getenv('gemini_api_key')
-genai.configure(api_key=GOOGLE_API_KEY)
+GEMINI_API_KEY = os.getenv('gemini_api_key')
+GEMINI_MODEL_NAME = os.getenv('gemini_model_name')
+
+if not GEMINI_API_KEY:
+    raise ValueError("Please set gemini_api_key in .env file")
+if not GEMINI_MODEL_NAME:
+    raise ValueError("Please set gemini_model_name in .env file")
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 
 def extract_text_from_pdf(pdf_path):
@@ -218,7 +225,7 @@ def analyze_costs_with_llm(pdf_text):
     
     try:
         # Initialize Gemini model
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel(GEMINI_MODEL_NAME)
         
         # Generate content
         response = model.generate_content(prompt)

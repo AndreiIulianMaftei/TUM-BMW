@@ -54,10 +54,10 @@ def chat_with_gemini(
     conversation_history: List[ChatMessage],
     document_context: str = None
 ) -> ChatResponse:
-    """Handle chat interaction using Gemini 2.5 Flash"""
+    """Handle chat interaction using Gemini"""
     settings = get_settings()
     genai.configure(api_key=settings.gemini_api_key)
-    model = genai.GenerativeModel('gemini-2.5-flash')  # Latest Gemini 2.5 Flash
+    model = genai.GenerativeModel(settings.gemini_model_name)  # Use environment variable
     
     # Build conversation context
     system_prompt = get_chat_system_prompt(document_context)
@@ -84,12 +84,11 @@ def chat_with_openai(
     conversation_history: List[ChatMessage],
     document_context: str = None
 ) -> ChatResponse:
-    """Handle chat interaction using OpenAI o1 (best reasoning model)"""
+    """Handle chat interaction using OpenAI"""
     settings = get_settings()
     client = OpenAI(api_key=settings.openai_api_key)
     
-    # Build messages - o1 doesn't support system messages
-    # Incorporate system prompt into first user message
+    # Build messages
     messages = []
     
     # Add system context as part of conversation
@@ -119,9 +118,9 @@ def chat_with_openai(
         # Add current message
         messages.append({"role": "user", "content": message})
     
-    # Generate response using o1 (no temperature control)
+    # Generate response using configured model
     response = client.chat.completions.create(
-        model="o1",  # Best reasoning model
+        model=settings.openai_model_name,  # Use environment variable
         messages=messages
     )
     

@@ -23,60 +23,385 @@ def get_analysis_prompt(text: str, settings: AnalysisSettings = None) -> str:
     2. Industry-specific context injection
     3. Currency-aware calculations
     4. Comprehensive cost breakdown structure
+    5. Real-world data derivation with source validation
     """
     
     # Default settings if none provided
     if settings is None:
         settings = AnalysisSettings()
     
-    return f"""You are Quant AI - an elite financial analyst specializing in market analysis and financial modeling.
+    return f"""You are Quant AI - an elite financial analyst specializing in market analysis and financial modeling for the automotive and technology industries.
 
 CONFIGURATION: Currency={settings.currency}{f", Industry={settings.industry_focus.upper()}" if settings.industry_focus else ""}
 
 ANALYZE THIS BUSINESS CONCEPT:
 {text}
 
+CRITICAL INSTRUCTIONS - YOU MUST FOLLOW THESE GUIDELINES:
+
+1. DATA DERIVATION & CALCULATION:
+   - DO NOT use mock or placeholder data
+   - DERIVE all estimates from real industry benchmarks, competitor data, and market research
+   - CALCULATE projections based on logical assumptions and growth models
+   - RESEARCH online for supporting evidence including company examples, industry reports, and market data
+   - VALIDATE your estimates against similar projects/companies in the automotive, motorcycle, or related industries
+
+2. SOURCE VALIDATION & EVIDENCE:
+   - For EVERY cost estimate, provide real company examples with actual project costs
+   - Include reference_links to credible sources (annual reports, press releases, industry publications)
+   - Cite specific companies (BMW competitors like Mercedes-Benz, Audi, Porsche, Harley-Davidson, Ducati, etc.)
+   - Use market_comparison fields to show how your estimates compare to real-world examples
+   - Sources must be verifiable and recent (prefer 2020-2024 data)
+
+3. MARKET ANALYSIS REQUIREMENTS:
+   - TAM/SAM/SOM: Base on actual market sizes from industry reports
+   - Include real industry examples with links for each metric
+   - Provide justification showing your calculation methodology
+   - Use competitor benchmarks to validate your projections
+
+4. COST BREAKDOWN STRUCTURE:
+   - Development Costs: Itemize IT development, system integration, project management
+   - Customer Acquisition: Calculate CAC with channel-specific costs and industry benchmarks
+   - Distribution/Operations: Include logistics, warehousing, IT maintenance with real operational costs
+   - After-Sales: Support, warranty, documentation costs with competitor comparisons
+   - COGS: Detailed per-unit costs with margin analysis vs. industry standards
+
+5. PROJECTIONS (2024-2030):
+   - Provide realistic volume growth based on market penetration models
+   - Show year-by-year cost breakdowns
+   - Calculate cumulative totals and averages
+   - Base growth rates on industry trends and competitor performance
+
+6. QUALITY STANDARDS:
+   - All monetary amounts must be realistic (not round numbers like 0, 1000, 5000)
+   - Every "market_comparison" must include real company names and actual project data
+   - Reference links must be real URLs (not placeholders)
+   - Reasoning fields must explain the logic behind each estimate
+   - Confidence levels should reflect data quality (70-85% typical range)
+
 OUTPUT REQUIREMENTS - Return ONLY valid JSON with this exact structure:
 
 {{
-  "tam": {{"description_of_public": "TAM description", "market_size": 0, "growth_rate": 0, "time_horizon": "2024-2030", "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "justification": "Calculation method", "insight": "Key insight", "confidence": 75, "industry_example": {{"name": "Company", "description": "Example", "link": null, "metric_value": null}}, "breakdown": {{}}}},
-  "sam": {{"description_of_public": "SAM description", "region": "Geographic market", "target_segment": "Customer segment", "market_size": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "justification": "Calculation", "insight": "Insight", "confidence": 75, "industry_example": {{"name": "Co", "description": "Ex", "link": null, "metric_value": null}}, "penetration_rate": 0}},
-  "som": {{"description_of_public": "SOM description", "market_share": 0, "revenue_potential": 0, "capture_period": "Timeline", "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "justification": "Calculation", "insight": "Strategy", "confidence": 70, "industry_example": {{"name": "Co", "description": "Ex", "link": null, "metric_value": null}}, "customer_acquisition_cost": null}},
-  "roi": {{"revenue": 0, "cost": 0, "roi_percentage": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "payback_period_months": null, "insight": "ROI analysis", "confidence": 70, "cost_breakdown": {{"development": null, "marketing": null, "operations": null}}}},
-  "turnover": {{"year": 2024, "total_revenue": 0, "yoy_growth": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "revenue_streams": {{"primary_product": null, "services": null, "recurring": null}}, "insight": "Revenue drivers", "confidence": 70}},
-  "volume": {{"units_sold": 0, "region": "Scope", "period": "Annual", "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "insight": "Volume trajectory", "confidence": 70, "growth_drivers": ["Driver1", "Driver2"]}},
-  "unit_economics": {{"unit_revenue": 0, "unit_cost": 0, "margin": 0, "margin_percentage": null, "ltv_cac_ratio": null, "insight": "Economics health", "confidence": 70, "cost_components": {{"variable_costs": null, "fixed_costs_per_unit": null}}}},
-  "ebit": {{"revenue": 0, "operating_expense": 0, "ebit_margin": 0, "ebit_percentage": null, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "insight": "Operating leverage", "confidence": 70, "opex_breakdown": {{"rd": null, "sales_marketing": null, "general_admin": null}}}},
-  "cogs": {{"material": null, "labor": null, "overheads": null, "total_cogs": 0, "cogs_percentage": null, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "insight": "Cost structure", "confidence": 70}},
-  "market_potential": {{"market_size": 0, "penetration": 0, "growth_rate": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "market_drivers": ["D1", "D2"], "barriers_to_entry": ["B1", "B2"], "insight": "Market attractiveness", "confidence": 70}},
-  "development_costs": [{{"category": "IT Development", "estimated_amount": 0, "currency": "{settings.currency}", "reasoning": "Why needed", "market_comparison": {{"similar_case": "Company Example", "comparison_details": "Validation", "cost_figures": [{{"company": "Co", "project": "Proj", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Source", "reference_links": ["URL"]}}}}],
-  "total_development_cost": 0,
-  "customer_acquisition_costs": [{{"category": "Marketing", "estimated_amount_per_customer": null, "estimated_annual_budget": 0, "currency": "{settings.currency}", "reasoning": "Why", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Val", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
-  "total_customer_acquisition_cost": 0,
-  "distribution_and_operations_costs": [{{"category": "Logistics", "estimated_amount": 0, "currency": "{settings.currency}", "reasoning": "Why", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Val", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
-  "total_distribution_operations_cost": 0,
-  "after_sales_costs": [{{"category": "Support", "estimated_amount": 0, "currency": "{settings.currency}", "reasoning": "Why", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Val", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
-  "total_after_sales_cost": 0,
-  "cost_of_goods_sold": [{{"product_category": "Product", "price_per_item": 0, "cogs_per_item": 0, "gross_margin_percentage": 0, "currency": "{settings.currency}", "reasoning": "COGS breakdown", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Margin comp", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
-  "average_cogs_per_bundle": 0,
-  "volume_projections": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}},
-  "yearly_cost_breakdown": {{"2024": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2025": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2026": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2027": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2028": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2029": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2030": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}}},
-  "seven_year_summary": {{"total_cost_2024_2030": 0, "total_volume_2024_2030": 0, "average_cost_per_unit": 0, "currency": "{settings.currency}"}},
-  "total_estimated_cost_summary": {{"one_time_development": 0, "annual_customer_acquisition": 0, "annual_distribution_operations": 0, "annual_after_sales": 0, "average_cogs_per_unit": 0}},
+  "tam": {{
+    "description_of_public": "Clear description of the total addressable market",
+    "market_size": <realistic_number>,
+    "growth_rate": <percentage>,
+    "time_horizon": "2024-2030",
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "justification": "Detailed calculation methodology with data sources",
+    "insight": "Key market insight (2-3 sentences)",
+    "confidence": 75,
+    "industry_example": {{
+      "name": "Real Company Name",
+      "description": "Specific example of TAM in related market",
+      "link": "https://real-url.com/source",
+      "metric_value": <actual_market_size>
+    }},
+    "breakdown": {{"segment1": <amount>, "segment2": <amount>}}
+  }},
+  "sam": {{
+    "description_of_public": "Serviceable available market description",
+    "region": "Geographic/demographic scope",
+    "target_segment": "Specific customer segment",
+    "market_size": <realistic_number>,
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "justification": "How SAM was derived from TAM with supporting data",
+    "insight": "Market opportunity insight",
+    "confidence": 75,
+    "industry_example": {{
+      "name": "Competitor Company",
+      "description": "Their addressable market example",
+      "link": "https://source-url.com",
+      "metric_value": <number>
+    }},
+    "penetration_rate": <percentage>
+  }},
+  "som": {{
+    "description_of_public": "Serviceable obtainable market description",
+    "market_share": <percentage>,
+    "revenue_potential": <amount>,
+    "capture_period": "Timeline (e.g., 3-5 years)",
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "justification": "Realistic market capture strategy with competitive analysis",
+    "insight": "Strategic positioning insight",
+    "confidence": 70,
+    "industry_example": {{
+      "name": "Similar Company Launch",
+      "description": "Their market penetration example",
+      "link": "https://url.com",
+      "metric_value": <number>
+    }},
+    "customer_acquisition_cost": <calculated_CAC>
+  }},
+  "roi": {{
+    "revenue": <projected_total_revenue>,
+    "cost": <total_investment>,
+    "roi_percentage": <calculated_roi>,
+    "numbers": {{"2024": <roi>, "2025": <roi>, "2026": <roi>, "2027": <roi>, "2028": <roi>, "2029": <roi>, "2030": <roi>}},
+    "payback_period_months": <calculated_months>,
+    "insight": "ROI analysis with risk factors",
+    "confidence": 70,
+    "cost_breakdown": {{"development": <amount>, "marketing": <amount>, "operations": <amount>}}
+  }},
+  "turnover": {{
+    "year": 2024,
+    "total_revenue": <amount>,
+    "yoy_growth": <percentage>,
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "revenue_streams": {{"primary_product": <amount>, "services": <amount>, "recurring": <amount>}},
+    "insight": "Revenue drivers and sustainability",
+    "confidence": 70
+  }},
+  "volume": {{
+    "units_sold": <projected_units>,
+    "region": "Market scope",
+    "period": "Annual",
+    "numbers": {{"2024": <units>, "2025": <units>, "2026": <units>, "2027": <units>, "2028": <units>, "2029": <units>, "2030": <units>}},
+    "insight": "Volume trajectory explanation",
+    "confidence": 70,
+    "growth_drivers": ["Driver 1 with data support", "Driver 2 with market evidence"]
+  }},
+  "unit_economics": {{
+    "unit_revenue": <avg_selling_price>,
+    "unit_cost": <total_unit_cost>,
+    "margin": <gross_margin_amount>,
+    "margin_percentage": <percentage>,
+    "ltv_cac_ratio": <calculated_ratio>,
+    "insight": "Unit economics health assessment",
+    "confidence": 70,
+    "cost_components": {{"variable_costs": <amount>, "fixed_costs_per_unit": <amount>}}
+  }},
+  "ebit": {{
+    "revenue": <operating_revenue>,
+    "operating_expense": <opex>,
+    "ebit_margin": <ebit_amount>,
+    "ebit_percentage": <percentage>,
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "insight": "Operating profitability trajectory",
+    "confidence": 70,
+    "opex_breakdown": {{"rd": <amount>, "sales_marketing": <amount>, "general_admin": <amount>}}
+  }},
+  "cogs": {{
+    "material": <amount>,
+    "labor": <amount>,
+    "overheads": <amount>,
+    "total_cogs": <sum>,
+    "cogs_percentage": <percentage_of_revenue>,
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "insight": "Cost structure efficiency",
+    "confidence": 70
+  }},
+  "market_potential": {{
+    "market_size": <total_market>,
+    "penetration": <target_percentage>,
+    "growth_rate": <annual_cagr>,
+    "numbers": {{"2024": <amount>, "2025": <amount>, "2026": <amount>, "2027": <amount>, "2028": <amount>, "2029": <amount>, "2030": <amount>}},
+    "market_drivers": ["Driver 1 with industry evidence", "Driver 2 with trends"],
+    "barriers_to_entry": ["Barrier 1", "Barrier 2"],
+    "insight": "Overall market attractiveness",
+    "confidence": 70
+  }},
+  "development_costs": [
+    {{
+      "category": "IT Development (System Name/Component)",
+      "estimated_amount": <realistic_cost>,
+      "currency": "{settings.currency}",
+      "reasoning": "Detailed explanation of why this development is needed, what it includes (e.g., frontend, backend, integration, testing), and how the estimate was derived",
+      "market_comparison": {{
+        "similar_case": "Real Company - Actual Project Name",
+        "comparison_details": "Detailed comparison explaining why this company's project is similar and how costs align. Include project scope, timeline, and outcomes.",
+        "cost_figures": [
+          {{
+            "company": "Company Name (e.g., Mercedes-Benz, Audi, Porsche)",
+            "project": "Specific project name (e.g., Configurator Upgrade, DMS Integration)",
+            "amount": <actual_reported_cost>,
+            "currency": "{settings.currency}",
+            "year": 2023
+          }}
+        ],
+        "source": "Specific source type (e.g., Annual Report, Press Release, Industry Analysis)",
+        "reference_links": ["https://real-verifiable-url.com/source"]
+      }}
+    }}
+  ],
+  "total_development_cost": <sum_of_all_development_costs>,
+  "customer_acquisition_costs": [
+    {{
+      "category": "Marketing Channel (e.g., Digital Marketing, Dealer Training)",
+      "estimated_amount_per_customer": <calculated_CAC>,
+      "estimated_annual_budget": <total_annual_budget>,
+      "currency": "{settings.currency}",
+      "reasoning": "How this channel contributes to customer acquisition, expected reach, conversion rates, and budget calculation methodology",
+      "market_comparison": {{
+        "similar_case": "Competitor Marketing Program",
+        "comparison_details": "How competitor's CAC and marketing spend validates this estimate",
+        "cost_figures": [
+          {{
+            "company": "Competitor Name",
+            "project": "Marketing campaign/program",
+            "amount": <actual_budget>,
+            "currency": "{settings.currency}",
+            "year": 2023
+          }}
+        ],
+        "source": "Industry report or company disclosure",
+        "reference_links": ["https://source-url.com"]
+      }}
+    }}
+  ],
+  "total_customer_acquisition_cost": <sum_of_annual_budgets>,
+  "distribution_and_operations_costs": [
+    {{
+      "category": "Operations Category (e.g., Logistics, IT Maintenance)",
+      "estimated_amount": <annual_cost>,
+      "currency": "{settings.currency}",
+      "reasoning": "What this covers, why it's necessary, and how the cost was estimated",
+      "market_comparison": {{
+        "similar_case": "Industry Benchmark",
+        "comparison_details": "How industry standards validate this operational cost",
+        "cost_figures": [
+          {{
+            "company": "Company Name",
+            "project": "Similar operations",
+            "amount": <benchmark_cost>,
+            "currency": "{settings.currency}",
+            "year": 2023
+          }}
+        ],
+        "source": "Logistics report or OEM disclosure",
+        "reference_links": ["https://url.com"]
+      }}
+    }}
+  ],
+  "total_distribution_operations_cost": <sum>,
+  "after_sales_costs": [
+    {{
+      "category": "After-sales Category (e.g., Support, Warranty)",
+      "estimated_amount": <annual_cost>,
+      "currency": "{settings.currency}",
+      "reasoning": "Scope of after-sales support and cost drivers",
+      "market_comparison": {{
+        "similar_case": "Industry Example",
+        "comparison_details": "How competitors handle similar after-sales costs",
+        "cost_figures": [
+          {{
+            "company": "Company",
+            "project": "Support program",
+            "amount": <cost>,
+            "currency": "{settings.currency}",
+            "year": 2023
+          }}
+        ],
+        "source": "Source type",
+        "reference_links": ["https://url.com"]
+      }}
+    }}
+  ],
+  "total_after_sales_cost": <sum>,
+  "cost_of_goods_sold": [
+    {{
+      "product_category": "Product/Bundle Type",
+      "price_per_item": <selling_price>,
+      "cogs_per_item": <cost_to_produce>,
+      "gross_margin_percentage": <margin>,
+      "currency": "{settings.currency}",
+      "reasoning": "COGS breakdown including materials, labor, overhead. How margin was determined.",
+      "market_comparison": {{
+        "similar_case": "Competitor Product Margins",
+        "comparison_details": "Industry margin benchmarks for similar products",
+        "cost_figures": [
+          {{
+            "company": "Competitor",
+            "product": "Similar product",
+            "cogs": <cost>,
+            "retail_price": <price>,
+            "margin": <percentage>,
+            "currency": "{settings.currency}",
+            "year": 2023
+          }}
+        ],
+        "source": "Market analysis or teardown report",
+        "reference_links": ["https://url.com"]
+      }}
+    }}
+  ],
+  "average_cogs_per_bundle": <weighted_average>,
+  "volume_projections": {{"2024": <units>, "2025": <units>, "2026": <units>, "2027": <units>, "2028": <units>, "2029": <units>, "2030": <units>}},
+  "yearly_cost_breakdown": {{
+    "2024": {{
+      "projected_volume": <units>,
+      "one_time_development": <amount>,
+      "customer_acquisition": <annual>,
+      "distribution_operations": <annual>,
+      "after_sales": <annual>,
+      "total_cogs": <volume_x_unit_cogs>,
+      "cogs_per_unit": <unit_cogs>,
+      "total_cost": <sum_all_costs>,
+      "currency": "{settings.currency}"
+    }},
+    "2025": {{"projected_volume": <units>, "one_time_development": 0, "customer_acquisition": <amount>, "distribution_operations": <amount>, "after_sales": <amount>, "total_cogs": <amount>, "cogs_per_unit": <amount>, "total_cost": <amount>, "currency": "{settings.currency}"}},
+    "2026": {{"projected_volume": <units>, "one_time_development": 0, "customer_acquisition": <amount>, "distribution_operations": <amount>, "after_sales": <amount>, "total_cogs": <amount>, "cogs_per_unit": <amount>, "total_cost": <amount>, "currency": "{settings.currency}"}},
+    "2027": {{"projected_volume": <units>, "one_time_development": 0, "customer_acquisition": <amount>, "distribution_operations": <amount>, "after_sales": <amount>, "total_cogs": <amount>, "cogs_per_unit": <amount>, "total_cost": <amount>, "currency": "{settings.currency}"}},
+    "2028": {{"projected_volume": <units>, "one_time_development": 0, "customer_acquisition": <amount>, "distribution_operations": <amount>, "after_sales": <amount>, "total_cogs": <amount>, "cogs_per_unit": <amount>, "total_cost": <amount>, "currency": "{settings.currency}"}},
+    "2029": {{"projected_volume": <units>, "one_time_development": 0, "customer_acquisition": <amount>, "distribution_operations": <amount>, "after_sales": <amount>, "total_cogs": <amount>, "cogs_per_unit": <amount>, "total_cost": <amount>, "currency": "{settings.currency}"}},
+    "2030": {{"projected_volume": <units>, "one_time_development": 0, "customer_acquisition": <amount>, "distribution_operations": <amount>, "after_sales": <amount>, "total_cogs": <amount>, "cogs_per_unit": <amount>, "total_cost": <amount>, "currency": "{settings.currency}"}}
+  }},
+  "seven_year_summary": {{
+    "total_cost_2024_2030": <sum_all_years>,
+    "total_volume_2024_2030": <sum_units>,
+    "average_cost_per_unit": <total_cost_div_total_volume>,
+    "currency": "{settings.currency}"
+  }},
+  "total_estimated_cost_summary": {{
+    "one_time_development": <total_dev_costs>,
+    "annual_customer_acquisition": <avg_annual>,
+    "annual_distribution_operations": <avg_annual>,
+    "annual_after_sales": <avg_annual>,
+    "average_cogs_per_unit": <unit_cogs>
+  }},
   "confidence_level": "Medium",
-  "additional_notes": "Analysis notes and assumptions",
-  "identified_variables": [{{"name": "Var", "value": "Val", "description": "Why matters"}}],
-  "formulas": [{{"name": "Formula", "formula": "Math", "calculation": "Result"}}],
-  "business_assumptions": ["Assumption 1", "Assumption 2"],
-  "improvement_recommendations": ["Rec 1", "Rec 2"],
-  "value_market_potential_text": "3-paragraph executive summary",
-  "executive_summary": "1-paragraph pitch",
-  "sources": ["URL1"],
-  "key_risks": ["Risk 1"],
-  "competitive_advantages": ["Advantage 1"]
+  "additional_notes": "Key assumptions, limitations, and important context about the analysis. Include any data gaps or estimation methodologies that affect confidence.",
+  "identified_variables": [
+    {{"name": "Variable Name", "value": "Value/Range", "description": "Why this variable is critical to the business model"}}
+  ],
+  "formulas": [
+    {{"name": "Formula Name", "formula": "Mathematical expression", "calculation": "Sample calculation with numbers"}}
+  ],
+  "business_assumptions": [
+    "Specific assumption 1 with basis",
+    "Specific assumption 2 with market data"
+  ],
+  "improvement_recommendations": [
+    "Actionable recommendation 1 with expected impact",
+    "Actionable recommendation 2 with implementation guidance"
+  ],
+  "value_market_potential_text": "3-paragraph executive summary: (1) Market opportunity with TAM/SAM/SOM context, (2) Competitive positioning and differentiation, (3) Growth strategy and financial outlook",
+  "executive_summary": "Concise 2-3 sentence investment pitch highlighting the opportunity, differentiation, and potential ROI",
+  "sources": [
+    "https://real-industry-report.com",
+    "https://competitor-annual-report.com",
+    "https://market-research-firm.com/study"
+  ],
+  "key_risks": [
+    "Specific risk 1 with probability and mitigation",
+    "Specific risk 2 with impact assessment"
+  ],
+  "competitive_advantages": [
+    "Advantage 1 with market validation",
+    "Advantage 2 with sustainability assessment"
+  ]
 }}
 
-CRITICAL: Return ONLY this JSON. Replace 0 with real estimates. Fill ALL fields. Use proper escaping. Currency={settings.currency}. Provide detailed market comparisons with real company examples and sources. Keep insights concise but complete."""
+REMEMBER:
+- Use REAL company examples (BMW, Mercedes, Audi, Porsche, Harley-Davidson, Ducati, Honda, Yamaha, etc.)
+- Provide ACTUAL cost figures from industry (not zeros or placeholders)
+- Include VERIFIABLE reference links to sources
+- Calculate ALL projections with clear methodology
+- Base estimates on COMPETITIVE intelligence and market data
+- Show your work in reasoning/justification fields
+- Currency: {settings.currency}
+
+Return ONLY the JSON. No additional text or explanations outside the JSON structure."""
 
 
 def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
@@ -217,7 +542,7 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
 
 
 def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
-    """Analyze document using Google Gemini 2.5 Flash"""
+    """Analyze document using Google Gemini"""
     config = get_settings()
     genai.configure(api_key=config.gemini_api_key)
     
@@ -233,7 +558,7 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
     }
     
     model = genai.GenerativeModel(
-        'gemini-2.5-flash',  # Gemini 2.5 Flash
+        config.gemini_model_name,  # Use environment variable
         generation_config=generation_config
     )
     
@@ -274,7 +599,7 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
 
 
 def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
-    """Analyze document using OpenAI GPT-5 (best reasoning model for complex analysis)"""
+    """Analyze document using OpenAI GPT"""
     config = get_settings()
     client = OpenAI(api_key=config.openai_api_key)
     
@@ -283,9 +608,9 @@ def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> Compreh
     
     prompt = get_analysis_prompt(text, settings)
     
-    # GPT-5 for advanced reasoning - no token limits
+    # Use configured model name from environment
     response = client.chat.completions.create(
-        model="gpt-5",
+        model=config.openai_model_name,
         messages=[
             {"role": "user", "content": prompt}
         ]

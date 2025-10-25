@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     openai_api_key: str
     secret_key: str
     debug: bool = True
+    gemini_model_name: str
+    openai_model_name: str
 
 
 @lru_cache()
