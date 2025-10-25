@@ -217,7 +217,7 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
 
 
 def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
-    """Analyze document using Google Gemini 2.0 Flash Experimental"""
+    """Analyze document using Google Gemini 2.5 Flash"""
     config = get_settings()
     genai.configure(api_key=config.gemini_api_key)
     
@@ -225,16 +225,15 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
     if settings is None:
         settings = AnalysisSettings()
     
-    # Optimized configuration for high-quality analysis
+    # Optimized configuration for high-quality analysis - no limits
     generation_config = {
-        "temperature": settings.temperature,  # Use full temperature range for quality
+        "temperature": settings.temperature,
         "top_p": 0.95,
         "top_k": 40,
-        "max_output_tokens": 16384,  # Increased for comprehensive responses
     }
     
     model = genai.GenerativeModel(
-        'gemini-2.0-flash-exp',  # Latest fastest Gemini model
+        'gemini-2.5-flash',  # Gemini 2.5 Flash
         generation_config=generation_config
     )
     
@@ -275,7 +274,7 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
 
 
 def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
-    """Analyze document using OpenAI o1 (best reasoning model for complex analysis)"""
+    """Analyze document using OpenAI GPT-5 (best reasoning model for complex analysis)"""
     config = get_settings()
     client = OpenAI(api_key=config.openai_api_key)
     
@@ -284,10 +283,9 @@ def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> Compreh
     
     prompt = get_analysis_prompt(text, settings)
     
-    # o1 models don't support system messages or temperature
-    # They use reasoning tokens for complex analysis
+    # GPT-5 for advanced reasoning - no token limits
     response = client.chat.completions.create(
-        model="o1",  # Best OpenAI model for complex reasoning
+        model="gpt-5",
         messages=[
             {"role": "user", "content": prompt}
         ]

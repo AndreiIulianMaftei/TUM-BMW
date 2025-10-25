@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     openai_api_key: str
     secret_key: str
     debug: bool = True
-    max_file_size: int = 10485760
 
 
 @lru_cache()

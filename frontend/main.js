@@ -117,7 +117,7 @@ uploadBtn.addEventListener('click', async () => {
     
     // Update loading message based on provider
     const loadingCard = document.querySelector('.loading-card h3');
-    const providerName = selectedProvider === 'gemini' ? 'Google Gemini 2.5 Flash' : 'OpenAI o1';
+    const providerName = selectedProvider === 'gemini' ? 'Google Gemini 2.5 Flash' : 'OpenAI GPT-5';
     loadingCard.textContent = `Analyzing with ${providerName}`;
     
     try {
