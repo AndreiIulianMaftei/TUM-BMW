@@ -1,5 +1,8 @@
 const uploadBox = document.getElementById('uploadBox');
+const textInputBox = document.getElementById('textInputBox');
 const fileInput = document.getElementById('fileInput');
+const textInput = document.getElementById('textInput');
+const charCount = document.getElementById('charCount');
 const uploadBtn = document.getElementById('uploadBtn');
 const uploadSection = document.getElementById('uploadSection');
 const loadingSection = document.getElementById('loadingSection');
@@ -8,8 +11,31 @@ const newAnalysisBtn = document.getElementById('newAnalysisBtn');
 const geminiOption = document.getElementById('geminiOption');
 const openaiOption = document.getElementById('openaiOption');
 
+// Settings elements
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const closeSettings = document.getElementById('closeSettings');
+const temperatureSlider = document.getElementById('temperatureSlider');
+const temperatureValue = document.getElementById('temperatureValue');
+const depthSelect = document.getElementById('depthSelect');
+const industrySelect = document.getElementById('industrySelect');
+const confidenceSlider = document.getElementById('confidenceSlider');
+const confidenceValue = document.getElementById('confidenceValue');
+const resetSettings = document.getElementById('resetSettings');
+
+// Chat elements
+const chatToggle = document.getElementById('chatToggle');
+const chatContainer = document.getElementById('chatContainer');
+const closeChat = document.getElementById('closeChat');
+const chatInput = document.getElementById('chatInput');
+const sendChat = document.getElementById('sendChat');
+const chatMessages = document.getElementById('chatMessages');
+
 let selectedFile = null;
 let selectedProvider = 'gemini'; // Default provider
+let inputMode = 'file'; // 'file' or 'text'
+let analysisContext = null;
+let settings = loadSettings();
 
 // LLM Provider Selection
 geminiOption.classList.add('active'); // Set Gemini as default

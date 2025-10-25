@@ -202,7 +202,7 @@ Begin analysis now:
 
 
 def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
-    """Parse and validate the LLM response into ComprehensiveAnalysis model"""
+    """Parse and validate the LLM response into ComprehensiveAnalysis model with robust error handling"""
     try:
         # Clean up markdown code blocks if present
         response_text = response_text.strip()
@@ -213,7 +213,23 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
         if response_text.endswith("```"):
             response_text = response_text[:-3]
         
-        analysis_data = json.loads(response_text.strip())
+        response_text = response_text.strip()
+        
+        # Try to fix common JSON issues
+        # Replace smart quotes with regular quotes
+        response_text = response_text.replace('"', '"').replace('"', '"')
+        response_text = response_text.replace(''', "'").replace(''', "'")
+        
+        # Attempt to parse JSON
+        analysis_data = json.loads(response_text)
+        
+        # Validate all required fields exist
+        required_sections = ['tam', 'sam', 'som', 'roi', 'turnover', 'volume', 
+                           'unit_economics', 'ebit', 'cogs', 'market_potential']
+        
+        for section in required_sections:
+            if section not in analysis_data:
+                raise ValueError(f"Missing required section: {section}")
         
         return ComprehensiveAnalysis(
             tam=TAMMetrics(**analysis_data["tam"]),
@@ -233,26 +249,33 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
             value_market_potential_text=analysis_data.get("value_market_potential_text", ""),
             executive_summary=analysis_data.get("executive_summary", "")
         )
+    except json.JSONDecodeError as e:
+        error_msg = f"JSON parsing failed at line {e.lineno}, column {e.colno}: {e.msg}"
+        print(f"JSON Error: {error_msg}")
+        print(f"Response preview: {response_text[:500]}")
     except Exception as e:
-        # Return error structure
-        return ComprehensiveAnalysis(
-            tam=TAMMetrics(insight=f"Error in TAM calculation: {str(e)}", confidence=0),
-            sam=SAMMetrics(insight=f"Error in SAM calculation: {str(e)}", confidence=0),
-            som=SOMMetrics(insight=f"Error in SOM calculation: {str(e)}", confidence=0),
-            roi=ROIMetrics(insight=f"Error in ROI calculation: {str(e)}", confidence=0),
-            turnover=TurnoverMetrics(insight=f"Error in turnover calculation: {str(e)}", confidence=0),
-            volume=VolumeMetrics(insight=f"Error in volume calculation: {str(e)}", confidence=0),
-            unit_economics=UnitEconomics(insight=f"Error in unit economics calculation: {str(e)}", confidence=0),
-            ebit=EBITMetrics(insight=f"Error in EBIT calculation: {str(e)}", confidence=0),
-            cogs=COGSMetrics(insight=f"Error in COGS calculation: {str(e)}", confidence=0),
-            market_potential=MarketPotential(insight=f"Error in market potential calculation: {str(e)}", confidence=0),
-            identified_variables=[],
-            formulas=[],
-            business_assumptions=[],
-            improvement_recommendations=[],
-            value_market_potential_text=f"Analysis encountered an error: {str(e)}",
-            executive_summary=f"Analysis could not be completed: {str(e)}"
-        )
+        error_msg = str(e)
+        print(f"Analysis Error: {error_msg}")
+    
+    # Return error structure if parsing fails
+    return ComprehensiveAnalysis(
+        tam=TAMMetrics(insight="Unable to complete TAM analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        sam=SAMMetrics(insight="Unable to complete SAM analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        som=SOMMetrics(insight="Unable to complete SOM analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        roi=ROIMetrics(insight="Unable to complete ROI analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        turnover=TurnoverMetrics(insight="Unable to complete turnover analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        volume=VolumeMetrics(insight="Unable to complete volume analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        unit_economics=UnitEconomics(insight="Unable to complete unit economics analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        ebit=EBITMetrics(insight="Unable to complete EBIT analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        cogs=COGSMetrics(insight="Unable to complete COGS analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        market_potential=MarketPotential(insight="Unable to complete market potential analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        identified_variables=[],
+        formulas=[],
+        business_assumptions=["Analysis failed due to technical error. Please retry."],
+        improvement_recommendations=["Try uploading the document again", "Use a different AI provider", "Ensure document contains clear business information"],
+        value_market_potential_text="The analysis could not be completed due to a technical error in processing the AI response. This may be due to the complexity of the document or temporary issues with the AI service. Please try again, or consider using the alternative AI provider.",
+        executive_summary="Analysis temporarily unavailable. Please retry or use the alternative AI provider."
+    )
 
 
 def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
@@ -269,6 +292,7 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
         "top_p": 0.95,
         "top_k": 40,
         "max_output_tokens": 8192,
+        "response_mime_type": "application/json",  # Enforce JSON output
     }
     
     model = genai.GenerativeModel(
@@ -277,9 +301,31 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
     )
     
     prompt = get_analysis_prompt(text, settings)
-    response = model.generate_content(prompt)
     
-    return parse_analysis_response(response.text)
+    try:
+        response = model.generate_content(prompt)
+        return parse_analysis_response(response.text)
+    except Exception as e:
+        print(f"Gemini API Error: {str(e)}")
+        # Return error structure
+        return ComprehensiveAnalysis(
+            tam=TAMMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            sam=SAMMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            som=SOMMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            roi=ROIMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            turnover=TurnoverMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            volume=VolumeMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            unit_economics=UnitEconomics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            ebit=EBITMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            cogs=COGSMetrics(insight=f"Gemini API error: {str(e)}", confidence=0),
+            market_potential=MarketPotential(insight=f"Gemini API error: {str(e)}", confidence=0),
+            identified_variables=[],
+            formulas=[],
+            business_assumptions=["API Error occurred"],
+            improvement_recommendations=["Try again", "Use OpenAI provider"],
+            value_market_potential_text=f"Error: {str(e)}",
+            executive_summary=f"Analysis failed: {str(e)}"
+        )
 
 
 def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
