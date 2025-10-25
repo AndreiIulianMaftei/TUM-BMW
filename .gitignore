@@ -10,6 +10,8 @@ ai_summary.txt
 index.html
 test.pdf
 first.json
+combined_bmw_json.json
+motorrad_cost_analysis_yearly.json
 
 # === Environment ===
 .env
