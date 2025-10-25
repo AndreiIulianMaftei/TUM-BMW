@@ -5,7 +5,9 @@ from backend.models import (
     ComprehensiveAnalysis, Variable, Formula, TAMMetrics, SAMMetrics, 
     SOMMetrics, ROIMetrics, TurnoverMetrics, VolumeMetrics, UnitEconomics,
     EBITMetrics, COGSMetrics, MarketPotential, AnalysisSettings, 
-    IndustryExample, YearlyProjection
+    IndustryExample, YearlyProjection, DevelopmentCost, CustomerAcquisitionCost,
+    DistributionOperationsCost, AfterSalesCost, COGSItem, YearlyCostBreakdown,
+    SevenYearSummary
 )
 import json
 
@@ -19,328 +21,62 @@ def get_analysis_prompt(text: str, settings: AnalysisSettings = None) -> str:
     Key improvements:
     1. Structured output format with strict JSON schema
     2. Industry-specific context injection
-    3. Confidence scoring methodology
-    4. Currency-aware calculations
-    5. Depth-based detail requirements
+    3. Currency-aware calculations
+    4. Comprehensive cost breakdown structure
     """
     
     # Default settings if none provided
     if settings is None:
         settings = AnalysisSettings()
     
-    # Industry-specific context
-    industry_context = ""
-    if settings.industry_focus:
-        industry_contexts = {
-            "automotive": "Focus on automotive industry dynamics, supply chain complexity, capital intensity, and long development cycles. Consider EV transition, autonomous driving trends, and changing mobility patterns.",
-            "tech": "Focus on software/SaaS metrics, user acquisition costs, churn rates, network effects, and scalability. Consider rapid iteration cycles and platform dynamics.",
-            "healthcare": "Focus on regulatory requirements, reimbursement models, clinical validation timelines, and patient outcomes. Consider compliance costs and long sales cycles.",
-            "retail": "Focus on customer acquisition costs, inventory turnover, omnichannel strategies, and margin pressure. Consider seasonal patterns and consumer behavior shifts.",
-            "fintech": "Focus on transaction volumes, regulatory compliance, security costs, and customer lifetime value. Consider trust factors and switching costs."
-        }
-        industry_context = industry_contexts.get(settings.industry_focus, "")
-    
-    # Depth requirements
-    depth_instructions = {
-        "quick": "High-level estimates only. Keep insights under 150 characters. Focus on numbers.",
-        "standard": "Balanced detail. Keep insights under 200 characters. Include key calculations.",
-        "comprehensive": "Detailed analysis. Keep insights under 250 characters. Show methodology."
-    }
-    depth_instruction = depth_instructions.get(settings.analysis_depth, depth_instructions["standard"])
-    
-    currency_symbol = {"EUR": "€", "USD": "$", "GBP": "£"}.get(settings.currency, "€")
-    
-    return f"""
-You are Quant AI - an elite financial analyst and business strategist with deep expertise in market analysis, 
-financial modeling, and strategic planning. You combine rigorous analytical methods with practical business acumen.
+    return f"""You are Quant AI - an elite financial analyst specializing in market analysis and financial modeling.
 
-=== ANALYSIS CONFIGURATION ===
-Analysis Depth: {settings.analysis_depth.upper()}
-Currency: {settings.currency} ({currency_symbol})
-Confidence Threshold: {settings.confidence_threshold}%
-{f"Industry Focus: {settings.industry_focus.upper()}" if settings.industry_focus else ""}
+CONFIGURATION: Currency={settings.currency}{f", Industry={settings.industry_focus.upper()}" if settings.industry_focus else ""}
 
-{industry_context}
-
-=== YOUR MISSION ===
-Analyze the following business concept and generate an investor-ready financial and market analysis.
-{depth_instruction}
-
-=== INPUT DOCUMENT ===
+ANALYZE THIS BUSINESS CONCEPT:
 {text}
 
-=== ANALYSIS FRAMEWORK ===
+OUTPUT REQUIREMENTS - Return ONLY valid JSON with this exact structure:
 
-CONFIDENCE SCORING METHODOLOGY:
-- 80-100%: Based on hard data, industry reports, or clear comparable companies
-- 60-79%: Based on reasonable assumptions with some market data support
-- 40-59%: Educated estimates with limited data, but logical reasoning
-- 20-39%: Rough estimates with high uncertainty
-- 0-19%: Pure speculation, significant data gaps
-
-Only include metrics with confidence >= {settings.confidence_threshold}% unless critical for completeness.
-
-CALCULATION PRINCIPLES:
-1. Work from first principles - show your math
-2. Use industry benchmarks (cite sources when possible)
-3. Consider market maturity, competition, and barriers to entry
-4. Account for customer acquisition costs and churn
-5. Factor in seasonality and economic cycles
-6. Include realistic implementation timelines
-
-CURRENCY FORMATTING:
-- Express ALL monetary values in {settings.currency}
-- Use actual numbers, not ranges (pick conservative midpoint)
-- Round to 2 decimal places for precision
-
-=== REQUIRED JSON OUTPUT ===
 {{
-  "tam": {{
-    "description_of_public": <string: Clear description of the total addressable market>,
-    "market_size": <float: Total Addressable Market in {settings.currency}>,
-    "growth_rate": <float: CAGR %>,
-    "time_horizon": <string: e.g., "2024-2030">,
-    "numbers": {{
-      "2024": <float: TAM value for 2024>,
-      "2025": <float: TAM value for 2025>,
-      "2026": <float: TAM value for 2026>,
-      "2027": <float: TAM value for 2027>,
-      "2028": <float: TAM value for 2028>,
-      "2029": <float: TAM value for 2029>,
-      "2030": <float: TAM value for 2030>
-    }},
-    "justification": <string: Detailed explanation of TAM calculation methodology and assumptions>,
-    "insight": <string: Key insights about TAM>,
-    "confidence": <int: 0-100>,
-    "industry_example": {{
-      "name": <string: Name of comparable company/industry>,
-      "description": <string: How this example validates the TAM>,
-      "link": <string: URL to source or null>,
-      "metric_value": <string: Specific metric from example or null>
-    }},
-    "breakdown": {{
-      "segment_1": <float: Value>,
-      "segment_2": <float: Value>
-    }}
-  }},
-  "sam": {{
-    "description_of_public": <string: Clear description of serviceable available market>,
-    "region": <string: Primary geographic market>,
-    "target_segment": <string: Specific customer segment description>,
-    "market_size": <float: Serviceable Available Market in {settings.currency}>,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "justification": <string: Detailed SAM calculation and filtering logic>,
-    "insight": <string: How SAM was narrowed from TAM>,
-    "confidence": <int: 0-100>,
-    "industry_example": {{
-      "name": <string>,
-      "description": <string>,
-      "link": <string or null>,
-      "metric_value": <string or null>
-    }},
-    "penetration_rate": <float: % of TAM that SAM represents>
-  }},
-  "som": {{
-    "description_of_public": <string: Clear description of serviceable obtainable market>,
-    "market_share": <float: Realistic market share % achievable>,
-    "revenue_potential": <float: Expected annual revenue in {settings.currency}>,
-    "capture_period": <string: Timeline to achieve this share>,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "justification": <string: Detailed SOM calculation and market capture strategy>,
-    "insight": <string: Market penetration strategy and competitive positioning>,
-    "confidence": <int: 0-100>,
-    "industry_example": {{
-      "name": <string>,
-      "description": <string>,
-      "link": <string or null>,
-      "metric_value": <string or null>
-    }},
-    "customer_acquisition_cost": <float: CAC in {settings.currency} or null>
-  }},
-  "roi": {{
-    "revenue": <float: Total projected revenue>,
-    "cost": <float: Total investment required>,
-    "roi_percentage": <float: ROI % = (Revenue-Cost)/Cost * 100>,
-    "numbers": {{
-      "2024": <float: ROI for each year>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "payback_period_months": <int: Number of months to break even or null>,
-    "insight": <string: Payback period and ROI trajectory>,
-    "confidence": <int: 0-100>,
-    "cost_breakdown": {{
-      "development": <float or null>,
-      "marketing": <float or null>,
-      "operations": <float or null>
-    }}
-  }},
-  "turnover": {{
-    "year": <int: Target year for projection>,
-    "total_revenue": <float: Annual revenue in {settings.currency}>,
-    "yoy_growth": <float: Year-over-year growth %>,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "revenue_streams": {{
-      "primary_product": <float or null>,
-      "services": <float or null>,
-      "recurring": <float or null>
-    }},
-    "insight": <string: Revenue composition and growth drivers>,
-    "confidence": <int: 0-100>
-  }},
-  "volume": {{
-    "units_sold": <int: Annual units/transactions>,
-    "region": <string: Geographic scope>,
-    "period": <string: "Annual">,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "insight": <string: Volume trajectory and drivers>,
-    "confidence": <int: 0-100>,
-    "growth_drivers": [<string: Key factor 1>, <string: Key factor 2>]
-  }},
-  "unit_economics": {{
-    "unit_revenue": <float: Average revenue per unit in {settings.currency}>,
-    "unit_cost": <float: Fully loaded cost per unit>,
-    "margin": <float: Contribution margin per unit>,
-    "margin_percentage": <float: Margin as % or null>,
-    "ltv_cac_ratio": <float: Lifetime Value / CAC or null>,
-    "insight": <string: Unit economics health and scalability>,
-    "confidence": <int: 0-100>,
-    "cost_components": {{
-      "variable_costs": <float or null>,
-      "fixed_costs_per_unit": <float or null>
-    }}
-  }},
-  "ebit": {{
-    "revenue": <float: Total revenue>,
-    "operating_expense": <float: OpEx including R&D, S&M, G&A>,
-    "ebit_margin": <float: EBIT in {settings.currency}>,
-    "ebit_percentage": <float: EBIT as % of revenue or null>,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "insight": <string: Operating leverage and path to profitability>,
-    "confidence": <int: 0-100>,
-    "opex_breakdown": {{
-      "rd": <float or null>,
-      "sales_marketing": <float or null>,
-      "general_admin": <float or null>
-    }}
-  }},
-  "cogs": {{
-    "material": <float: Direct material costs or null>,
-    "labor": <float: Direct labor costs or null>,
-    "overheads": <float: Manufacturing/delivery overhead or null>,
-    "total_cogs": <float: Sum of all COGS>,
-    "cogs_percentage": <float: COGS as % of revenue or null>,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "insight": <string: Cost structure and optimization opportunities>,
-    "confidence": <int: 0-100>
-  }},
-  "market_potential": {{
-    "market_size": <float: Overall addressable opportunity>,
-    "penetration": <float: Realistic penetration %>,
-    "growth_rate": <float: Market CAGR %>,
-    "numbers": {{
-      "2024": <float>,
-      "2025": <float>,
-      "2026": <float>,
-      "2027": <float>,
-      "2028": <float>,
-      "2029": <float>,
-      "2030": <float>
-    }},
-    "market_drivers": [<string: Driver 1>, <string: Driver 2>],
-    "barriers_to_entry": [<string: Barrier 1>, <string: Barrier 2>],
-    "insight": <string: Market attractiveness assessment>,
-    "confidence": <int: 0-100>
-  }},
-  "identified_variables": [
-    {{
-      "name": <string: e.g., "Customer Acquisition Cost">,
-      "value": <string: e.g., "{currency_symbol}250 per customer">,
-      "description": <string: Why this drives the business model>
-    }}
-  ],
-  "formulas": [
-    {{
-      "name": <string: e.g., "LTV/CAC Ratio">,
-      "formula": <string: e.g., "({currency_symbol}1,200 × 3 years) / {currency_symbol}250">,
-      "calculation": <string: e.g., "14.4x - Excellent unit economics">
-    }}
-  ],
-  "business_assumptions": [
-    <string: List 5-10 critical assumptions underpinning this analysis>
-  ],
-  "improvement_recommendations": [
-    <string: List 5-8 specific, actionable recommendations to strengthen the business case>
-  ],
-  "value_market_potential_text": <string: Professional 3-paragraph executive summary for formal documentation>,
-  "executive_summary": <string: 1-paragraph elevator pitch highlighting the opportunity>,
-  "sources": [<string: URL 1>, <string: URL 2>],
-  "key_risks": [<string: Risk 1>, <string: Risk 2>],
-  "competitive_advantages": [<string: Advantage 1>, <string: Advantage 2>]
+  "tam": {{"description_of_public": "TAM description", "market_size": 0, "growth_rate": 0, "time_horizon": "2024-2030", "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "justification": "Calculation method", "insight": "Key insight", "confidence": 75, "industry_example": {{"name": "Company", "description": "Example", "link": null, "metric_value": null}}, "breakdown": {{}}}},
+  "sam": {{"description_of_public": "SAM description", "region": "Geographic market", "target_segment": "Customer segment", "market_size": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "justification": "Calculation", "insight": "Insight", "confidence": 75, "industry_example": {{"name": "Co", "description": "Ex", "link": null, "metric_value": null}}, "penetration_rate": 0}},
+  "som": {{"description_of_public": "SOM description", "market_share": 0, "revenue_potential": 0, "capture_period": "Timeline", "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "justification": "Calculation", "insight": "Strategy", "confidence": 70, "industry_example": {{"name": "Co", "description": "Ex", "link": null, "metric_value": null}}, "customer_acquisition_cost": null}},
+  "roi": {{"revenue": 0, "cost": 0, "roi_percentage": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "payback_period_months": null, "insight": "ROI analysis", "confidence": 70, "cost_breakdown": {{"development": null, "marketing": null, "operations": null}}}},
+  "turnover": {{"year": 2024, "total_revenue": 0, "yoy_growth": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "revenue_streams": {{"primary_product": null, "services": null, "recurring": null}}, "insight": "Revenue drivers", "confidence": 70}},
+  "volume": {{"units_sold": 0, "region": "Scope", "period": "Annual", "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "insight": "Volume trajectory", "confidence": 70, "growth_drivers": ["Driver1", "Driver2"]}},
+  "unit_economics": {{"unit_revenue": 0, "unit_cost": 0, "margin": 0, "margin_percentage": null, "ltv_cac_ratio": null, "insight": "Economics health", "confidence": 70, "cost_components": {{"variable_costs": null, "fixed_costs_per_unit": null}}}},
+  "ebit": {{"revenue": 0, "operating_expense": 0, "ebit_margin": 0, "ebit_percentage": null, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "insight": "Operating leverage", "confidence": 70, "opex_breakdown": {{"rd": null, "sales_marketing": null, "general_admin": null}}}},
+  "cogs": {{"material": null, "labor": null, "overheads": null, "total_cogs": 0, "cogs_percentage": null, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "insight": "Cost structure", "confidence": 70}},
+  "market_potential": {{"market_size": 0, "penetration": 0, "growth_rate": 0, "numbers": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}}, "market_drivers": ["D1", "D2"], "barriers_to_entry": ["B1", "B2"], "insight": "Market attractiveness", "confidence": 70}},
+  "development_costs": [{{"category": "IT Development", "estimated_amount": 0, "currency": "{settings.currency}", "reasoning": "Why needed", "market_comparison": {{"similar_case": "Company Example", "comparison_details": "Validation", "cost_figures": [{{"company": "Co", "project": "Proj", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Source", "reference_links": ["URL"]}}}}],
+  "total_development_cost": 0,
+  "customer_acquisition_costs": [{{"category": "Marketing", "estimated_amount_per_customer": null, "estimated_annual_budget": 0, "currency": "{settings.currency}", "reasoning": "Why", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Val", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
+  "total_customer_acquisition_cost": 0,
+  "distribution_and_operations_costs": [{{"category": "Logistics", "estimated_amount": 0, "currency": "{settings.currency}", "reasoning": "Why", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Val", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
+  "total_distribution_operations_cost": 0,
+  "after_sales_costs": [{{"category": "Support", "estimated_amount": 0, "currency": "{settings.currency}", "reasoning": "Why", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Val", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
+  "total_after_sales_cost": 0,
+  "cost_of_goods_sold": [{{"product_category": "Product", "price_per_item": 0, "cogs_per_item": 0, "gross_margin_percentage": 0, "currency": "{settings.currency}", "reasoning": "COGS breakdown", "market_comparison": {{"similar_case": "Ex", "comparison_details": "Margin comp", "cost_figures": [{{"company": "Co", "project": "P", "amount": 0, "currency": "{settings.currency}", "year": 2023}}], "source": "Src", "reference_links": ["URL"]}}}}],
+  "average_cogs_per_bundle": 0,
+  "volume_projections": {{"2024": 0, "2025": 0, "2026": 0, "2027": 0, "2028": 0, "2029": 0, "2030": 0}},
+  "yearly_cost_breakdown": {{"2024": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2025": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2026": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2027": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2028": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2029": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}, "2030": {{"projected_volume": 0, "one_time_development": 0, "customer_acquisition": 0, "distribution_operations": 0, "after_sales": 0, "total_cogs": 0, "cogs_per_unit": 0, "total_cost": 0, "currency": "{settings.currency}"}}}},
+  "seven_year_summary": {{"total_cost_2024_2030": 0, "total_volume_2024_2030": 0, "average_cost_per_unit": 0, "currency": "{settings.currency}"}},
+  "total_estimated_cost_summary": {{"one_time_development": 0, "annual_customer_acquisition": 0, "annual_distribution_operations": 0, "annual_after_sales": 0, "average_cogs_per_unit": 0}},
+  "confidence_level": "Medium",
+  "additional_notes": "Analysis notes and assumptions",
+  "identified_variables": [{{"name": "Var", "value": "Val", "description": "Why matters"}}],
+  "formulas": [{{"name": "Formula", "formula": "Math", "calculation": "Result"}}],
+  "business_assumptions": ["Assumption 1", "Assumption 2"],
+  "improvement_recommendations": ["Rec 1", "Rec 2"],
+  "value_market_potential_text": "3-paragraph executive summary",
+  "executive_summary": "1-paragraph pitch",
+  "sources": ["URL1"],
+  "key_risks": ["Risk 1"],
+  "competitive_advantages": ["Advantage 1"]
 }}
 
-=== CRITICAL OUTPUT REQUIREMENTS ===
-1. OUTPUT ONLY VALID JSON - no markdown, no text outside JSON
-2. Keep ALL "insight" fields concise (under 200 chars each)
-3. Use proper JSON escaping - no unescaped quotes or line breaks in strings
-4. ALL monetary values in {settings.currency}
-5. Round numbers to 2 decimal places
-6. Be specific and quantitative
-
-Begin analysis now:
-"""
+CRITICAL: Return ONLY this JSON. Replace 0 with real estimates. Fill ALL fields. Use proper escaping. Currency={settings.currency}. Provide detailed market comparisons with real company examples and sources. Keep insights concise but complete."""
 
 
 def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
@@ -381,6 +117,38 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
             if section not in analysis_data:
                 raise ValueError(f"Missing required section: {section}")
         
+        # Parse optional new cost fields
+        development_costs = None
+        if 'development_costs' in analysis_data and analysis_data['development_costs']:
+            development_costs = [DevelopmentCost(**item) for item in analysis_data['development_costs']]
+        
+        customer_acquisition_costs = None
+        if 'customer_acquisition_costs' in analysis_data and analysis_data['customer_acquisition_costs']:
+            customer_acquisition_costs = [CustomerAcquisitionCost(**item) for item in analysis_data['customer_acquisition_costs']]
+        
+        distribution_costs = None
+        if 'distribution_and_operations_costs' in analysis_data and analysis_data['distribution_and_operations_costs']:
+            distribution_costs = [DistributionOperationsCost(**item) for item in analysis_data['distribution_and_operations_costs']]
+        
+        after_sales_costs = None
+        if 'after_sales_costs' in analysis_data and analysis_data['after_sales_costs']:
+            after_sales_costs = [AfterSalesCost(**item) for item in analysis_data['after_sales_costs']]
+        
+        cogs_items = None
+        if 'cost_of_goods_sold' in analysis_data and analysis_data['cost_of_goods_sold']:
+            cogs_items = [COGSItem(**item) for item in analysis_data['cost_of_goods_sold']]
+        
+        yearly_cost_breakdown = None
+        if 'yearly_cost_breakdown' in analysis_data and analysis_data['yearly_cost_breakdown']:
+            yearly_cost_breakdown = {
+                year: YearlyCostBreakdown(**data) 
+                for year, data in analysis_data['yearly_cost_breakdown'].items()
+            }
+        
+        seven_year_summary = None
+        if 'seven_year_summary' in analysis_data and analysis_data['seven_year_summary']:
+            seven_year_summary = SevenYearSummary(**analysis_data['seven_year_summary'])
+        
         return ComprehensiveAnalysis(
             tam=TAMMetrics(**analysis_data["tam"]),
             sam=SAMMetrics(**analysis_data["sam"]),
@@ -392,12 +160,31 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
             ebit=EBITMetrics(**analysis_data["ebit"]),
             cogs=COGSMetrics(**analysis_data["cogs"]),
             market_potential=MarketPotential(**analysis_data["market_potential"]),
+            development_costs=development_costs,
+            total_development_cost=analysis_data.get("total_development_cost"),
+            customer_acquisition_costs=customer_acquisition_costs,
+            total_customer_acquisition_cost=analysis_data.get("total_customer_acquisition_cost"),
+            distribution_and_operations_costs=distribution_costs,
+            total_distribution_operations_cost=analysis_data.get("total_distribution_operations_cost"),
+            after_sales_costs=after_sales_costs,
+            total_after_sales_cost=analysis_data.get("total_after_sales_cost"),
+            cost_of_goods_sold=cogs_items,
+            average_cogs_per_bundle=analysis_data.get("average_cogs_per_bundle"),
+            volume_projections=analysis_data.get("volume_projections"),
+            yearly_cost_breakdown=yearly_cost_breakdown,
+            seven_year_summary=seven_year_summary,
+            total_estimated_cost_summary=analysis_data.get("total_estimated_cost_summary"),
+            confidence_level=analysis_data.get("confidence_level"),
+            additional_notes=analysis_data.get("additional_notes"),
             identified_variables=[Variable(**v) for v in analysis_data.get("identified_variables", [])],
             formulas=[Formula(**f) for f in analysis_data.get("formulas", [])],
             business_assumptions=analysis_data.get("business_assumptions", []),
             improvement_recommendations=analysis_data.get("improvement_recommendations", []),
             value_market_potential_text=analysis_data.get("value_market_potential_text", ""),
-            executive_summary=analysis_data.get("executive_summary", "")
+            executive_summary=analysis_data.get("executive_summary", ""),
+            sources=analysis_data.get("sources"),
+            key_risks=analysis_data.get("key_risks"),
+            competitive_advantages=analysis_data.get("competitive_advantages")
         )
     except json.JSONDecodeError as e:
         error_msg = f"JSON parsing failed at line {e.lineno}, column {e.colno}: {e.msg}"
@@ -430,7 +217,7 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
 
 
 def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
-    """Analyze document using Google Gemini 2.5 Flash (latest)"""
+    """Analyze document using Google Gemini 2.0 Flash Experimental"""
     config = get_settings()
     genai.configure(api_key=config.gemini_api_key)
     
@@ -438,21 +225,20 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
     if settings is None:
         settings = AnalysisSettings()
     
+    # Optimized configuration for high-quality analysis
     generation_config = {
-        "temperature": settings.temperature,
+        "temperature": settings.temperature,  # Use full temperature range for quality
         "top_p": 0.95,
         "top_k": 40,
+        "max_output_tokens": 16384,  # Increased for comprehensive responses
     }
     
     model = genai.GenerativeModel(
-        'gemini-2.5-flash',  # Latest Gemini 2.5 Flash
+        'gemini-2.0-flash-exp',  # Latest fastest Gemini model
         generation_config=generation_config
     )
     
     prompt = get_analysis_prompt(text, settings)
-    
-    # Add explicit JSON-only instruction at the end
-    prompt += "\n\nIMPORTANT: Return ONLY valid JSON. Keep all insight fields under 200 characters. Use concise language. Start with { and end with }."
     
     try:
         response = model.generate_content(prompt)
@@ -462,8 +248,10 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
         print(f"Gemini API Error: {error_msg}")
         
         # Provide helpful error message
-        if "timeout" in error_msg.lower() or "504" in error_msg:
-            error_msg = "Request timed out. Try using 'Quick' analysis mode or the OpenAI provider."
+        if "timeout" in error_msg.lower() or "504" in error_msg or "deadline" in error_msg.lower():
+            error_msg = "Request timed out. The analysis is too complex. Try using the OpenAI provider."
+        elif "quota" in error_msg.lower() or "429" in error_msg:
+            error_msg = "API quota exceeded. Please try again later or use OpenAI provider."
         
         # Return error structure
         return ComprehensiveAnalysis(
@@ -480,7 +268,7 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
             identified_variables=[],
             formulas=[],
             business_assumptions=["Analysis failed due to API timeout or error"],
-            improvement_recommendations=["Use 'Quick' analysis depth in settings", "Try OpenAI provider", "Simplify your input document"],
+            improvement_recommendations=["Try OpenAI provider", "Simplify your input document"],
             value_market_potential_text=f"Analysis could not be completed: {error_msg}",
             executive_summary=f"Analysis failed: {error_msg}"
         )

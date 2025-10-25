@@ -17,10 +17,7 @@ const settingsPanel = document.getElementById('settingsPanel');
 const closeSettings = document.getElementById('closeSettings');
 const temperatureSlider = document.getElementById('temperatureSlider');
 const temperatureValue = document.getElementById('temperatureValue');
-const depthSelect = document.getElementById('depthSelect');
 const industrySelect = document.getElementById('industrySelect');
-const confidenceSlider = document.getElementById('confidenceSlider');
-const confidenceValue = document.getElementById('confidenceValue');
 const resetSettings = document.getElementById('resetSettings');
 
 // Chat elements
@@ -400,11 +397,8 @@ function loadSettings() {
     }
     return {
         temperature: 0.7,
-        analysis_depth: 'standard',
         industry_focus: 'general',
-        currency: 'USD',
-        confidence_threshold: 70,
-        response_format: 'structured'
+        currency: 'EUR'
     };
 }
 
@@ -417,12 +411,7 @@ function applySettings() {
         temperatureSlider.value = settings.temperature;
         temperatureValue.textContent = settings.temperature.toFixed(1);
     }
-    if (depthSelect) depthSelect.value = settings.analysis_depth;
     if (industrySelect) industrySelect.value = settings.industry_focus;
-    if (confidenceSlider) {
-        confidenceSlider.value = settings.confidence_threshold;
-        confidenceValue.textContent = `${settings.confidence_threshold}%`;
-    }
     const currencyRadio = document.querySelector(`input[name="currency"][value="${settings.currency}"]`);
     if (currencyRadio) currencyRadio.checked = true;
 }
@@ -445,22 +434,6 @@ if (temperatureSlider) {
         const val = parseFloat(e.target.value);
         temperatureValue.textContent = val.toFixed(1);
         settings.temperature = val;
-        saveSettings();
-    });
-}
-
-if (confidenceSlider) {
-    confidenceSlider.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value);
-        confidenceValue.textContent = `${val}%`;
-        settings.confidence_threshold = val;
-        saveSettings();
-    });
-}
-
-if (depthSelect) {
-    depthSelect.addEventListener('change', (e) => {
-        settings.analysis_depth = e.target.value;
         saveSettings();
     });
 }

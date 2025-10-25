@@ -88,7 +88,7 @@ def generate_questions(business_data):
     
     # Initialize the model
     model = genai.GenerativeModel(
-        model_name='gemini-2.0-flash-exp',
+        model_name='gemini-2.5-flash-exp',
         generation_config={
             "temperature": 0.7,  # Moderate temperature for creative but focused questions
             "top_p": 0.95,

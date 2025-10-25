@@ -118,7 +118,7 @@ def generate_formatted_json(input_data):
     
     # Initialize the model
     model = genai.GenerativeModel(
-        model_name='gemini-2.0-flash-exp',
+        model_name='gemini-2.5-flash',
         generation_config={
             "temperature": 0.1,  # Low temperature for consistent formatting
             "top_p": 0.95,

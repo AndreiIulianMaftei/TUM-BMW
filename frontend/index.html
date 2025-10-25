@@ -409,16 +409,6 @@
             </div>
             
             <div class="setting-group">
-                <label for="depthSelect">Analysis Depth</label>
-                <select id="depthSelect">
-                    <option value="quick">Quick Analysis</option>
-                    <option value="standard" selected>Standard Analysis</option>
-                    <option value="comprehensive">Comprehensive Analysis</option>
-                </select>
-                <p class="setting-hint">Comprehensive analysis provides more detailed insights</p>
-            </div>
-            
-            <div class="setting-group">
                 <label for="industrySelect">Industry Focus</label>
                 <select id="industrySelect">
                     <option value="general" selected>General</option>
@@ -447,13 +437,6 @@
                         <span>GBP (£)</span>
                     </label>
                 </div>
-            </div>
-            
-            <div class="setting-group">
-                <label for="confidenceSlider">Confidence Threshold</label>
-                <input type="range" id="confidenceSlider" min="0" max="100" step="5" value="70">
-                <span class="setting-value" id="confidenceValue">70%</span>
-                <p class="setting-hint">Minimum confidence level for insights</p>
             </div>
             
             <button class="btn-reset" id="resetSettings">Reset to Defaults</button>

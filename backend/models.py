@@ -37,6 +37,94 @@ class YearlyProjection(BaseModel):
         populate_by_name = True
 
 
+# New detailed cost analysis models
+class CostFigure(BaseModel):
+    """Industry cost comparison figure"""
+    company: str
+    project: str
+    amount: float
+    currency: str
+    year: int
+
+
+class MarketComparison(BaseModel):
+    """Market comparison with industry examples"""
+    similar_case: str
+    comparison_details: str
+    cost_figures: Optional[List[CostFigure]] = None
+    source: Optional[str] = None
+    reference_links: Optional[List[str]] = None
+
+
+class DevelopmentCost(BaseModel):
+    """Development cost item with detailed justification"""
+    category: str
+    estimated_amount: float
+    currency: str = "EUR"
+    reasoning: str
+    market_comparison: Optional[MarketComparison] = None
+
+
+class CustomerAcquisitionCost(BaseModel):
+    """Customer acquisition cost item"""
+    category: str
+    estimated_amount_per_customer: Optional[float] = None
+    estimated_annual_budget: float
+    currency: str = "EUR"
+    reasoning: str
+    market_comparison: Optional[MarketComparison] = None
+
+
+class DistributionOperationsCost(BaseModel):
+    """Distribution and operations cost item"""
+    category: str
+    estimated_amount: float
+    currency: str = "EUR"
+    reasoning: str
+    market_comparison: Optional[MarketComparison] = None
+
+
+class AfterSalesCost(BaseModel):
+    """After-sales cost item"""
+    category: str
+    estimated_amount: float
+    currency: str = "EUR"
+    reasoning: str
+    market_comparison: Optional[MarketComparison] = None
+
+
+class COGSItem(BaseModel):
+    """Cost of goods sold item"""
+    product_category: str
+    price_per_item: float
+    cogs_per_item: float
+    gross_margin_percentage: float
+    currency: str = "EUR"
+    reasoning: str
+    market_comparison: Optional[MarketComparison] = None
+
+
+class YearlyCostBreakdown(BaseModel):
+    """Yearly cost breakdown"""
+    projected_volume: int
+    one_time_development: float
+    customer_acquisition: float
+    distribution_operations: float
+    after_sales: float
+    total_cogs: float
+    cogs_per_unit: float
+    total_cost: float
+    currency: str = "EUR"
+
+
+class SevenYearSummary(BaseModel):
+    """Seven-year summary metrics"""
+    total_cost_2024_2030: float
+    total_volume_2024_2030: int
+    average_cost_per_unit: float
+    currency: str = "EUR"
+
+
 class TAMMetrics(BaseModel):
     description_of_public: str
     market_size: Optional[float] = None
@@ -152,6 +240,7 @@ class MarketPotential(BaseModel):
 
 
 class ComprehensiveAnalysis(BaseModel):
+    # Original market metrics
     tam: TAMMetrics
     sam: SAMMetrics
     som: SOMMetrics
@@ -162,6 +251,30 @@ class ComprehensiveAnalysis(BaseModel):
     ebit: EBITMetrics
     cogs: COGSMetrics
     market_potential: MarketPotential
+    
+    # New detailed cost analysis
+    development_costs: Optional[List[DevelopmentCost]] = None
+    total_development_cost: Optional[float] = None
+    customer_acquisition_costs: Optional[List[CustomerAcquisitionCost]] = None
+    total_customer_acquisition_cost: Optional[float] = None
+    distribution_and_operations_costs: Optional[List[DistributionOperationsCost]] = None
+    total_distribution_operations_cost: Optional[float] = None
+    after_sales_costs: Optional[List[AfterSalesCost]] = None
+    total_after_sales_cost: Optional[float] = None
+    cost_of_goods_sold: Optional[List[COGSItem]] = None
+    average_cogs_per_bundle: Optional[float] = None
+    
+    # Volume projections and summaries
+    volume_projections: Optional[Dict[str, int]] = None  # {"2024": 5000, "2025": 12000, ...}
+    yearly_cost_breakdown: Optional[Dict[str, YearlyCostBreakdown]] = None  # {"2024": {...}, "2025": {...}, ...}
+    seven_year_summary: Optional[SevenYearSummary] = None
+    
+    # Summary fields
+    total_estimated_cost_summary: Optional[Dict[str, float]] = None
+    confidence_level: Optional[str] = None
+    additional_notes: Optional[str] = None
+    
+    # Original summary fields
     identified_variables: List[Variable]
     formulas: List[Formula]
     business_assumptions: List[str]
@@ -176,11 +289,8 @@ class ComprehensiveAnalysis(BaseModel):
 class AnalysisSettings(BaseModel):
     """Advanced settings for analysis customization"""
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
-    analysis_depth: str = Field(default="comprehensive")  # quick, standard, comprehensive
     industry_focus: Optional[str] = None  # automotive, tech, healthcare, etc.
     currency: str = Field(default="EUR")  # EUR, USD, GBP
-    confidence_threshold: int = Field(default=60, ge=0, le=100)
-    response_format: str = Field(default="detailed")  # concise, standard, detailed
 
 
 class TextAnalysisRequest(BaseModel):
