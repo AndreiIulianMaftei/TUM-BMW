@@ -4,7 +4,8 @@ from backend.config import get_settings
 from backend.models import (
     ComprehensiveAnalysis, Variable, Formula, TAMMetrics, SAMMetrics, 
     SOMMetrics, ROIMetrics, TurnoverMetrics, VolumeMetrics, UnitEconomics,
-    EBITMetrics, COGSMetrics, MarketPotential, AnalysisSettings
+    EBITMetrics, COGSMetrics, MarketPotential, AnalysisSettings, 
+    IndustryExample, YearlyProjection
 )
 import json
 
@@ -95,87 +96,225 @@ CURRENCY FORMATTING:
 === REQUIRED JSON OUTPUT ===
 {{
   "tam": {{
+    "description_of_public": <string: Clear description of the total addressable market>,
     "market_size": <float: Total Addressable Market in {settings.currency}>,
     "growth_rate": <float: CAGR %>,
-    "time_horizon": <string: e.g., "2025-2030">,
-    "insight": <string: Detailed TAM calculation with data sources and methodology>,
-    "confidence": <int: 0-100>
+    "time_horizon": <string: e.g., "2024-2030">,
+    "numbers": {{
+      "2024": <float: TAM value for 2024>,
+      "2025": <float: TAM value for 2025>,
+      "2026": <float: TAM value for 2026>,
+      "2027": <float: TAM value for 2027>,
+      "2028": <float: TAM value for 2028>,
+      "2029": <float: TAM value for 2029>,
+      "2030": <float: TAM value for 2030>
+    }},
+    "justification": <string: Detailed explanation of TAM calculation methodology and assumptions>,
+    "insight": <string: Key insights about TAM>,
+    "confidence": <int: 0-100>,
+    "industry_example": {{
+      "name": <string: Name of comparable company/industry>,
+      "description": <string: How this example validates the TAM>,
+      "link": <string: URL to source or null>,
+      "metric_value": <string: Specific metric from example or null>
+    }},
+    "breakdown": {{
+      "segment_1": <float: Value>,
+      "segment_2": <float: Value>
+    }}
   }},
   "sam": {{
+    "description_of_public": <string: Clear description of serviceable available market>,
     "region": <string: Primary geographic market>,
     "target_segment": <string: Specific customer segment description>,
     "market_size": <float: Serviceable Available Market in {settings.currency}>,
-    "insight": <string: How SAM was narrowed from TAM - geographic/segment filters>,
-    "confidence": <int: 0-100>
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "justification": <string: Detailed SAM calculation and filtering logic>,
+    "insight": <string: How SAM was narrowed from TAM>,
+    "confidence": <int: 0-100>,
+    "industry_example": {{
+      "name": <string>,
+      "description": <string>,
+      "link": <string or null>,
+      "metric_value": <string or null>
+    }},
+    "penetration_rate": <float: % of TAM that SAM represents>
   }},
   "som": {{
-    "market_share": <float: Realistic market share % achievable in 3-5 years>,
+    "description_of_public": <string: Clear description of serviceable obtainable market>,
+    "market_share": <float: Realistic market share % achievable>,
     "revenue_potential": <float: Expected annual revenue in {settings.currency}>,
     "capture_period": <string: Timeline to achieve this share>,
-    "insight": <string: Market penetration strategy, competitive positioning, growth drivers>,
-    "confidence": <int: 0-100>
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "justification": <string: Detailed SOM calculation and market capture strategy>,
+    "insight": <string: Market penetration strategy and competitive positioning>,
+    "confidence": <int: 0-100>,
+    "industry_example": {{
+      "name": <string>,
+      "description": <string>,
+      "link": <string or null>,
+      "metric_value": <string or null>
+    }},
+    "customer_acquisition_cost": <float: CAC in {settings.currency} or null>
   }},
   "roi": {{
     "revenue": <float: Total projected revenue>,
     "cost": <float: Total investment required>,
     "roi_percentage": <float: ROI % = (Revenue-Cost)/Cost * 100>,
-    "insight": <string: Payback period, key cost assumptions, revenue ramp timeline>,
-    "confidence": <int: 0-100>
+    "numbers": {{
+      "2024": <float: ROI for each year>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "payback_period_months": <int: Number of months to break even or null>,
+    "insight": <string: Payback period and ROI trajectory>,
+    "confidence": <int: 0-100>,
+    "cost_breakdown": {{
+      "development": <float or null>,
+      "marketing": <float or null>,
+      "operations": <float or null>
+    }}
   }},
   "turnover": {{
     "year": <int: Target year for projection>,
     "total_revenue": <float: Annual revenue in {settings.currency}>,
     "yoy_growth": <float: Year-over-year growth %>,
-    "insight": <string: Revenue composition, growth drivers, scaling assumptions>,
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "revenue_streams": {{
+      "primary_product": <float or null>,
+      "services": <float or null>,
+      "recurring": <float or null>
+    }},
+    "insight": <string: Revenue composition and growth drivers>,
     "confidence": <int: 0-100>
   }},
   "volume": {{
     "units_sold": <int: Annual units/transactions>,
     "region": <string: Geographic scope>,
-    "period": <string: "Annual" or specific period>,
-    "insight": <string: Volume calculation: market size × penetration / avg transaction value>,
-    "confidence": <int: 0-100>
+    "period": <string: "Annual">,
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "insight": <string: Volume trajectory and drivers>,
+    "confidence": <int: 0-100>,
+    "growth_drivers": [<string: Key factor 1>, <string: Key factor 2>]
   }},
   "unit_economics": {{
     "unit_revenue": <float: Average revenue per unit in {settings.currency}>,
     "unit_cost": <float: Fully loaded cost per unit>,
     "margin": <float: Contribution margin per unit>,
-    "insight": <string: Margin %, path to profitability, economies of scale>,
-    "confidence": <int: 0-100>
+    "margin_percentage": <float: Margin as % or null>,
+    "ltv_cac_ratio": <float: Lifetime Value / CAC or null>,
+    "insight": <string: Unit economics health and scalability>,
+    "confidence": <int: 0-100>,
+    "cost_components": {{
+      "variable_costs": <float or null>,
+      "fixed_costs_per_unit": <float or null>
+    }}
   }},
   "ebit": {{
     "revenue": <float: Total revenue>,
     "operating_expense": <float: OpEx including R&D, S&M, G&A>,
     "ebit_margin": <float: EBIT in {settings.currency}>,
-    "insight": <string: Operating leverage, fixed vs variable costs, path to positive EBIT>,
-    "confidence": <int: 0-100>
+    "ebit_percentage": <float: EBIT as % of revenue or null>,
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "insight": <string: Operating leverage and path to profitability>,
+    "confidence": <int: 0-100>,
+    "opex_breakdown": {{
+      "rd": <float or null>,
+      "sales_marketing": <float or null>,
+      "general_admin": <float or null>
+    }}
   }},
   "cogs": {{
-    "material": <float: Direct material costs>,
-    "labor": <float: Direct labor costs>,
-    "overheads": <float: Manufacturing/delivery overhead>,
+    "material": <float: Direct material costs or null>,
+    "labor": <float: Direct labor costs or null>,
+    "overheads": <float: Manufacturing/delivery overhead or null>,
     "total_cogs": <float: Sum of all COGS>,
-    "insight": <string: Cost structure, supplier dependencies, opportunities for cost reduction>,
+    "cogs_percentage": <float: COGS as % of revenue or null>,
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "insight": <string: Cost structure and optimization opportunities>,
     "confidence": <int: 0-100>
   }},
   "market_potential": {{
     "market_size": <float: Overall addressable opportunity>,
     "penetration": <float: Realistic penetration %>,
     "growth_rate": <float: Market CAGR %>,
-    "insight": <string: Market attractiveness: growth, competition, barriers, timing>,
+    "numbers": {{
+      "2024": <float>,
+      "2025": <float>,
+      "2026": <float>,
+      "2027": <float>,
+      "2028": <float>,
+      "2029": <float>,
+      "2030": <float>
+    }},
+    "market_drivers": [<string: Driver 1>, <string: Driver 2>],
+    "barriers_to_entry": [<string: Barrier 1>, <string: Barrier 2>],
+    "insight": <string: Market attractiveness assessment>,
     "confidence": <int: 0-100>
   }},
   "identified_variables": [
     {{
       "name": <string: e.g., "Customer Acquisition Cost">,
-      "value": <string: e.g., "€250 per customer">,
+      "value": <string: e.g., "{currency_symbol}250 per customer">,
       "description": <string: Why this drives the business model>
     }}
   ],
   "formulas": [
     {{
       "name": <string: e.g., "LTV/CAC Ratio">,
-      "formula": <string: e.g., "(€1,200 × 3 years) / €250">,
+      "formula": <string: e.g., "({currency_symbol}1,200 × 3 years) / {currency_symbol}250">,
       "calculation": <string: e.g., "14.4x - Excellent unit economics">
     }}
   ],
@@ -186,7 +325,10 @@ CURRENCY FORMATTING:
     <string: List 5-8 specific, actionable recommendations to strengthen the business case>
   ],
   "value_market_potential_text": <string: Professional 3-paragraph executive summary for formal documentation>,
-  "executive_summary": <string: 1-paragraph elevator pitch highlighting the opportunity>
+  "executive_summary": <string: 1-paragraph elevator pitch highlighting the opportunity>,
+  "sources": [<string: URL 1>, <string: URL 2>],
+  "key_risks": [<string: Risk 1>, <string: Risk 2>],
+  "competitive_advantages": [<string: Advantage 1>, <string: Advantage 2>]
 }}
 
 === CRITICAL OUTPUT REQUIREMENTS ===
@@ -268,9 +410,9 @@ def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
     
     # Return error structure if parsing fails
     return ComprehensiveAnalysis(
-        tam=TAMMetrics(insight="Unable to complete TAM analysis due to response parsing error. Please try again or contact support.", confidence=0),
-        sam=SAMMetrics(insight="Unable to complete SAM analysis due to response parsing error. Please try again or contact support.", confidence=0),
-        som=SOMMetrics(insight="Unable to complete SOM analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        tam=TAMMetrics(description_of_public="Error", justification="Error", insight="Unable to complete TAM analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        sam=SAMMetrics(description_of_public="Error", justification="Error", insight="Unable to complete SAM analysis due to response parsing error. Please try again or contact support.", confidence=0),
+        som=SOMMetrics(description_of_public="Error", justification="Error", insight="Unable to complete SOM analysis due to response parsing error. Please try again or contact support.", confidence=0),
         roi=ROIMetrics(insight="Unable to complete ROI analysis due to response parsing error. Please try again or contact support.", confidence=0),
         turnover=TurnoverMetrics(insight="Unable to complete turnover analysis due to response parsing error. Please try again or contact support.", confidence=0),
         volume=VolumeMetrics(insight="Unable to complete volume analysis due to response parsing error. Please try again or contact support.", confidence=0),
@@ -325,9 +467,9 @@ def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> Compreh
         
         # Return error structure
         return ComprehensiveAnalysis(
-            tam=TAMMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
-            sam=SAMMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
-            som=SOMMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
+            tam=TAMMetrics(description_of_public="Error", justification="Error", insight=f"Analysis failed. {error_msg}", confidence=0),
+            sam=SAMMetrics(description_of_public="Error", justification="Error", insight=f"Analysis failed. {error_msg}", confidence=0),
+            som=SOMMetrics(description_of_public="Error", justification="Error", insight=f"Analysis failed. {error_msg}", confidence=0),
             roi=ROIMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
             turnover=TurnoverMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
             volume=VolumeMetrics(insight=f"Analysis failed. {error_msg}", confidence=0),
