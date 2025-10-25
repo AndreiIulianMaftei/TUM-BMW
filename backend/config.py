@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     mongodb_uri: str
     database_name: str
     gemini_api_key: str
+    openai_api_key: str
     secret_key: str
     debug: bool = True
     max_file_size: int = 10485760

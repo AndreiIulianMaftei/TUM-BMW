@@ -5,8 +5,26 @@ const uploadSection = document.getElementById('uploadSection');
 const loadingSection = document.getElementById('loadingSection');
 const resultsSection = document.getElementById('resultsSection');
 const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+const geminiOption = document.getElementById('geminiOption');
+const openaiOption = document.getElementById('openaiOption');
 
 let selectedFile = null;
+let selectedProvider = 'gemini'; // Default provider
+
+// LLM Provider Selection
+geminiOption.classList.add('active'); // Set Gemini as default
+
+geminiOption.addEventListener('click', () => {
+    selectedProvider = 'gemini';
+    geminiOption.classList.add('active');
+    openaiOption.classList.remove('active');
+});
+
+openaiOption.addEventListener('click', () => {
+    selectedProvider = 'openai';
+    openaiOption.classList.add('active');
+    geminiOption.classList.remove('active');
+});
 
 uploadBox.addEventListener('click', () => fileInput.click());
 
@@ -64,9 +82,15 @@ uploadBtn.addEventListener('click', async () => {
     
     const formData = new FormData();
     formData.append('file', selectedFile);
+    formData.append('provider', selectedProvider);
     
     uploadSection.style.display = 'none';
     loadingSection.style.display = 'flex';
+    
+    // Update loading message based on provider
+    const loadingCard = document.querySelector('.loading-card h3');
+    const providerName = selectedProvider === 'gemini' ? 'Google Gemini 2.5 Flash' : 'OpenAI o1';
+    loadingCard.textContent = `Analyzing with ${providerName}`;
     
     try {
         const response = await fetch('/api/upload', {

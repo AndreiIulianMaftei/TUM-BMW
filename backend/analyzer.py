@@ -1,158 +1,215 @@
 import google.generativeai as genai
+from openai import OpenAI
 from backend.config import get_settings
 from backend.models import (
     ComprehensiveAnalysis, Variable, Formula, TAMMetrics, SAMMetrics, 
     SOMMetrics, ROIMetrics, TurnoverMetrics, VolumeMetrics, UnitEconomics,
-    EBITMetrics, COGSMetrics, MarketPotential
+    EBITMetrics, COGSMetrics, MarketPotential, AnalysisSettings
 )
 import json
 
 
-def analyze_bmw_1pager(text: str) -> ComprehensiveAnalysis:
-    settings = get_settings()
-    genai.configure(api_key=settings.gemini_api_key)
-    model = genai.GenerativeModel('gemini-2.0-flash-exp')
+def get_analysis_prompt(text: str, settings: AnalysisSettings = None) -> str:
+    """
+    Generate the comprehensive analysis prompt for both LLM providers.
     
-    prompt = f"""
-You are an expert financial analyst and business strategist specializing in automotive innovation and market potential assessment. 
-Analyze the following BMW 1-Pager document and generate a comprehensive market and financial analysis.
+    THIS IS THE MOST CRITICAL FUNCTION - The system prompt determines analysis quality.
+    
+    Key improvements:
+    1. Structured output format with strict JSON schema
+    2. Industry-specific context injection
+    3. Confidence scoring methodology
+    4. Currency-aware calculations
+    5. Depth-based detail requirements
+    """
+    
+    # Default settings if none provided
+    if settings is None:
+        settings = AnalysisSettings()
+    
+    # Industry-specific context
+    industry_context = ""
+    if settings.industry_focus:
+        industry_contexts = {
+            "automotive": "Focus on automotive industry dynamics, supply chain complexity, capital intensity, and long development cycles. Consider EV transition, autonomous driving trends, and changing mobility patterns.",
+            "tech": "Focus on software/SaaS metrics, user acquisition costs, churn rates, network effects, and scalability. Consider rapid iteration cycles and platform dynamics.",
+            "healthcare": "Focus on regulatory requirements, reimbursement models, clinical validation timelines, and patient outcomes. Consider compliance costs and long sales cycles.",
+            "retail": "Focus on customer acquisition costs, inventory turnover, omnichannel strategies, and margin pressure. Consider seasonal patterns and consumer behavior shifts.",
+            "fintech": "Focus on transaction volumes, regulatory compliance, security costs, and customer lifetime value. Consider trust factors and switching costs."
+        }
+        industry_context = industry_contexts.get(settings.industry_focus, "")
+    
+    # Depth requirements
+    depth_instructions = {
+        "quick": "Provide high-level estimates with key assumptions. Focus on headline metrics and primary insights.",
+        "standard": "Balance detail with efficiency. Include main calculations and critical assumptions.",
+        "comprehensive": "Provide detailed analysis with multiple scenarios, sensitivity analysis, and thorough justification for all assumptions."
+    }
+    depth_instruction = depth_instructions.get(settings.analysis_depth, depth_instructions["comprehensive"])
+    
+    currency_symbol = {"EUR": "€", "USD": "$", "GBP": "£"}.get(settings.currency, "€")
+    
+    return f"""
+You are ProspectAI - an elite financial analyst and business strategist with deep expertise in market analysis, 
+financial modeling, and strategic planning. You combine rigorous analytical methods with practical business acumen.
 
-CRITICAL INSTRUCTIONS:
-1. Extract ALL relevant business information from the document
-2. Calculate realistic financial metrics based on the business model described
-3. Use automotive industry benchmarks and comparable market data
-4. Provide specific numbers with clear reasoning
-5. Rate your confidence (0-100%) for each metric based on data availability
-6. Include actionable recommendations for improvement
+=== ANALYSIS CONFIGURATION ===
+Analysis Depth: {settings.analysis_depth.upper()}
+Currency: {settings.currency} ({currency_symbol})
+Confidence Threshold: {settings.confidence_threshold}%
+{f"Industry Focus: {settings.industry_focus.upper()}" if settings.industry_focus else ""}
 
-INPUT DOCUMENT:
+{industry_context}
+
+=== YOUR MISSION ===
+Analyze the following business concept and generate an investor-ready financial and market analysis.
+{depth_instruction}
+
+=== INPUT DOCUMENT ===
 {text}
 
-REQUIRED OUTPUT (JSON format):
+=== ANALYSIS FRAMEWORK ===
+
+CONFIDENCE SCORING METHODOLOGY:
+- 80-100%: Based on hard data, industry reports, or clear comparable companies
+- 60-79%: Based on reasonable assumptions with some market data support
+- 40-59%: Educated estimates with limited data, but logical reasoning
+- 20-39%: Rough estimates with high uncertainty
+- 0-19%: Pure speculation, significant data gaps
+
+Only include metrics with confidence >= {settings.confidence_threshold}% unless critical for completeness.
+
+CALCULATION PRINCIPLES:
+1. Work from first principles - show your math
+2. Use industry benchmarks (cite sources when possible)
+3. Consider market maturity, competition, and barriers to entry
+4. Account for customer acquisition costs and churn
+5. Factor in seasonality and economic cycles
+6. Include realistic implementation timelines
+
+CURRENCY FORMATTING:
+- Express ALL monetary values in {settings.currency}
+- Use actual numbers, not ranges (pick conservative midpoint)
+- Round to 2 decimal places for precision
+
+=== REQUIRED JSON OUTPUT ===
 {{
   "tam": {{
-    "market_size": <float: Total Addressable Market in EUR/USD>,
-    "growth_rate": <float: Annual growth rate %>,
-    "time_horizon": <string: "2025-2030" or relevant period>,
-    "insight": <string: Clear explanation of TAM calculation and sources>,
+    "market_size": <float: Total Addressable Market in {settings.currency}>,
+    "growth_rate": <float: CAGR %>,
+    "time_horizon": <string: e.g., "2025-2030">,
+    "insight": <string: Detailed TAM calculation with data sources and methodology>,
     "confidence": <int: 0-100>
   }},
   "sam": {{
-    "region": <string: Geographic focus>,
-    "target_segment": <string: Specific customer segment>,
-    "market_size": <float: Serviceable Available Market in EUR/USD>,
-    "insight": <string: How SAM was derived from TAM>,
+    "region": <string: Primary geographic market>,
+    "target_segment": <string: Specific customer segment description>,
+    "market_size": <float: Serviceable Available Market in {settings.currency}>,
+    "insight": <string: How SAM was narrowed from TAM - geographic/segment filters>,
     "confidence": <int: 0-100>
   }},
   "som": {{
-    "market_share": <float: Realistic market share % in 3-5 years>,
-    "revenue_potential": <float: Expected revenue in EUR/USD>,
-    "capture_period": <string: "Year 1-3" timeframe>,
-    "insight": <string: Market penetration strategy and assumptions>,
+    "market_share": <float: Realistic market share % achievable in 3-5 years>,
+    "revenue_potential": <float: Expected annual revenue in {settings.currency}>,
+    "capture_period": <string: Timeline to achieve this share>,
+    "insight": <string: Market penetration strategy, competitive positioning, growth drivers>,
     "confidence": <int: 0-100>
   }},
   "roi": {{
-    "revenue": <float: Projected revenue>,
-    "cost": <float: Total investment/cost>,
-    "roi_percentage": <float: ROI %>,
-    "insight": <string: ROI calculation breakdown and timeline>,
+    "revenue": <float: Total projected revenue>,
+    "cost": <float: Total investment required>,
+    "roi_percentage": <float: ROI % = (Revenue-Cost)/Cost * 100>,
+    "insight": <string: Payback period, key cost assumptions, revenue ramp timeline>,
     "confidence": <int: 0-100>
   }},
   "turnover": {{
-    "year": <int: Projection year>,
-    "total_revenue": <float: Annual revenue>,
+    "year": <int: Target year for projection>,
+    "total_revenue": <float: Annual revenue in {settings.currency}>,
     "yoy_growth": <float: Year-over-year growth %>,
-    "insight": <string: Revenue projection rationale>,
+    "insight": <string: Revenue composition, growth drivers, scaling assumptions>,
     "confidence": <int: 0-100>
   }},
   "volume": {{
-    "units_sold": <int: Expected transaction/unit volume>,
+    "units_sold": <int: Annual units/transactions>,
     "region": <string: Geographic scope>,
     "period": <string: "Annual" or specific period>,
-    "insight": <string: Volume calculation based on market size and penetration>,
+    "insight": <string: Volume calculation: market size × penetration / avg transaction value>,
     "confidence": <int: 0-100>
   }},
   "unit_economics": {{
-    "unit_revenue": <float: Average revenue per unit/transaction>,
-    "unit_cost": <float: Cost per unit>,
-    "margin": <float: Profit margin per unit>,
-    "insight": <string: Unit economics breakdown and sustainability>,
+    "unit_revenue": <float: Average revenue per unit in {settings.currency}>,
+    "unit_cost": <float: Fully loaded cost per unit>,
+    "margin": <float: Contribution margin per unit>,
+    "insight": <string: Margin %, path to profitability, economies of scale>,
     "confidence": <int: 0-100>
   }},
   "ebit": {{
     "revenue": <float: Total revenue>,
-    "operating_expense": <float: Operating expenses>,
-    "ebit_margin": <float: EBIT (revenue - opex)>,
-    "insight": <string: Operational profitability analysis>,
+    "operating_expense": <float: OpEx including R&D, S&M, G&A>,
+    "ebit_margin": <float: EBIT in {settings.currency}>,
+    "insight": <string: Operating leverage, fixed vs variable costs, path to positive EBIT>,
     "confidence": <int: 0-100>
   }},
   "cogs": {{
-    "material": <float: Material costs>,
-    "labor": <float: Labor costs>,
-    "overheads": <float: Overhead costs>,
+    "material": <float: Direct material costs>,
+    "labor": <float: Direct labor costs>,
+    "overheads": <float: Manufacturing/delivery overhead>,
     "total_cogs": <float: Sum of all COGS>,
-    "insight": <string: Cost structure breakdown>,
+    "insight": <string: Cost structure, supplier dependencies, opportunities for cost reduction>,
     "confidence": <int: 0-100>
   }},
   "market_potential": {{
-    "market_size": <float: Overall market opportunity>,
-    "penetration": <float: Achievable penetration %>,
-    "growth_rate": <float: Market growth %>,
-    "insight": <string: Overall market attractiveness and opportunity>,
+    "market_size": <float: Overall addressable opportunity>,
+    "penetration": <float: Realistic penetration %>,
+    "growth_rate": <float: Market CAGR %>,
+    "insight": <string: Market attractiveness: growth, competition, barriers, timing>,
     "confidence": <int: 0-100>
   }},
   "identified_variables": [
     {{
-      "name": <string: Variable name>,
-      "value": <string: Estimated value with units>,
-      "description": <string: Why this variable is critical>
+      "name": <string: e.g., "Customer Acquisition Cost">,
+      "value": <string: e.g., "€250 per customer">,
+      "description": <string: Why this drives the business model>
     }}
   ],
   "formulas": [
     {{
-      "name": <string: Formula name>,
-      "formula": <string: Mathematical formula>,
-      "calculation": <string: Calculated result with explanation>
+      "name": <string: e.g., "LTV/CAC Ratio">,
+      "formula": <string: e.g., "(€1,200 × 3 years) / €250">,
+      "calculation": <string: e.g., "14.4x - Excellent unit economics">
     }}
   ],
   "business_assumptions": [
-    <string: List all key assumptions made in the analysis>
+    <string: List 5-10 critical assumptions underpinning this analysis>
   ],
   "improvement_recommendations": [
-    <string: Actionable recommendations to increase market potential>
+    <string: List 5-8 specific, actionable recommendations to strengthen the business case>
   ],
-  "value_market_potential_text": <string: Professional 2-3 paragraph summary for BMW documentation>,
-  "executive_summary": <string: 1 paragraph high-level overview for executives>
+  "value_market_potential_text": <string: Professional 3-paragraph executive summary for formal documentation>,
+  "executive_summary": <string: 1-paragraph elevator pitch highlighting the opportunity>
 }}
 
-CALCULATION GUIDELINES:
-- Use automotive industry averages (e.g., motorcycle accessories market ~$50B globally)
-- Consider BMW's premium positioning (higher margins, smaller volume)
-- Account for geographic variations in market size
-- Factor in digital transformation trends and e-commerce growth
-- Include realistic cost structures for automotive retail
-- Use conservative estimates where data is uncertain
-- Reference industry reports, market research, and comparable companies
-- For BMW motorcycle accessories: consider install base, accessory attach rate, average order value
+=== CRITICAL OUTPUT REQUIREMENTS ===
+1. OUTPUT ONLY VALID JSON - no markdown, no explanations outside JSON
+2. ALL monetary values in {settings.currency}
+3. Insights must be specific, quantitative, and actionable
+4. Confidence scores must reflect data quality honestly
+5. Recommendations must be prioritized and implementable
+6. Use conservative assumptions (better to under-promise)
 
-CONTEXT-SPECIFIC ANALYSIS:
-- Analyze the specific business model described
-- Identify cost drivers and revenue drivers mentioned
-- Extract customer segments and their needs
-- Assess competitive advantages and barriers to entry
-- Consider implementation complexity and timeline
-- Evaluate scalability and long-term sustainability
-
-OUTPUT ONLY VALID JSON. Be specific, quantitative, and investor-ready.
+Begin analysis now:
 """
-    
-    response = model.generate_content(prompt)
-    
+
+
+def parse_analysis_response(response_text: str) -> ComprehensiveAnalysis:
+    """Parse and validate the LLM response into ComprehensiveAnalysis model"""
     try:
-        response_text = response.text.strip()
-        
+        # Clean up markdown code blocks if present
+        response_text = response_text.strip()
         if response_text.startswith("```json"):
             response_text = response_text[7:]
+        if response_text.startswith("```"):
+            response_text = response_text[3:]
         if response_text.endswith("```"):
             response_text = response_text[:-3]
         
@@ -176,8 +233,8 @@ OUTPUT ONLY VALID JSON. Be specific, quantitative, and investor-ready.
             value_market_potential_text=analysis_data.get("value_market_potential_text", ""),
             executive_summary=analysis_data.get("executive_summary", "")
         )
-        
     except Exception as e:
+        # Return error structure
         return ComprehensiveAnalysis(
             tam=TAMMetrics(insight=f"Error in TAM calculation: {str(e)}", confidence=0),
             sam=SAMMetrics(insight=f"Error in SAM calculation: {str(e)}", confidence=0),
@@ -196,3 +253,70 @@ OUTPUT ONLY VALID JSON. Be specific, quantitative, and investor-ready.
             value_market_potential_text=f"Analysis encountered an error: {str(e)}",
             executive_summary=f"Analysis could not be completed: {str(e)}"
         )
+
+
+def analyze_with_gemini(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
+    """Analyze document using Google Gemini 2.5 Flash (latest)"""
+    config = get_settings()
+    genai.configure(api_key=config.gemini_api_key)
+    
+    # Use temperature from settings
+    if settings is None:
+        settings = AnalysisSettings()
+    
+    generation_config = {
+        "temperature": settings.temperature,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+    }
+    
+    model = genai.GenerativeModel(
+        'gemini-2.5-flash',  # Latest Gemini 2.5 Flash model
+        generation_config=generation_config
+    )
+    
+    prompt = get_analysis_prompt(text, settings)
+    response = model.generate_content(prompt)
+    
+    return parse_analysis_response(response.text)
+
+
+def analyze_with_openai(text: str, settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
+    """Analyze document using OpenAI o1 (best reasoning model for complex analysis)"""
+    config = get_settings()
+    client = OpenAI(api_key=config.openai_api_key)
+    
+    if settings is None:
+        settings = AnalysisSettings()
+    
+    prompt = get_analysis_prompt(text, settings)
+    
+    # o1 models don't support system messages or temperature
+    # They use reasoning tokens for complex analysis
+    response = client.chat.completions.create(
+        model="o1",  # Best OpenAI model for complex reasoning
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+    
+    return parse_analysis_response(response.choices[0].message.content)
+
+
+def analyze_bmw_1pager(text: str, provider: str = "gemini", settings: AnalysisSettings = None) -> ComprehensiveAnalysis:
+    """
+    Main analysis function that routes to the appropriate LLM provider
+    
+    Args:
+        text: The extracted document text
+        provider: Either 'gemini' or 'openai'
+        settings: Optional analysis settings for customization
+    
+    Returns:
+        ComprehensiveAnalysis model with all financial metrics
+    """
+    if provider.lower() == "openai":
+        return analyze_with_openai(text, settings)
+    else:
+        return analyze_with_gemini(text, settings)

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
+from datetime import datetime
 
 
 class Variable(BaseModel):
@@ -112,3 +113,42 @@ class ComprehensiveAnalysis(BaseModel):
     improvement_recommendations: List[str]
     value_market_potential_text: str
     executive_summary: str
+
+
+class AnalysisSettings(BaseModel):
+    """Advanced settings for analysis customization"""
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0)
+    analysis_depth: str = Field(default="comprehensive")  # quick, standard, comprehensive
+    industry_focus: Optional[str] = None  # automotive, tech, healthcare, etc.
+    currency: str = Field(default="EUR")  # EUR, USD, GBP
+    confidence_threshold: int = Field(default=60, ge=0, le=100)
+    response_format: str = Field(default="detailed")  # concise, standard, detailed
+
+
+class TextAnalysisRequest(BaseModel):
+    """Request model for text-based analysis"""
+    text: str = Field(..., min_length=50, max_length=50000)
+    provider: str = Field(default="gemini")
+    settings: Optional[AnalysisSettings] = None
+
+
+class ChatMessage(BaseModel):
+    """Chat message model"""
+    role: str  # user, assistant, system
+    content: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
+class ChatRequest(BaseModel):
+    """Request for chat interaction"""
+    message: str = Field(..., min_length=1, max_length=2000)
+    document_id: Optional[str] = None  # Reference to analyzed document
+    conversation_history: List[ChatMessage] = Field(default_factory=list)
+    provider: str = Field(default="gemini")
+
+
+class ChatResponse(BaseModel):
+    """Response from chat interaction"""
+    message: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    tokens_used: Optional[int] = None

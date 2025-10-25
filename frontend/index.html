@@ -60,6 +60,46 @@
                         <div class="upload-instructions">
                             <div class="step-indicator">
                                 <div class="step">1</div>
+                                <span>Choose your AI provider</span>
+                            </div>
+                        </div>
+                        
+                        <!-- LLM Provider Switcher -->
+                        <div class="llm-switcher">
+                            <div class="llm-option" data-provider="gemini" id="geminiOption">
+                                <div class="llm-icon-wrapper">
+                                    <img src="icons/gemini.svg" alt="Google Gemini" class="llm-icon">
+                                </div>
+                                <div class="llm-info">
+                                    <h4>Google Gemini</h4>
+                                    <p>Gemini 2.5 Flash</p>
+                                </div>
+                                <div class="llm-check">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="llm-option" data-provider="openai" id="openaiOption">
+                                <div class="llm-icon-wrapper">
+                                    <img src="icons/openai.svg" alt="OpenAI" class="llm-icon">
+                                </div>
+                                <div class="llm-info">
+                                    <h4>OpenAI</h4>
+                                    <p>o1 (Reasoning)</p>
+                                </div>
+                                <div class="llm-check">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upload-instructions" style="margin-top: 32px;">
+                            <div class="step-indicator">
+                                <div class="step">2</div>
                                 <span>Upload your innovation document</span>
                             </div>
                         </div>
