@@ -9,6 +9,7 @@ __pycache__/
 ai_summary.txt
 index.html
 test.pdf
+first.json
 
 # === Environment ===
 .env
