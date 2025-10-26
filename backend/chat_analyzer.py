@@ -175,6 +175,15 @@ AVAILABLE PARAMETERS TO MODIFY:
 - fleet_size_or_units: Number of units or fleet size
 - price_per_unit: Price per unit in euros
 
+You may also accept HIGH-LEVEL metric overrides:
+ - TAM: Will be interpreted as new annual_revenue_or_savings baseline (no double reduction)
+ - SAM: Will adjust market_coverage relative to current TAM
+ - SOM: Will adjust take_rate relative to current SAM
+If user supplies TAM + SAM + SOM together, compute coverage and take sequentially.
+
+AUTO-SCALING RULE (Savings projects):
+If user changes fleet_size_or_units WITHOUT explicitly changing annual_revenue_or_savings, the system will assume per-unit savings remain constant and will proportionally scale the annual total. To override this behavior, explicitly set a new annual_revenue_or_savings value.
+
 EXAMPLE USER REQUESTS:
 - "What if we increase the growth rate to 10%?" → Modify growth_rate to 10.0
 - "Try with 20% higher development cost" → Modify development_cost accordingly
@@ -274,6 +283,11 @@ def _extract_parameter_modifications(
     print("   🔍 Extracting parameter modifications...")
     
     modifications = {}
+
+    # Early detection of revert/reset intent
+    if re.search(r'\b(revert|reset|undo|original)\b', user_message.lower()) and not re.search(r'(increase|decrease)', user_message.lower()):
+        print("   ↩️ Revert command detected in user message")
+        return {"__revert": True}
     
     # First, try to extract JSON block from AI response
     json_match = re.search(r'```json\s*(\{.*?\})\s*```', ai_response, re.DOTALL)
@@ -295,6 +309,8 @@ def _extract_parameter_modifications(
     
     # Validate modifications
     if modifications:
+        # Map high-level semantic keys (TAM/SAM/SOM) to underlying parameters first
+        modifications = _map_semantic_modifications(modifications, analysis_context)
         modifications = _validate_modifications(modifications, analysis_context)
         print(f"   ✓ Validated modifications: {len(modifications)} parameters")
     
@@ -324,11 +340,11 @@ def _infer_modifications_from_message(
             print(f"   ✓ Detected growth_rate: {modifications['growth_rate']}")
             break
     
-    # Development cost patterns
+    # Development cost patterns - must match million/m suffix to avoid false matches
     cost_patterns = [
-        r'development cost.*?€?(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:million|m)?',
+        r'(?:development\s+)?cost\s+(?:was|is|at|=)?\s*€?(\d+(?:,\d{3})*(?:\.\d+)?)\s*(million|m)\b',  # "cost was 10m"
+        r'development cost.*?€?(\d+(?:,\d{3})*(?:\.\d+)?)\s*(million|m)\b',  # "development cost 50m"
         r'(?:increase|decrease).*?cost.*?(\d+)\s*%',
-        r'cost.*?€?(\d+(?:,\d{3})*)'
     ]
     for pattern in cost_patterns:
         match = re.search(pattern, message_lower)
@@ -344,8 +360,10 @@ def _infer_modifications_from_message(
                 elif 'decrease' in message_lower:
                     value = current_cost * (1 - value / 100)
             
-            # Check for million
-            if 'million' in message_lower or ' m' in message_lower:
+            # Check for million (group 2 in first/second pattern, or word in message)
+            if len(match.groups()) > 1 and match.group(2) in ['million', 'm']:
+                value *= 1_000_000
+            elif 'million' in message_lower:
                 value *= 1_000_000
             
             modifications['development_cost'] = value
@@ -389,8 +407,200 @@ def _infer_modifications_from_message(
             modifications['royalty_percentage'] = float(match.group(1))
             print(f"   ✓ Detected royalty_percentage: {modifications['royalty_percentage']}")
             break
+
+    # Income / revenue direct value (e.g., "income was 5 million", "revenue 3.2m", "total income was 1m")
+    income_patterns = [
+        r'(?:total\s+)?(?:income|revenue|savings)\s+(?:was|is|at|=)?\s*€?(\d+(?:,\d{3})*(?:\.\d+)?)\s*(million|m)\b',  # "income was 1m"
+        r'(?:total\s+)?(?:income|revenue|savings)\s*(?:was|is|at|=)?\s*(?:always\s+)?€?(\d+(?:,\d{3})*(?:\.\d+)?)\s*(million|m)?\b',
+        r'(?:income|revenue|savings).*?€\s*(\d+(?:,\d{3})*)'
+    ]
+    for pattern in income_patterns:
+        match = re.search(pattern, message_lower)
+        if match:
+            raw = match.group(1).replace(',', '')
+            val = float(raw)
+            # Check if million/m suffix captured in group 2, or anywhere in message
+            if (len(match.groups()) > 1 and match.group(2) in ['million', 'm']) or 'million' in message_lower:
+                val *= 1_000_000
+            modifications.setdefault('annual_revenue_or_savings', val)
+            print(f"   ✓ Detected income/revenue value: {val}")
+            break
+
+    # Generic parameter override & delta parsing
+    generic = _parse_generic_parameter_adjustments(message, analysis_context)
+    if generic:
+        modifications.update(generic)
+        print(f"   ✓ Generic adjustments parsed: {list(generic.keys())}")
     
     return modifications
+
+
+def _parse_generic_parameter_adjustments(message: str, analysis_context: Dict[str, Any]) -> Dict[str, Any]:
+    """Parse generic 'set', '=', 'increase/decrease' patterns for any known parameter.
+    Supports:
+      - set growth_rate to 7%
+      - change market coverage to 65%
+      - take_rate = 12%
+      - increase development cost by 15%
+      - decrease annual revenue by 2 million
+      - increase annual_revenue_or_savings by 500000
+      - set TAM to 10 million (handled later by semantic mapper)
+    Returns raw modifications (semantic mapping handled separately).
+    """
+    known_params = [
+        'growth_rate', 'development_cost', 'royalty_percentage', 'take_rate', 'market_coverage',
+        'annual_revenue_or_savings', 'fleet_size_or_units', 'price_per_unit', 'TAM', 'SAM', 'SOM',
+        'volume', 'fleet', 'units'  # Aliases for fleet_size_or_units
+    ]
+    msg = message.lower()
+    mods: Dict[str, Any] = {}
+
+    def parse_number(token: str) -> Optional[float]:
+        token = token.replace(',', '').strip()
+        mult = 1.0
+        if token.endswith('m'):  # 5m shorthand
+            mult = 1_000_000
+            token = token[:-1]
+        if token.endswith('k'):  # 500k shorthand
+            mult = 1_000
+            token = token[:-1]
+        try:
+            val = float(token)
+            return val * mult
+        except ValueError:
+            return None
+
+    # Normalize aliases to canonical param names
+    def normalize_param(param: str) -> str:
+        param = param.strip().replace(' ', '_')
+        if param in ['volume', 'fleet', 'units', 'fleet_size']:
+            return 'fleet_size_or_units'
+        return param
+    
+    # SET / CHANGE / UPDATE patterns
+    set_pattern = re.compile(r'(set|change|update)\s+([a-z_ ]+)\s+(?:to|=|to\s+be)\s*([\d.,]+(?:\s*million|\s*m|\s*k|%|))', re.IGNORECASE)
+    for verb, param_raw, value_raw in set_pattern.findall(message):
+        param = normalize_param(param_raw.strip())
+        if param in known_params or param == 'fleet_size_or_units':
+            value = value_raw.strip()
+            is_percent = value.endswith('%')
+            value = value.rstrip('%').strip()
+            if 'million' in value:
+                value = value.replace('million', '').strip()
+                parsed = parse_number(value)
+                if parsed is not None:
+                    parsed *= 1_000_000
+            else:
+                parsed = parse_number(value)
+            if parsed is not None:
+                if is_percent:
+                    mods[param] = parsed  # percent kept as raw value
+                else:
+                    mods[param] = parsed
+                print(f"   → Parsed SET for {param} = {mods[param]}")
+    
+    # Contextual "now X" pattern for volume/fleet (e.g., "now 50k")
+    # Only apply if previous message context suggests volume modification
+    now_pattern = re.compile(r'\bnow\s+([\d.,]+(?:k|m)?)\b', re.IGNORECASE)
+    now_match = now_pattern.search(message)
+    if now_match and len(message.split()) <= 3:  # Short message like "now 50k"
+        # Assume continuing volume conversation
+        value_raw = now_match.group(1)
+        parsed = parse_number(value_raw)
+        if parsed and 'fleet_size_or_units' not in mods:
+            mods['fleet_size_or_units'] = int(parsed)
+            print(f"   → Parsed contextual NOW for fleet_size_or_units = {mods['fleet_size_or_units']}")
+
+    # DIRECT assignment pattern e.g., market_coverage = 70%
+    assign_pattern = re.compile(r'\b([a-z_]{3,})\s*=\s*([\d.,]+(?:\s*million|\s*m|\s*k|%|))', re.IGNORECASE)
+    for param_raw, value_raw in assign_pattern.findall(message):
+        param = normalize_param(param_raw.strip())
+        if param in known_params or param == 'fleet_size_or_units':
+            value = value_raw.strip()
+            is_percent = value.endswith('%')
+            value = value.rstrip('%').strip()
+            if 'million' in value:
+                value = value.replace('million', '').strip()
+                parsed = parse_number(value)
+                if parsed is not None:
+                    parsed *= 1_000_000
+            else:
+                parsed = parse_number(value)
+            if parsed is not None:
+                if is_percent:
+                    mods[param] = parsed
+                else:
+                    mods[param] = parsed
+                print(f"   → Parsed DIRECT assignment for {param} = {mods[param]}")
+    
+    # Volume/fleet specific patterns (e.g., "volume was 20", "if fleet was 100")
+    volume_patterns = [
+        r'\b(?:volume|fleet|units?)\s+(?:was|is|of|at)\s+([\d.,]+(?:k|m)?)\b',  # "volume was 20", "fleet is 100k"
+        r'\bif\s+(?:volume|fleet|units?)\s+(?:was|were|is)\s+([\d.,]+(?:k|m)?)\b',  # "if volume was 20"
+    ]
+    for pattern in volume_patterns:
+        match = re.search(pattern, msg)
+        if match and 'fleet_size_or_units' not in mods:
+            value_raw = match.group(1)
+            parsed = parse_number(value_raw)
+            if parsed is not None:
+                mods['fleet_size_or_units'] = int(parsed)
+                print(f"   → Parsed volume/fleet pattern: fleet_size_or_units = {mods['fleet_size_or_units']}")
+                break
+            if parsed is not None:
+                mods[param] = parsed
+                print(f"   → Parsed ASSIGN for {param} = {mods[param]}")
+
+    # INCREASE / DECREASE patterns
+    incdec_pattern = re.compile(r'(increase|decrease)\s+([a-z_ ]+)\s+by\s+([\d.,]+(?:\s*million|\s*m|\s*k|%|))', re.IGNORECASE)
+    for action, param_raw, value_raw in incdec_pattern.findall(message):
+        param = param_raw.strip().replace(' ', '_')
+        if param in known_params:
+            value = value_raw.strip()
+            is_percent = value.endswith('%')
+            value = value.rstrip('%').strip()
+            base_current = None
+            # Try to derive current value from context
+            if param in analysis_context:
+                base_current = analysis_context.get(param)
+            elif param == 'annual_revenue_or_savings':
+                base_current = analysis_context.get('som', {}).get('revenue_potential') or analysis_context.get('tam', {}).get('market_size')
+            elif param == 'market_coverage':
+                base_current = analysis_context.get('market_coverage') or analysis_context.get('sam', {}).get('penetration_rate')
+            elif param == 'take_rate':
+                base_current = analysis_context.get('take_rate')
+            elif param == 'growth_rate':
+                base_current = analysis_context.get('tam', {}).get('growth_rate')
+
+            if 'million' in value:
+                value = value.replace('million', '').strip()
+                parsed = parse_number(value)
+                if parsed is not None:
+                    parsed *= 1_000_000
+            else:
+                parsed = parse_number(value)
+            if parsed is None:
+                continue
+
+            if is_percent and base_current is not None:
+                delta_ratio = parsed / 100.0
+                if action.lower() == 'increase':
+                    mods[param] = base_current * (1 + delta_ratio)
+                else:
+                    mods[param] = base_current * (1 - delta_ratio)
+            else:
+                # Absolute delta
+                if base_current is not None:
+                    if action.lower() == 'increase':
+                        mods[param] = base_current + parsed
+                    else:
+                        mods[param] = max(0, base_current - parsed)
+                else:
+                    # If no base, treat as direct value
+                    mods[param] = parsed if action.lower() == 'increase' else max(0, parsed)
+            print(f"   → Parsed {action.upper()} for {param} -> {mods[param]}")
+
+    return mods
 
 
 def _validate_modifications(
@@ -431,3 +641,75 @@ def _validate_modifications(
             print(f"   ⚠️  Skipping {key}: out of valid range or unknown parameter")
     
     return valid
+
+
+def _map_semantic_modifications(mods: Dict[str, Any], analysis_context: Dict[str, Any]) -> Dict[str, Any]:
+    """Translate high-level metric overrides (TAM/SAM/SOM) into concrete simulator parameters.
+
+    Rules:
+    - TAM: sets annual_revenue_or_savings directly (treated as realized baseline for savings; as new theoretical market for revenue/royalty)
+    - SAM: adjusts market_coverage = SAM / TAM * 100 if TAM available (from override or context)
+    - SOM: adjusts take_rate = SOM / SAM * 100 if SAM available (from override or context)
+    If only SOM provided and TAM exists, infer SAM = existing SAM or TAM * existing market_coverage.
+    Edge cases handled conservatively (skip divide-by-zero).
+    """
+    if not mods:
+        return mods
+
+    # Fetch existing context metrics
+    ctx_tam = None
+    ctx_sam = None
+    try:
+        if 'tam' in analysis_context and isinstance(analysis_context['tam'], dict):
+            ctx_tam = analysis_context['tam'].get('market_size')
+        if 'sam' in analysis_context and isinstance(analysis_context['sam'], dict):
+            ctx_sam = analysis_context['sam'].get('market_size')
+    except Exception:
+        pass
+
+    # Work on a copy
+    mapped = dict(mods)
+
+    # Handle TAM override
+    if 'TAM' in mapped:
+        tam_val = mapped.pop('TAM')
+        if isinstance(tam_val, (int, float)) and tam_val >= 0:
+            mapped['annual_revenue_or_savings'] = tam_val
+            ctx_tam = tam_val  # Update for subsequent SAM/SOM mapping
+            print(f"   🔁 Mapped TAM -> annual_revenue_or_savings = {tam_val}")
+
+    # Handle SAM override
+    if 'SAM' in mapped:
+        sam_val = mapped.pop('SAM')
+        if isinstance(sam_val, (int, float)) and sam_val >= 0:
+            if ctx_tam and ctx_tam > 0:
+                coverage = (sam_val / ctx_tam) * 100.0
+                mapped['market_coverage'] = coverage
+                ctx_sam = sam_val
+                print(f"   🔁 Mapped SAM -> market_coverage = {coverage:.2f}% (SAM {sam_val} / TAM {ctx_tam})")
+            else:
+                # Fallback: treat SAM as annual value if TAM unknown
+                mapped['annual_revenue_or_savings'] = sam_val
+                ctx_sam = sam_val
+                print(f"   ⚠️ No TAM context; SAM treated as annual_revenue_or_savings = {sam_val}")
+
+    # Handle SOM override
+    if 'SOM' in mapped:
+        som_val = mapped.pop('SOM')
+        if isinstance(som_val, (int, float)) and som_val >= 0:
+            # Need SAM for take_rate calculation
+            if not ctx_sam and ctx_tam:
+                # Reconstruct SAM using existing market_coverage in context if available
+                existing_cov = analysis_context.get('market_coverage') or analysis_context.get('sam', {}).get('penetration_rate')
+                if existing_cov:
+                    ctx_sam = ctx_tam * (existing_cov / 100.0)
+            if ctx_sam and ctx_sam > 0:
+                take_rate = (som_val / ctx_sam) * 100.0
+                mapped['take_rate'] = take_rate
+                print(f"   🔁 Mapped SOM -> take_rate = {take_rate:.2f}% (SOM {som_val} / SAM {ctx_sam})")
+            else:
+                # If no SAM context, treat SOM as annual_revenue_or_savings directly
+                mapped['annual_revenue_or_savings'] = som_val
+                print(f"   ⚠️ No SAM context; SOM treated as annual_revenue_or_savings = {som_val}")
+
+    return mapped

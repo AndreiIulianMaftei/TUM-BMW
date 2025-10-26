@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Form, Body
 from fastapi.responses import FileResponse
 from datetime import datetime
 from backend.processor import process_file
-from backend.analyzer import analyze_bmw_1pager
+from backend.analyzer import analyze_bmw_1pager, analyze_bmw_1pager_with_extraction
 from backend.database import Database
 from backend.models import (
     TextAnalysisRequest, AnalysisSettings, ComprehensiveAnalysis, ChatRequest, ChatResponse
@@ -85,7 +85,7 @@ async def upload_document(
         print(f"   Preview: {text[:200]}...")
         
         print(f"\n🧠 Starting analysis...")
-        analysis = analyze_bmw_1pager(text, provider=provider, settings=settings)
+        analysis, extraction_data = analyze_bmw_1pager_with_extraction(text, provider=provider, settings=settings)
         print(f"✓ Analysis completed")
         
         print(f"\n📊 Generating title...")
@@ -102,7 +102,8 @@ async def upload_document(
             "llm_provider": provider,
             "upload_date": datetime.utcnow(),
             "settings": settings.model_dump() if settings else None,
-            "analysis": analysis.model_dump()
+            "analysis": analysis.model_dump(),
+            "extraction_data": extraction_data  # Store original LLM extraction for auto-scaling
         }
         
         result = db.documents.insert_one(document_record)
@@ -139,7 +140,7 @@ async def analyze_text(request: TextAnalysisRequest):
         raise HTTPException(status_code=400, detail="Provider must be 'gemini' or 'openai'")
     
     try:
-        analysis = analyze_bmw_1pager(
+        analysis, extraction_data = analyze_bmw_1pager_with_extraction(
             text=request.text,
             provider=request.provider,
             settings=request.settings
@@ -158,7 +159,8 @@ async def analyze_text(request: TextAnalysisRequest):
             "upload_date": datetime.utcnow(),
             "input_text": request.text[:500],  # Store first 500 chars for reference
             "settings": request.settings.model_dump() if request.settings else None,
-            "analysis": analysis.model_dump()
+            "analysis": analysis.model_dump(),
+            "extraction_data": extraction_data  # Store for auto-scaling
         }
         
         result = db.documents.insert_one(document_record)
@@ -274,6 +276,33 @@ async def simulate_income(
             "take_rate": parameters.get("take_rate", 10.0),
             "market_coverage": parameters.get("market_coverage", 50.0)
         }
+
+        # ----- AUTO-SCALING LOGIC FOR DEPENDENT METRICS -----
+        # Remove internal tracking metadata before processing
+        explicit_mods = extracted_params.pop('_explicit_mods', set())
+        
+        # If only volume/fleet size changed for savings project, scale annual_revenue_or_savings proportionally
+        # IMPORTANT: Use original EXTRACTION values, not derived analysis values
+        try:
+            if original_analysis and extracted_params["project_type"] in ["savings", "cost_savings", "efficiency"]:
+                # Get original EXTRACTED fleet size (not derived units_sold)
+                orig_extraction = original_analysis.get("extraction_data", {})
+                orig_fleet = orig_extraction.get("fleet_size_or_units")
+                orig_annual = orig_extraction.get("annual_revenue_or_savings")
+                new_fleet = extracted_params.get("fleet_size_or_units")
+                
+                # Check if user explicitly modified annual_revenue_or_savings (via _explicit_mods set from chat)
+                user_overrode_annual = 'annual_revenue_or_savings' in explicit_mods
+                
+                # Only scale if original baseline exists, new fleet provided, annual not explicitly overridden
+                if orig_fleet and new_fleet and orig_fleet > 0 and new_fleet != orig_fleet:
+                    if not user_overrode_annual and orig_annual:
+                        per_unit = orig_annual / orig_fleet
+                        scaled = per_unit * new_fleet
+                        extracted_params["annual_revenue_or_savings"] = scaled
+                        print(f"   🔁 Auto-scaled annual savings: baseline per-unit=€{per_unit:.2f} → new annual=€{scaled:,.0f} (fleet {orig_fleet:,}→{new_fleet:,})")
+        except Exception as e:
+            print(f"   ⚠️ Auto-scale skipped (error: {e})")
         
         new_analysis = calculate_complete_analysis(extracted_params)
         print(f"✓ Simulation completed")
@@ -286,10 +315,14 @@ async def simulate_income(
         print(f"   Break-even: {new_analysis.roi.payback_period_months} months")
         
         print(f"\n💾 Saving simulation scenario to database...")
+        
+        # Clean internal metadata from parameters before saving
+        clean_parameters = {k: v for k, v in parameters.items() if k != '_explicit_mods'}
+        
         simulation_record = {
             "original_document_id": document_id,
             "simulation_date": datetime.utcnow(),
-            "modified_parameters": parameters,
+            "modified_parameters": clean_parameters,
             "simulation_results": new_analysis.model_dump(),
             "scenario_type": parameters.get("scenario_type", "custom")
         }
@@ -321,7 +354,7 @@ async def simulate_income(
             "simulation_id": simulation_id,
             "analysis": new_analysis,
             "comparison": comparison,
-            "modified_parameters": parameters
+            "modified_parameters": clean_parameters
         }
     
     except Exception as e:
@@ -390,16 +423,30 @@ async def chat_endpoint(request: ChatRequest):
             "modifications": modifications
         }
         
-        # If modifications were detected, run simulation automatically
-        if modifications:
+        # Handle revert request
+        if modifications and modifications.get('__revert'):
+            print("\n↩️ Revert requested - returning original analysis without simulation")
+            # Remove special key from modifications before returning
+            result['modifications'] = None
+            result['revert'] = True
+            # Embed original analysis for frontend to restore
+            result['simulation'] = {"analysis": request.analysis_context}
+        # If modifications were detected (non-revert), run simulation automatically
+        elif modifications:
             print(f"\n🎯 Auto-running simulation with modifications...")
             print(f"   Modified parameters: {list(modifications.keys())}")
             
             # Get current parameters from analysis context
             current_params = _extract_current_parameters(request.analysis_context)
             
+            # Track which parameters were explicitly modified by user
+            explicit_modifications = set(modifications.keys())
+            
             # Apply modifications
             current_params.update(modifications)
+            
+            # Pass explicit modification info for auto-scaling detection
+            current_params['_explicit_mods'] = explicit_modifications
             
             print(f"   Running simulation...")
             simulation_result = await simulate_income(
@@ -449,12 +496,26 @@ def _extract_current_parameters(analysis_context: Dict[str, Any]) -> Dict[str, A
         }
     
     # Extract market data
-    if "tam" in analysis_context:
-        params["annual_revenue_or_savings"] = analysis_context["tam"].get("market_size", 0) / 5
+    project_type = analysis_context.get("project_type")
+    # For savings projects: annual value already represents realized annual savings → no division
+    if project_type in ["savings", "cost_savings", "efficiency"]:
+        if "som" in analysis_context and isinstance(analysis_context["som"], dict):
+            params["annual_revenue_or_savings"] = analysis_context["som"].get("revenue_potential", 0)
+        elif "tam" in analysis_context and isinstance(analysis_context["tam"], dict):
+            params["annual_revenue_or_savings"] = analysis_context["tam"].get("market_size", 0)
+    else:
+        # Non-savings: keep conservative original behavior (divide to approximate Year1 if total used)
+        if "som" in analysis_context and isinstance(analysis_context["som"], dict):
+            params["annual_revenue_or_savings"] = analysis_context["som"].get("revenue_potential", 0) / 5
+        elif "tam" in analysis_context and isinstance(analysis_context["tam"], dict):
+            params["annual_revenue_or_savings"] = analysis_context["tam"].get("market_size", 0) / 5
     
-    if "som" in analysis_context:
-        params["annual_revenue_or_savings"] = analysis_context["som"].get("revenue_potential", 0) / 5
-    
+    # Extract fleet size & price if available (ensure downstream scaling context)
+    if "volume" in analysis_context and isinstance(analysis_context["volume"], dict):
+        params["fleet_size_or_units"] = analysis_context["volume"].get("units_sold")
+    if "unit_economics" in analysis_context and isinstance(analysis_context["unit_economics"], dict):
+        params["price_per_unit"] = analysis_context["unit_economics"].get("unit_revenue")
+
     # Extract percentages
     params["royalty_percentage"] = analysis_context.get("royalty_percentage", 0.0)
     params["take_rate"] = analysis_context.get("take_rate", 10.0)

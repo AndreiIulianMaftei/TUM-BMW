@@ -61,6 +61,7 @@ let currentAnalysisId = null;
 let analysisContext = null;
 let settings = loadSettings();
 let conversationHistory = []; // Chat conversation history
+let baselineOriginalAnalysis = null; // Preserve the initially extracted analysis for revert
 
 // LLM Provider Selection
 geminiOption.classList.add('active'); // Set Gemini as default
@@ -171,8 +172,11 @@ uploadBtn.addEventListener('click', async () => {
         }
         
         const data = await response.json();
-        analysisContext = data.analysis; // Save for chat
-        displayResults(data.analysis);
+        // Attach document_id to analysis context for chat simulations & comparisons
+        if (data.analysis) {
+            analysisContext = { ...data.analysis, document_id: data.document_id };
+            displayResults(analysisContext);
+        }
         
         // Reload history to show the new analysis
         loadHistory();
@@ -192,6 +196,11 @@ function displayResults(analysis) {
     
     // Clear conversation history for new analysis
     conversationHistory = [];
+    // Set baseline original analysis if not already or if completely new document
+    if (!baselineOriginalAnalysis || (analysis.document_id && (!baselineOriginalAnalysis.document_id || baselineOriginalAnalysis.document_id !== analysis.document_id))) {
+        baselineOriginalAnalysis = JSON.parse(JSON.stringify(analysis));
+        console.log('📦 Baseline original analysis stored for revert');
+    }
     console.log('🔄 Conversation history cleared for new analysis');
     
     document.getElementById('executiveSummary').textContent = analysis.executive_summary || 'No executive summary available';
@@ -910,7 +919,8 @@ async function sendChatMessage() {
             throw new Error(`Chat request failed: ${response.status} - ${errorText}`);
         }
         
-        const data = await response.json();
+    const previousAnalysis = analysisContext ? JSON.parse(JSON.stringify(analysisContext)) : null;
+    const data = await response.json();
         console.log('✅ Chat response received:', data);
         console.log('   Response length:', data.response?.length);
         console.log('   Modifications:', data.modifications);
@@ -933,19 +943,25 @@ async function sendChatMessage() {
             addModificationMessage(data.modifications);
         }
         
-        // If simulation was run, update the UI
-        if (data.simulation && data.simulation.analysis) {
+        // Handle revert scenario
+        if (data.revert && data.simulation && data.simulation.analysis) {
+            console.log('↩️ Reverting to original baseline analysis');
+            revertToOriginalFromBackend(data.simulation.analysis);
+            addChatMessage('↩️ Reverted to original extracted data. Ask for new changes anytime.', 'assistant');
+        }
+        // If simulation was run, update the UI (normal modifications)
+        else if (data.simulation && data.simulation.analysis) {
             console.log('📊 Updating UI with simulation results...');
-            
-            // Update the simulated analysis
-            updateComparisonDisplay(
-                data.simulation.analysis,
-                data.simulation.comparison
-            );
-            
-            // Show success message
+            // Apply new analysis to dashboard while preserving chat history
+            applyChatDrivenAnalysisUpdate(data.simulation.analysis);
+            // Update comparison vs previous baseline
+            if (previousAnalysis) {
+                updateComparisonDisplay(previousAnalysis, data.simulation.analysis, data.simulation.comparison);
+            } else {
+                updateComparisonDisplay(data.simulation.analysis, data.simulation.analysis, data.simulation.comparison);
+            }
             addChatMessage(
-                '✅ I\'ve updated the simulator with these changes. You can see the new projections above!',
+                '✅ Dashboard & simulator refreshed with new scenario. Ask for further tweaks or say "revert" to go back.',
                 'assistant'
             );
         }
@@ -962,10 +978,25 @@ async function sendChatMessage() {
     }
 }
 
+// Apply updated analysis from chat modifications without clearing chat history
+function applyChatDrivenAnalysisUpdate(newAnalysis) {
+    if (!newAnalysis) return;
+    // Preserve existing conversation history
+    const preservedHistory = [...conversationHistory];
+    // Update global context and rerender dashboard
+    analysisContext = newAnalysis;
+    displayResults(newAnalysis); // This clears conversationHistory internally
+    // Restore chat history state variable (DOM messages remain untouched)
+    conversationHistory = preservedHistory;
+    console.log('🔄 Dashboard refreshed via chat-driven update');
+}
+
 function addModificationMessage(modifications) {
     console.log('📝 Adding modification message to chat');
     
-    const modList = Object.entries(modifications)
+    const sanitizedMods = { ...modifications };
+    if (sanitizedMods.__revert) { delete sanitizedMods.__revert; }
+    const modList = Object.entries(sanitizedMods)
         .map(([key, value]) => {
             const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             let displayValue = value;
@@ -995,6 +1026,45 @@ function addModificationMessage(modifications) {
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+}
+
+// Revert logic
+function revertToOriginalFromBackend(original) {
+    if (!original) return;
+    const preservedHistory = [...conversationHistory];
+    analysisContext = original;
+    displayResults(original);
+    conversationHistory = preservedHistory; // restore
+    console.log('↩️ Revert applied from backend payload');
+}
+
+function revertToOriginalClient() {
+    if (!baselineOriginalAnalysis) {
+        addChatMessage('No baseline available to revert to.', 'assistant');
+        return;
+    }
+    const preservedHistory = [...conversationHistory];
+    analysisContext = JSON.parse(JSON.stringify(baselineOriginalAnalysis));
+    displayResults(analysisContext);
+    conversationHistory = preservedHistory;
+    addChatMessage('↩️ Reverted locally to original extracted analysis.', 'assistant');
+}
+
+// Add a revert button to chat controls if not present
+const chatControls = document.querySelector('.chat-input-container');
+if (chatControls && !document.getElementById('revertBtn')) {
+    const revertBtn = document.createElement('button');
+    revertBtn.id = 'revertBtn';
+    revertBtn.type = 'button';
+    revertBtn.className = 'revert-btn';
+    revertBtn.textContent = '↩️ Revert';
+    revertBtn.title = 'Revert dashboard to original extracted data';
+    revertBtn.addEventListener('click', () => {
+        // Send a revert command through chat pipeline (ensures consistent state management)
+        chatInput.value = 'revert';
+        sendChatMessage();
+    });
+    chatControls.appendChild(revertBtn);
 }
 
 // Simple markdown parser for chat messages
@@ -1546,10 +1616,9 @@ async function loadAnalysisById(id) {
         });
         
         // Save to context for chat
-        analysisContext = data.analysis;
-        
-        // Display the analysis using existing displayResults function
-        displayResults(data.analysis);
+    analysisContext = { ...data.analysis, document_id: id };
+    // Display the analysis using existing displayResults function
+    displayResults(analysisContext);
         
         // Close history sidebar on mobile
         if (window.innerWidth <= 768) {

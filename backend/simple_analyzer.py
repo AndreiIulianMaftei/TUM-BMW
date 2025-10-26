@@ -189,6 +189,29 @@ Return ONLY this JSON:
 }}"""
 
 def analyze_document_fast(text: str) -> ComprehensiveAnalysis:
+    """Analyze document and return only the analysis (legacy)."""
+    analysis, _ = analyze_document_fast_with_extraction(text)
+    return analysis
+
+
+def analyze_document_fast_with_extraction(text: str) -> tuple:
+    """Analyze document and return both analysis and extraction data.
+
+    Enhancement: Before calling the calculator, we attempt to detect explicitly stated
+    TAM/SAM/SOM values in the source text (the uploaded document). These override any
+    computed values inside the calculator when present.
+
+    We look for patterns like:
+        TAM: 735,000,000
+        SAM €5.2m
+        SOM 120m
+        TAM €735M | SAM €367.5M | SOM €36.75M
+
+    Supported suffixes:
+        k -> *1,000
+        m / million -> *1,000,000
+        b / bn / billion -> *1,000,000,000
+    """
     print("\n" + "="*80)
     print("🚀 STARTING DOCUMENT ANALYSIS")
     print("="*80)
@@ -248,11 +271,12 @@ def analyze_document_fast(text: str) -> ComprehensiveAnalysis:
         
         print(f"📥 LLM Raw Response:\n{content}\n")
         
+        # Prepare results directory early so it's available even if JSON parse fails
+        results_dir = Path("Json_Results")
+        results_dir.mkdir(exist_ok=True)
+
         try:
             extracted = json.loads(content)
-            
-            results_dir = Path("Json_Results")
-            results_dir.mkdir(exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             
             extraction_path = results_dir / f"extraction_{timestamp}.json"
@@ -274,13 +298,164 @@ def analyze_document_fast(text: str) -> ComprehensiveAnalysis:
             for key, value in extracted.items():
                 print(f"   {key}: {value}")
             print()
+
+            # ---------------- EXPLICIT TAM/SAM/SOM DETECTION ----------------
+            # We parse the ORIGINAL text (more likely to contain explicit labels)
+            # Fallback to sanitized text if needed.
+            source_for_scan = original_text + "\n" + sanitized_text
+
+            def _parse_explicit(label: str) -> float | None:
+                # Regex patterns for a label followed by number and optional suffix
+                # Examples handled: TAM: 735,000,000 | TAM €735M | TAM 735m | TAM 0.5b
+                patterns = [
+                    rf"\b{label}\b\s*[:=]?\s*€?([\d,.]+)(\s*[kmb]|\s*million|\s*billion|\s*bn|\s*b)?\b",
+                    rf"\b{label}\b[^\n]*?€\s*([\d,.]+)(\s*[kmb]|\s*million|\s*billion|\s*bn|\s*b)?\b",
+                ]
+                for pat in patterns:
+                    m = re.search(pat, source_for_scan, flags=re.IGNORECASE)
+                    if m:
+                        raw = m.group(1).replace(',', '')
+                        try:
+                            val = float(raw)
+                        except ValueError:
+                            continue
+                        suffix = (m.group(2) or '').strip().lower()
+                        if suffix in ['k']:
+                            val *= 1_000
+                        elif suffix in ['m', 'million']:
+                            val *= 1_000_000
+                        elif suffix in ['b', 'bn', 'billion']:
+                            val *= 1_000_000_000
+                        return val
+                return None
+
+            explicit_tam = _parse_explicit('TAM')
+            explicit_sam = _parse_explicit('SAM')
+            explicit_som = _parse_explicit('SOM')
+
+            if explicit_tam is not None:
+                extracted['explicit_tam'] = explicit_tam
+                print(f"   🔍 Detected explicit TAM override: €{explicit_tam:,.0f}")
+            if explicit_sam is not None:
+                extracted['explicit_sam'] = explicit_sam
+                print(f"   🔍 Detected explicit SAM override: €{explicit_sam:,.0f}")
+            if explicit_som is not None:
+                extracted['explicit_som'] = explicit_som
+                print(f"   🔍 Detected explicit SOM override: €{explicit_som:,.0f}")
+
+            if any(k in extracted for k in ['explicit_tam', 'explicit_sam', 'explicit_som']):
+                print("   ✅ Explicit market size overrides will take precedence in calculator.")
+
+            # ---------------- HEURISTIC FIELD ENRICHMENT ----------------
+            def _heuristic_field_extraction(src: str) -> Dict[str, Any]:
+                enriched: Dict[str, Any] = {}
+                lower = src.lower()
+
+                # Development fleet size (savings project example)
+                m_fleet = re.search(r'development fleet consists of approximately\s+([\d,.]+)', lower)
+                if m_fleet and extracted.get('fleet_size_or_units') in (None, 0, ''):
+                    val = int(m_fleet.group(1).replace(',', ''))
+                    enriched['fleet_size_or_units'] = val
+
+                # Royalty formula line parsing (motorcycles sold × categories × take rate% × EUR price × market coverage% × royalty%)
+                # Example: 210,000 * 10 * 10% * EUR 350 * 50% * 10% = EUR 3,675,000
+                royalty_patterns = [
+                    re.compile(r'([\d,.]+)\s*\*\s*(\d+)\s*\*\s*(\d+)%\s*\*\s*(?:eur\s*)?(\d+(?:,\d{3})*)\s*\*\s*(\d+)%\s*\*\s*(\d+)%')
+                ]
+                if extracted.get('royalty_percentage') in (None, 0, '') or extracted.get('number_of_product_categories') in (None, 0, ''):
+                    for rp in royalty_patterns:
+                        m = rp.search(src.lower())
+                        if m:
+                            motorcycles_sold = int(m.group(1).replace(',', ''))
+                            categories = int(m.group(2))
+                            take_rate = float(m.group(3))
+                            price_per_unit = float(m.group(4).replace(',', ''))
+                            market_cov = float(m.group(5))
+                            royalty_pct = float(m.group(6))
+                            if extracted.get('fleet_size_or_units') in (None, 0, '') and 'fleet_size_or_units' not in enriched:
+                                enriched['fleet_size_or_units'] = motorcycles_sold
+                            if extracted.get('number_of_product_categories') in (None, 0, ''):
+                                enriched['number_of_product_categories'] = categories
+                            if extracted.get('take_rate') in (None, 0, ''):
+                                enriched['take_rate'] = take_rate
+                            if extracted.get('price_per_unit') in (None, 0, ''):
+                                enriched['price_per_unit'] = price_per_unit
+                            if extracted.get('market_coverage') in (None, 0, ''):
+                                enriched['market_coverage'] = market_cov
+                            if extracted.get('royalty_percentage') in (None, 0, ''):
+                                enriched['royalty_percentage'] = royalty_pct
+                            break
+
+                # Stream potentials (savings project) – capture monetary amounts per stream
+                # Patterns like: 'Potential high (> €2 million p.a.), currently €750,000 p.a.' or '€3 million'
+                stream_val = extracted.get('stream_values')
+                if stream_val in (None, [], '') or (isinstance(stream_val, list) and all(v is None for v in stream_val)):
+                    stream_section_matches = re.findall(r'stream\s+\d+:.*?(?=stream\s+\d+:|value |confidential|$)', src, flags=re.IGNORECASE | re.DOTALL)
+                    stream_amounts = []
+                    euro_pattern = re.compile(r'€\s*([\d,.]+)\s*(million)?', re.IGNORECASE)
+                    for section in stream_section_matches:
+                        # collect all euro amounts
+                        for em in euro_pattern.finditer(section):
+                            raw = em.group(1).replace(',', '')
+                            try:
+                                val = float(raw)
+                            except ValueError:
+                                continue
+                            if em.group(2):
+                                val *= 1_000_000
+                            stream_amounts.append(val)
+                    # Deduplicate & keep reasonable count
+                    stream_amounts = list(dict.fromkeys(stream_amounts))
+                    if stream_amounts:
+                        enriched['stream_values'] = stream_amounts[:10]
+
+                return enriched
+
+            heuristic_enriched = _heuristic_field_extraction(source_for_scan)
+            if heuristic_enriched:
+                for k, v in heuristic_enriched.items():
+                    if k not in extracted or extracted.get(k) in (None, [], ''):
+                        extracted[k] = v
+                print(f"   🔧 Heuristic enrichment added: {', '.join(heuristic_enriched.keys())}")
+            else:
+                print("   ℹ️ No heuristic enrichment applied (patterns not found).")
+
+            # Apply fallback defaults for any critical fields still None/0/empty
+            # This ensures the UI ALWAYS has values even when LLM extraction fails
+            defaults = {
+                'fleet_size_or_units': 100000,  # Default fleet/market size
+                'price_per_unit': 500,           # Default price per unit
+                'annual_revenue_or_savings': 10000000,  # Default €10M
+                'development_cost': 500000,      # Default €500k
+                'growth_rate': 5,
+                'royalty_percentage': 10,
+                'take_rate': 10,
+                'market_coverage': 50,
+                'number_of_product_categories': 5
+            }
+            
+            applied_defaults = []
+            for key, default_value in defaults.items():
+                current = extracted.get(key)
+                # Apply default if None, 0, empty string, or empty list
+                if current is None or current == 0 or current == '' or current == []:
+                    extracted[key] = default_value
+                    applied_defaults.append(f"{key}={default_value}")
+            
+            if applied_defaults:
+                print(f"   🔧 Fallback defaults applied: {', '.join(applied_defaults)}")
+
+            # External enrichment stub (placeholder for future web lookups)
+            missing_for_external = [k for k in ['fleet_size_or_units','price_per_unit','take_rate','market_coverage','royalty_percentage'] if extracted.get(k) in (None,'',0)]
+            if missing_for_external:
+                print(f"   🌐 External data enrichment deferred (missing: {', '.join(missing_for_external)}) – implement web fetch if required.")
             
         except Exception as e:
             print(f"❌ JSON Parse Error: {e}")
             print(f"Raw content causing error: {content[:500]}")
             extracted = {}
         
-        print("🧮 Starting calculator with extracted data...")
+        print("🧮 Starting calculator with extracted data (including explicit overrides if any)...")
         print(f"Input to calculator: {json.dumps(extracted, indent=2)}")
         
         full_analysis = calculate_complete_analysis(extracted)
@@ -304,8 +479,7 @@ def analyze_document_fast(text: str) -> ComprehensiveAnalysis:
         print(f"   Units: {full_analysis.volume.units_sold:,.0f}")
         print("="*80 + "\n")
         
-        return full_analysis
-        
+        return full_analysis, extracted
     except Exception as e:
         print(f"\n❌ FATAL ERROR in analyze_document_fast:")
         print(f"Error type: {type(e).__name__}")

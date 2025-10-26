@@ -48,6 +48,21 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
         is_savings = project_type in ['savings', 'cost_savings', 'efficiency']
         is_royalty = project_type == 'royalty'
 
+        # -------------------- EXPLICIT OVERRIDES --------------------
+        # Support explicit market size overrides extracted directly from the document
+        explicit_tam = extracted.get('explicit_tam')
+        explicit_sam = extracted.get('explicit_sam')
+        explicit_som = extracted.get('explicit_som')
+        overrides_used = []
+        if explicit_tam is not None or explicit_sam is not None or explicit_som is not None:
+            print("\n🔍 Explicit market size values detected:")
+            if explicit_tam is not None:
+                print(f"   • TAM override: €{explicit_tam:,.0f}")
+            if explicit_sam is not None:
+                print(f"   • SAM override: €{explicit_sam:,.0f}")
+            if explicit_som is not None:
+                print(f"   • SOM override: €{explicit_som:,.0f}")
+
         # --- Heuristic: infer categories for royalty if annual_value looks like royalty revenue ---
         if is_royalty and annual_value and fleet_size and price_per_unit and royalty and take_rate and market_cov and not categories:
             try:
@@ -59,66 +74,98 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
             except Exception:
                 pass
 
-        print("\n💡 Calculating TAM, SAM, SOM using corrected non-double-reduction logic...")
+        print("\n💡 Calculating TAM, SAM, SOM (explicit overrides checked first)...")
         if is_savings:
-            # Annual value already represents validated achievable savings -> treat as SOM directly
-            som = annual_value or (total_streams or 0)
-            tam = som  # For reporting, TAM=SAM=SOM to avoid artificial reduction
-            sam = som
-            print(f"   Provided validated annual savings = €{som:,.0f} (used as TAM=SAM=SOM)")
+            if explicit_tam is not None or explicit_sam is not None or explicit_som is not None:
+                tam = explicit_tam if explicit_tam is not None else (explicit_som if explicit_som is not None else (annual_value or (total_streams or 0)))
+                sam = explicit_sam if explicit_sam is not None else tam
+                som = explicit_som if explicit_som is not None else (annual_value or (total_streams or sam))
+                overrides_used.extend([n for n,v in [('TAM',explicit_tam),('SAM',explicit_sam),('SOM',explicit_som)] if v is not None])
+                print(f"   ✅ Savings overrides applied: {', '.join(overrides_used)}")
+            else:
+                som = annual_value or (total_streams or 0)
+                tam = som
+                sam = som
+                print(f"   Provided validated annual savings = €{som:,.0f} (used as TAM=SAM=SOM)")
         elif is_royalty:
-            # If categories known (extracted or inferred) compute full TAM = fleet × categories × price
-            if fleet_size and price_per_unit and categories:
-                tam = fleet_size * categories * price_per_unit  # Full theoretical accessory value
-                sam = tam * (market_cov/100.0)
-                gross_gmv_captured = sam * (take_rate/100.0)
-                # Annual_value is royalty revenue; if present override royalty calc
-                if annual_value and royalty:
-                    expected_royalty = gross_gmv_captured * (royalty/100.0)
-                    # Align SOM with gross GMV, but keep royalty revenue separately
-                    som = gross_gmv_captured
-                    print(f"   TAM = {fleet_size:,} × {categories} × €{price_per_unit} = €{tam:,.0f}")
-                    print(f"   SAM = TAM × {market_cov}% = €{sam:,.0f}")
-                    print(f"   Gross GMV captured (SOM base) = SAM × {take_rate}% = €{som:,.0f}")
-                    if abs(expected_royalty - annual_value) > 1:  # sanity check mismatch
-                        print(f"   ⚠️ Provided annual royalty (€{annual_value:,.0f}) != computed (€{expected_royalty:,.0f}), using provided value for revenue")
-                else:
-                    som = gross_gmv_captured
-                    annual_value = som * (royalty/100.0)
+            if explicit_tam is not None:
+                tam = explicit_tam
+                overrides_used.append('TAM')
+                print(f"   ✅ Explicit TAM override used: €{tam:,.0f}")
+                sam = explicit_sam if explicit_sam is not None else tam * (market_cov/100.0)
+                if explicit_sam is not None:
+                    overrides_used.append('SAM')
+                som = explicit_som if explicit_som is not None else sam * (take_rate/100.0)
+                if explicit_som is not None:
+                    overrides_used.append('SOM')
             else:
-                # Fallback: no categories -> treat annual_value as royalty revenue directly; back-compute SOM gross GMV
-                if annual_value and royalty:
-                    som = annual_value / (royalty/100.0)  # gross GMV
-                    sam = som / (take_rate/100.0) if take_rate else som
-                    tam = sam / (market_cov/100.0) if market_cov else sam
-                    print(f"   Royalty revenue provided: €{annual_value:,.0f} -> Gross GMV (SOM) €{som:,.0f}")
-                    print(f"   Back-computed SAM: €{sam:,.0f} | TAM: €{tam:,.0f}")
-                else:
-                    # Last resort original behavior
-                    tam = annual_value or (fleet_size * price_per_unit if (fleet_size and price_per_unit) else 0)
+                # Maintain original inference logic only when TAM isn't explicitly provided
+                if fleet_size and price_per_unit and categories:
+                    tam = fleet_size * categories * price_per_unit
                     sam = tam * (market_cov/100.0)
-                    som = sam * (take_rate/100.0)
-                    print(f"   Fallback TAM=€{tam:,.0f} SAM=€{sam:,.0f} SOM=€{som:,.0f}")
+                    gross_gmv_captured = sam * (take_rate/100.0)
+                    if annual_value and royalty:
+                        expected_royalty = gross_gmv_captured * (royalty/100.0)
+                        som = gross_gmv_captured
+                        print(f"   TAM = {fleet_size:,} × {categories} × €{price_per_unit} = €{tam:,.0f}")
+                        print(f"   SAM = TAM × {market_cov}% = €{sam:,.0f}")
+                        print(f"   Gross GMV captured (SOM base) = SAM × {take_rate}% = €{som:,.0f}")
+                        if abs(expected_royalty - annual_value) > 1:
+                            print(f"   ⚠️ Provided annual royalty (€{annual_value:,.0f}) != computed (€{expected_royalty:,.0f}), using provided value for revenue")
+                    else:
+                        som = gross_gmv_captured
+                        annual_value = som * (royalty/100.0)
+                else:
+                    if annual_value and royalty:
+                        som = annual_value / (royalty/100.0)
+                        sam = som / (take_rate/100.0) if take_rate else som
+                        tam = sam / (market_cov/100.0) if market_cov else sam
+                        print(f"   Royalty revenue provided: €{annual_value:,.0f} -> Gross GMV (SOM) €{som:,.0f}")
+                        print(f"   Back-computed SAM: €{sam:,.0f} | TAM: €{tam:,.0f}")
+                    else:
+                        tam = annual_value or (fleet_size * price_per_unit if (fleet_size and price_per_unit) else 0)
+                        sam = tam * (market_cov/100.0)
+                        som = sam * (take_rate/100.0)
+                        print(f"   Fallback TAM=€{tam:,.0f} SAM=€{sam:,.0f} SOM=€{som:,.0f}")
+            # Apply explicit SAM/SOM overrides if TAM wasn't explicit but they were
+            if explicit_tam is None:
+                if explicit_sam is not None:
+                    sam = explicit_sam
+                    overrides_used.append('SAM')
+                    print(f"   ✅ Explicit SAM override used: €{sam:,.0f}")
+                if explicit_som is not None:
+                    som = explicit_som
+                    overrides_used.append('SOM')
+                    print(f"   ✅ Explicit SOM override used: €{som:,.0f}")
         else:
-            # Standard revenue model: compute progression normally unless annual_value is already realized final
-            if fleet_size and price_per_unit:
-                base_tam = fleet_size * price_per_unit
-                if annual_value and annual_value < base_tam:  # treat annual_value as realized SOM if clearly below TAM
-                    tam = base_tam
-                    sam = tam * (market_cov/100.0)
-                    som = annual_value  # already realized revenue potential
-                    print(f"   Realized annual revenue provided (€{annual_value:,.0f}) used as SOM; TAM=€{tam:,.0f} SAM=€{sam:,.0f}")
-                else:
-                    tam = base_tam if not annual_value else annual_value  # preserve previous behavior
-                    sam = tam * (market_cov/100.0)
-                    som = sam * (take_rate/100.0)
-                    print(f"   TAM=€{tam:,.0f} SAM=€{sam:,.0f} SOM=€{som:,.0f}")
-            elif annual_value:
-                tam = sam = som = annual_value
-                print(f"   Annual value treated as realized SOM = €{som:,.0f} (no unit base available)")
+            if explicit_tam is not None or explicit_sam is not None or explicit_som is not None:
+                tam = explicit_tam if explicit_tam is not None else (fleet_size * price_per_unit if (fleet_size and price_per_unit) else (annual_value or 0))
+                sam = explicit_sam if explicit_sam is not None else tam * (market_cov/100.0)
+                som = explicit_som if explicit_som is not None else (sam * (take_rate/100.0))
+                overrides_used.extend([n for n,v in [('TAM',explicit_tam),('SAM',explicit_sam),('SOM',explicit_som)] if v is not None])
+                print(f"   ✅ Revenue overrides applied: {', '.join(overrides_used)}")
             else:
-                tam = sam = som = 0
-                print("   No market inputs available -> zeros for TAM/SAM/SOM")
+                if fleet_size and price_per_unit:
+                    base_tam = fleet_size * price_per_unit
+                    if annual_value and annual_value < base_tam:
+                        tam = base_tam
+                        sam = tam * (market_cov/100.0)
+                        som = annual_value
+                        print(f"   Realized annual revenue provided (€{annual_value:,.0f}) used as SOM; TAM=€{tam:,.0f} SAM=€{sam:,.0f}")
+                    else:
+                        tam = base_tam if not annual_value else annual_value
+                        sam = tam * (market_cov/100.0)
+                        som = sam * (take_rate/100.0)
+                        print(f"   TAM=€{tam:,.0f} SAM=€{sam:,.0f} SOM=€{som:,.0f}")
+                elif annual_value:
+                    tam = sam = som = annual_value
+                    print(f"   Annual value treated as realized SOM = €{som:,.0f} (no unit base available)")
+                else:
+                    tam = sam = som = 0
+                    print("   No market inputs available -> zeros for TAM/SAM/SOM")
+
+        if overrides_used:
+            print(f"   🔁 Overrides precedence applied for: {', '.join(overrides_used)}")
 
         # At this point tam/sam/som set according to revised semantics
 

@@ -334,4 +334,5 @@ class ChatResponse(BaseModel):
     simulation: Optional[Dict[str, Any]] = None  # Simulation results if modifications applied
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     tokens_used: Optional[int] = None
+    revert: Optional[bool] = None  # True if user requested revert to original baseline
 
