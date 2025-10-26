@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all motorcycle owners globally who might purchase accessories, encompassing both end customers and dealers. This encompasses not only BMW motorcycle owners but also owners of other brands who may consider switching to BMW for better accessory integration.",
+    "numbers": {
+      "2024": 50000000,
+      "2025": 52500000,
+      "2026": 55125000,
+      "2027": 57881250,
+      "2028": 60775312,
+      "2029": 63814077,
+      "2030": 67004781
+    },
+    "justification": "The TAM is estimated based on global motorcycle ownership, which is approximately 50 million units. Growth projections are based on a conservative increase of 5% annually, accounting for rising interest in motorcycle riding and accessory customization. The motorcycle accessories market is expected to grow significantly as more consumers seek personalized options.",
+    "industry_example": {
+      "name": "Harley-Davidson",
+      "description": "Harley-Davidson offers a wide range of motorcycle accessories and has developed a substantial market for aftermarket parts, illustrating the potential for accessory bundles. They emphasize customization and personalization, which aligns with the proposed project.",
+      "link": "https://www.harley-davidson.com/us/en/shop/accessories.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market focuses on BMW motorcycle owners and dealerships that sell BMW motorcycles and accessories. This segment can realistically be targeted with tailored accessory bundles due to existing brand loyalty and infrastructure.",
+    "numbers": {
+      "2024": 15000000,
+      "2025": 15750000,
+      "2026": 16537500,
+      "2027": 17364375,
+      "2028": 18232693,
+      "2029": 19144228,
+      "2030": 20101339
+    },
+    "justification": "The SAM is calculated as 30% of the TAM, focusing on BMW's market share in the motorcycle segment. It is expected to grow at 5% annually, reflecting the increasing sales and brand loyalty among BMW motorcycle owners. This segment is reachable through existing dealerships and marketing strategies.",
+    "industry_example": {
+      "name": "BMW Motorrad",
+      "description": "BMW Motorrad has a dedicated segment of the market that caters to its motorcycle owners, offering various accessories and parts directly through its dealerships, demonstrating an effective serviceable market.",
+      "link": "https://www.bmw-motorrad.com/en/service/accessories.html"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market reflects the immediate market share that can realistically be captured through the launch of accessory bundles targeting existing BMW motorcycle customers and dealers. This considers competitive factors and initial marketing efforts.",
+    "numbers": {
+      "2024": 3000000,
+      "2025": 3150000,
+      "2026": 3307500,
+      "2027": 3472875,
+      "2028": 3646519,
+      "2029": 3828845,
+      "2030": 4020287
+    },
+    "justification": "The SOM represents 20% of the SAM in the initial years, reflecting a realistic expectation for market capture as the new product bundles are introduced. Growth is projected at 5% annually as brand recognition and product adoption increase. The strategy includes aggressive marketing and leveraging existing customer relationships.",
+    "industry_example": {
+      "name": "Ducati",
+      "description": "Ducati has successfully captured a significant market share in the motorcycle accessories segment by leveraging its brand identity and strong customer engagement strategies, showcasing how effective marketing can enhance market penetration.",
+      "link": "https://www.ducati.com/ww/en/accessories"
+    }
+  },
+  "sources": [
+    "https://www.statista.com/statistics/272003/motorcycle-ownership-worldwide/",
+    "https://www.mordorintelligence.com/industry-reports/motorcycle-accessories-market",
+    "https://www.bikeexif.com/motorcycle-customization-market"
+  ]
+}

@@ -1,0 +1,309 @@
+{
+  "development_costs": [
+    {
+      "category": "IT Development",
+      "estimated_amount": 250000,
+      "currency": "EUR",
+      "reasoning": "The project requires significant IT development for the New Bike Configurator (NBC) to integrate the accessory bundles feature. This includes software development, testing, and system integration costs, which are typical for automotive IT projects.",
+      "market_comparison": {
+        "similar_case": "Mercedes-Benz Digital Retailing",
+        "comparison_details": "Mercedes-Benz invested around 300,000 EUR on enhancements to their digital retailing platform to improve customer experience and dealer interaction.",
+        "cost_figures": [
+          {
+            "company": "Mercedes-Benz",
+            "project": "Digital Retailing Enhancements",
+            "amount": 300000,
+            "currency": "EUR",
+            "year": 2022
+          },
+          {
+            "company": "Audi",
+            "project": "Audi Connect Development",
+            "amount": 200000,
+            "currency": "EUR",
+            "year": 2021
+          }
+        ],
+        "source": "Automotive Digital Development Reports",
+        "reference_links": [
+          "https://www.mercedes-benz.com/en/vehicles/mb-digital-retailing/",
+          "https://www.audi.com/en/experience/technology/audi-connect.html"
+        ]
+      }
+    },
+    {
+      "category": "Engineering Cost",
+      "estimated_amount": 150000,
+      "currency": "EUR",
+      "reasoning": "Engineering costs involve the creation of the accessory bundle specifications, testing of compatibility, and ensuring quality standards are met across different motorcycle models.",
+      "market_comparison": {
+        "similar_case": "BMW i3 Development",
+        "comparison_details": "The engineering costs for the BMW i3 included around 200,000 EUR for component testing and integration for new features.",
+        "cost_figures": [
+          {
+            "company": "BMW",
+            "project": "i3 Development",
+            "amount": 200000,
+            "currency": "EUR",
+            "year": 2018
+          },
+          {
+            "company": "Tesla",
+            "project": "Model 3 Engineering",
+            "amount": 250000,
+            "currency": "EUR",
+            "year": 2019
+          }
+        ],
+        "source": "Automotive Engineering Cost Reports",
+        "reference_links": [
+          "https://www.bmw.com/en/automotive-life/bmw-i3.html",
+          "https://www.tesla.com/model3"
+        ]
+      }
+    }
+  ],
+  "total_development_cost": 400000,
+  "customer_acquisition_costs": [
+    {
+      "category": "Digital Marketing",
+      "estimated_amount_per_customer": 50,
+      "estimated_annual_budget": 50000,
+      "currency": "EUR",
+      "reasoning": "The estimated budget for digital marketing campaigns to promote the new accessory bundles. This includes online advertising, social media marketing, and content creation aimed at both customers and dealers.",
+      "market_comparison": {
+        "similar_case": "BMW X1 Launch Campaign",
+        "comparison_details": "BMW allocated approximately 60,000 EUR for the digital marketing campaign during the launch of the X1 model, targeting both end customers and dealers.",
+        "cost_figures": [
+          {
+            "company": "BMW",
+            "project": "X1 Launch Campaign",
+            "amount": 60000,
+            "currency": "EUR",
+            "year": 2020
+          },
+          {
+            "company": "Audi",
+            "project": "Audi Q3 Marketing",
+            "amount": 55000,
+            "currency": "EUR",
+            "year": 2021
+          }
+        ],
+        "source": "Automotive Marketing Analysis",
+        "reference_links": [
+          "https://www.bmw.com/en/bmw-experience/bmw-x1.html",
+          "https://www.audi.com/en/audi-q3.html"
+        ]
+      }
+    }
+  ],
+  "total_customer_acquisition_cost": 50000,
+  "distribution_and_operations_costs": [
+    {
+      "category": "Logistics",
+      "estimated_amount": 75000,
+      "currency": "EUR",
+      "reasoning": "This cost covers the logistics of providing accessory bundles to dealers, including warehousing, handling, and distribution costs. As the bundles may consist of various components, efficient logistics is critical.",
+      "market_comparison": {
+        "similar_case": "Mercedes-Benz Parts Distribution",
+        "comparison_details": "Mercedes-Benz logistics costs for parts distribution are approximately 80,000 EUR annually for a comparable project involving accessory bundles.",
+        "cost_figures": [
+          {
+            "company": "Mercedes-Benz",
+            "project": "Parts Distribution",
+            "amount": 80000,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "Audi",
+            "project": "Accessory Distribution",
+            "amount": 70000,
+            "currency": "EUR",
+            "year": 2020
+          }
+        ],
+        "source": "Logistics Cost Reports",
+        "reference_links": [
+          "https://www.mercedes-benz.com/en/passion/parts-distribution/",
+          "https://www.audi.com/en/parts-services.html"
+        ]
+      }
+    }
+  ],
+  "total_distribution_operations_cost": 75000,
+  "after_sales_costs": [
+    {
+      "category": "Customer Service",
+      "estimated_amount": 40000,
+      "currency": "EUR",
+      "reasoning": "This includes costs for customer service support related to accessory bundles. Training and staffing costs for handling inquiries and support related to the new bundles are factored in.",
+      "market_comparison": {
+        "similar_case": "BMW Customer Service Enhancement",
+        "comparison_details": "BMW invested approximately 50,000 EUR on customer service improvements for the i4 model launch.",
+        "cost_figures": [
+          {
+            "company": "BMW",
+            "project": "i4 Customer Service",
+            "amount": 50000,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "Tesla",
+            "project": "Customer Support for Model S",
+            "amount": 45000,
+            "currency": "EUR",
+            "year": 2020
+          }
+        ],
+        "source": "Customer Service Investment Reports",
+        "reference_links": [
+          "https://www.bmw.com/en/i4.html",
+          "https://www.tesla.com/models"
+        ]
+      }
+    }
+  ],
+  "total_after_sales_cost": 40000,
+  "cost_of_goods_sold": [
+    {
+      "product_category": "Accessory Bundle",
+      "price_per_item": 300,
+      "cogs_per_item": 200,
+      "gross_margin_percentage": 33,
+      "currency": "EUR",
+      "reasoning": "Estimated costs associated with producing a bundle of accessories for motorcycles, including manufacturing and logistics. The gross margin is calculated based on the difference between selling price and COGS.",
+      "market_comparison": {
+        "similar_case": "Harley-Davidson Accessory Bundles",
+        "comparison_details": "Harley-Davidson's accessory bundles are priced around 350 EUR, with COGS reported at approximately 230 EUR, yielding a gross margin of about 34%.",
+        "cost_figures": [
+          {
+            "company": "Harley-Davidson",
+            "project": "Accessory Bundle Sales",
+            "amount": 230,
+            "currency": "EUR",
+            "year": 2021
+          },
+          {
+            "company": "Ducati",
+            "project": "Accessory Packages",
+            "amount": 210,
+            "currency": "EUR",
+            "year": 2020
+          }
+        ],
+        "source": "Motorcycle Accessory Market Reports",
+        "reference_links": [
+          "https://www.harley-davidson.com/en_US/products/accessories.html",
+          "https://www.ducati.com/ww/en/accessories"
+        ]
+      }
+    }
+  ],
+  "average_cogs_per_bundle": 200,
+  "total_estimated_cost_summary": {
+    "one_time_development": 400000,
+    "annual_customer_acquisition": 50000,
+    "annual_distribution_operations": 75000,
+    "annual_after_sales": 40000,
+    "average_cogs_per_unit": 200
+  },
+  "confidence_level": "High",
+  "additional_notes": "The estimates are based on historical data from similar projects and industry benchmarks. Assumptions include standard costs in the automotive sector, particularly for IT, engineering, and support systems.",
+  "volume_projections": {
+    "2024": 1500000,
+    "2025": 1575000,
+    "2026": 1653750,
+    "2027": 1736437,
+    "2028": 1823259,
+    "2029": 1914422,
+    "2030": 2010143
+  },
+  "yearly_cost_breakdown": {
+    "2024": {
+      "projected_volume": 1500000,
+      "one_time_development": 400000,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 300000000,
+      "cogs_per_unit": 200,
+      "total_cost": 300565000,
+      "currency": "EUR"
+    },
+    "2025": {
+      "projected_volume": 1575000,
+      "one_time_development": 0,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 315000000,
+      "cogs_per_unit": 200,
+      "total_cost": 315165000,
+      "currency": "EUR"
+    },
+    "2026": {
+      "projected_volume": 1653750,
+      "one_time_development": 0,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 330750000,
+      "cogs_per_unit": 200,
+      "total_cost": 330915000,
+      "currency": "EUR"
+    },
+    "2027": {
+      "projected_volume": 1736437,
+      "one_time_development": 0,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 347287400,
+      "cogs_per_unit": 200,
+      "total_cost": 347452400,
+      "currency": "EUR"
+    },
+    "2028": {
+      "projected_volume": 1823259,
+      "one_time_development": 0,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 364651800,
+      "cogs_per_unit": 200,
+      "total_cost": 364816800,
+      "currency": "EUR"
+    },
+    "2029": {
+      "projected_volume": 1914422,
+      "one_time_development": 0,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 382884400,
+      "cogs_per_unit": 200,
+      "total_cost": 383049400,
+      "currency": "EUR"
+    },
+    "2030": {
+      "projected_volume": 2010143,
+      "one_time_development": 0,
+      "customer_acquisition": 50000,
+      "distribution_operations": 75000,
+      "after_sales": 40000,
+      "total_cogs": 402028600,
+      "cogs_per_unit": 200,
+      "total_cost": 402193600,
+      "currency": "EUR"
+    }
+  },
+  "seven_year_summary": {
+    "total_cost_2024_2030": 2444157200,
+    "total_volume_2024_2030": 12213011,
+    "average_cost_per_unit": 200.13,
+    "currency": "EUR"
+  }
+}

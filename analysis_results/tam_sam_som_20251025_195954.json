@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all potential users and beneficiaries of the reuse and recycling processes within the automotive industry, focusing on vehicle manufacturers and development teams that require a sustainable approach to component usage and procurement.",
+    "numbers": {
+      "2024": 10000000,
+      "2025": 12000000,
+      "2026": 14000000,
+      "2027": 16000000,
+      "2028": 18000000,
+      "2029": 20000000,
+      "2030": 22000000
+    },
+    "justification": "The TAM calculations are based on the estimated size of the global automotive development parts market, which is influenced by the increasing focus on sustainability and cost reduction strategies by manufacturers. The assumptions include a compound annual growth rate (CAGR) of approximately 15% due to the rising demand for circular economy practices in automotive development.",
+    "industry_example": {
+      "name": "Ford Motor Company",
+      "description": "Ford has been implementing sustainability initiatives in its supply chain and development processes, focusing on the reuse of materials and components to reduce waste and costs.",
+      "link": "https://media.ford.com/content/fordmedia/fna/us/en/news/2022/01/26/ford-aims-to-reduce-waste.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market consists of automotive manufacturers and development teams that can realistically implement reuse and recycling processes in their operations, particularly those aligned with BMW's existing development fleets and processes.",
+    "numbers": {
+      "2024": 6000000,
+      "2025": 7200000,
+      "2026": 8400000,
+      "2027": 9600000,
+      "2028": 10800000,
+      "2029": 12000000,
+      "2030": 13200000
+    },
+    "justification": "The SAM represents approximately 60% of the TAM, reflecting manufacturers likely to adopt such processes based on their commitment to sustainability and cost management. Growth is anticipated at a rate of 15%, consistent with trends observed in the automotive sector's shift towards circular business models.",
+    "industry_example": {
+      "name": "Volkswagen AG",
+      "description": "Volkswagen is actively pursuing circular economy initiatives, focusing on parts reuse and efficient resource management within its production facilities.",
+      "link": "https://www.volkswagen-newsroom.com/en/press-releases/2021/03/volkswagen-aims-for-circular-economy-7083"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market includes automotive manufacturers and development teams that can be captured in the near term, specifically within the BMW Group and its immediate partners, based on the implementation of the RE:USE Prototypes project.",
+    "numbers": {
+      "2024": 1200000,
+      "2025": 1440000,
+      "2026": 1680000,
+      "2027": 1920000,
+      "2028": 2160000,
+      "2029": 2400000,
+      "2030": 2640000
+    },
+    "justification": "The SOM is projected to be 20% of the SAM initially, growing to 22% by 2030. This growth is based on the expected adoption rate of reuse processes among BMW's development teams, with competitive factors being the efficiency of implementation and demonstrated cost savings.",
+    "industry_example": {
+      "name": "Toyota Motor Corporation",
+      "description": "Toyota has effectively captured market share in the automotive industry by focusing on lean manufacturing and sustainability, which has allowed them to optimize resource usage and reduce costs.",
+      "link": "https://global.toyota/en/newsroom/corporate/35660075.html"
+    }
+  },
+  "sources": [
+    "https://www.wbcsd.org/Overview/Panorama/Articles/Circular-economy-in-the-automotive-industry",
+    "https://www.autoweek.com/news/auto-shows/a38433051/ford-sustainability-2022/",
+    "https://www.volkswagenag.com/en/news/stories/2021/03/circular-economy.html"
+  ]
+}

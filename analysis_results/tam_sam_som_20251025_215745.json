@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The Total Addressable Market (TAM) represents all potential users of smart water bottles globally, particularly those focused on sustainability and health. This includes university and high-school students, environmentally conscious consumers, and institutions looking to incorporate sustainable products into their campuses.",
+    "numbers": {
+      "2024": 210000000,
+      "2025": 227850000,
+      "2026": 246000000,
+      "2027": 265500000,
+      "2028": 286400000,
+      "2029": 308700000,
+      "2030": 332400000
+    },
+    "justification": "The TAM is based on the global smart water bottle market size of €210 million in 2025, with a projected CAGR of 8.5% through 2030. This growth rate is reflective of increasing consumer awareness about sustainability and the adoption of smart devices. Assumptions include heightened demand as younger generations prioritize eco-friendly products, leading to an expanding market.",
+    "industry_example": {
+      "name": "HydraSpark",
+      "description": "HydraSpark produces smart water bottles that track hydration levels and sync with mobile apps. Their focus on sustainability and technology parallels BMW EcoHydrate's goals and target market.",
+      "link": "https://www.hydraspark.com/news"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The Serviceable Available Market (SAM) is the segment of the TAM that focuses specifically on university and high-school students in the EU, along with lifestyle buyers who are inclined towards sustainability. This market is more targeted and realistic for BMW EcoHydrate's initial offerings.",
+    "numbers": {
+      "2024": 85000000,
+      "2025": 91425000,
+      "2026": 100000000,
+      "2027": 108500000,
+      "2028": 117400000,
+      "2029": 126700000,
+      "2030": 136400000
+    },
+    "justification": "SAM is estimated at about 40% of the TAM, based on the specific focus on students and institutions within Europe who are more likely to adopt a product like BMW EcoHydrate. This reflects targeted marketing efforts and partnerships with universities. The growth also assumes a rising trend in the adoption of sustainable products among younger consumers.",
+    "industry_example": {
+      "name": "LARQ",
+      "description": "LARQ targets environmentally conscious consumers with their self-cleaning water bottles. They have successfully penetrated the student market by emphasizing sustainability and health, similar to BMW’s approach.",
+      "link": "https://www.larq.com/blogs/news/lifestyle-and-sustainability"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The Serviceable Obtainable Market (SOM) is the portion of the SAM that BMW EcoHydrate can realistically capture in the short term, focusing on initial sales to students and partnerships with educational institutions.",
+    "numbers": {
+      "2024": 8500000,
+      "2025": 9500000,
+      "2026": 10000000,
+      "2027": 11500000,
+      "2028": 13000000,
+      "2029": 14500000,
+      "2030": 16000000
+    },
+    "justification": "The SOM is approximated at 10% of the SAM initially, reflecting realistic market penetration based on brand recognition and consumer adoption rates. Assumptions include effective marketing strategies, pilot program success, and increased awareness of sustainability, leading to growth in sales over time.",
+    "industry_example": {
+      "name": "S'well",
+      "description": "S'well has successfully captured significant market share in the reusable bottle segment by leveraging a strong brand identity and effective partnerships, showcasing how targeted marketing can yield rapid growth.",
+      "link": "https://www.swell.com/blogs/news/brand-growth-strategy"
+    }
+  },
+  "sources": [
+    "https://www.marketwatch.com/",
+    "https://www.statista.com/",
+    "https://www.researchgate.net/"
+  ]
+}

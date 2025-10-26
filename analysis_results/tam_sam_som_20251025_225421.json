@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all potential motorcycle owners and enthusiasts who may purchase accessories for their bikes, as well as all dealers selling motorcycle accessories.",
+    "numbers": {
+      "2024": 50000000,
+      "2025": 52500000,
+      "2026": 55125000,
+      "2027": 57881250,
+      "2028": 60775263,
+      "2029": 63814006,
+      "2030": 67004606
+    },
+    "justification": "The TAM was calculated based on the estimated number of motorcycle owners in Europe and North America, which is approximately 50 million currently, growing at an annual rate of 5%. This assumption is supported by industry reports indicating a steady increase in motorcycle sales and ownership. The market for accessories is typically estimated to be 1.5 times larger than the market for motorcycles themselves, leading to a total addressable market of around $15 billion by 2030.",
+    "industry_example": {
+      "name": "Harley-Davidson",
+      "description": "Harley-Davidson focuses on a large customer base of motorcycle enthusiasts who regularly purchase accessories, contributing to a significant portion of their revenue.",
+      "link": "https://www.harley-davidson.com/us/en/about-us/investors.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market consists of motorcycle owners who are actively looking for accessories and are reachable through BMW's existing dealer network.",
+    "numbers": {
+      "2024": 15000000,
+      "2025": 15750000,
+      "2026": 16537500,
+      "2027": 17364375,
+      "2028": 18232594,
+      "2029": 19144223,
+      "2030": 20101434
+    },
+    "justification": "The SAM is estimated to be 30% of the TAM, focusing on customers who own BMW motorcycles or those likely to purchase BMW accessories. The increase in motorcycle ownership, along with targeted marketing and improved accessibility of products through dealers, supports growth in this segment.",
+    "industry_example": {
+      "name": "BMW Motorrad",
+      "description": "BMW Motorrad has successfully targeted a specific segment of motorcycle owners through their dealer network, focusing on high-quality accessories tailored for BMW models.",
+      "link": "https://www.bmwgroup.com/en/investors.html"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market represents the share of the SAM that BMW can realistically capture through its new accessory bundles in the near term.",
+    "numbers": {
+      "2024": 3000000,
+      "2025": 3150000,
+      "2026": 3307500,
+      "2027": 3472875,
+      "2028": 3646519,
+      "2029": 3828844,
+      "2030": 4020286
+    },
+    "justification": "The SOM is estimated at 20% of the SAM initially, growing as the accessory bundles become established and marketed effectively. This percentage is reasonable given competitive factors and the adoption curve for new products. The growth trajectory assumes increased awareness and marketing efforts over time.",
+    "industry_example": {
+      "name": "Ducati",
+      "description": "Ducati has effectively captured market share through specialized accessory bundles that appeal to their customer base, achieving strong sales and loyalty.",
+      "link": "https://www.ducati.com/ww/en/home"
+    }
+  },
+  "sources": [
+    "https://www.statista.com/statistics/251139/motorcycle-sales-in-the-us/",
+    "https://www.mordorintelligence.com/industry-reports/motorcycle-accessories-market",
+    "https://www.ibisworld.com/united-states/market-research-reports/motorcycle-accessories-industry/"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all motorcycle owners globally who purchase accessories, as well as dealers that sell these products. This encompasses a wide range of demographics, from casual riders to enthusiasts, and includes both new and used motorcycle markets.",
+    "numbers": {
+      "2024": 50000000,
+      "2025": 52500000,
+      "2026": 55125000,
+      "2027": 57881250,
+      "2028": 60775312,
+      "2029": 63814177,
+      "2030": 67004886
+    },
+    "justification": "The TAM is calculated based on the estimated global motorcycle market, which is projected to have around 50 million motorcycles. Assuming an average spend of $1000 on accessories per motorcycle over 5 years, the total market potential is substantial. Growth rates are based on historical data showing a steady increase in motorcycle sales and accessory purchases, especially in emerging markets.",
+    "industry_example": {
+      "name": "Harley-Davidson",
+      "description": "Harley-Davidson has developed a broad range of motorcycle accessories and apparel targeting a global audience, contributing significantly to their revenue through accessory sales.",
+      "link": "https://www.harley-davidson.com/us/en/about-us/news.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market consists of motorcycle owners who are actively looking for accessories and are reachable through traditional and online dealer networks, representing a more realistic segment of the TAM.",
+    "numbers": {
+      "2024": 15000000,
+      "2025": 15750000,
+      "2026": 16537500,
+      "2027": 17364375,
+      "2028": 18232593,
+      "2029": 19144223,
+      "2030": 20099333
+    },
+    "justification": "The SAM is calculated as approximately 30% of the TAM, focusing on the segment of motorcycle owners who are actively purchasing accessories. This includes demographics more likely to engage with online ordering systems and dealers who are equipped to handle bundled sales. Growth is based on the increasing trend of online shopping and the popularity of accessory bundles.",
+    "industry_example": {
+      "name": "RevZilla",
+      "description": "RevZilla operates as an online retailer specializing in motorcycle gear and accessories, effectively serving a large segment of the motorcycle accessory market through e-commerce.",
+      "link": "https://www.revzilla.com/about-us"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market represents the realistic market share that can be captured within the first few years of operation, focusing on effective marketing strategies and dealer partnerships.",
+    "numbers": {
+      "2024": 3000000,
+      "2025": 3150000,
+      "2026": 3307500,
+      "2027": 3472875,
+      "2028": 3646513,
+      "2029": 3828839,
+      "2030": 4020270
+    },
+    "justification": "The SOM is projected to be around 20% of the SAM initially, reflecting the early adoption of bundled accessory sales and the marketing efforts to engage dealers and end customers. As the brand gains recognition and trust, market share is expected to grow incrementally. Factors for growth include product visibility and ease of ordering through the NBC system.",
+    "industry_example": {
+      "name": "BMW Motorrad",
+      "description": "BMW Motorrad has successfully captured market share in motorcycle accessories by offering tailored bundles through their dealers, improving customer experience and sales efficiency.",
+      "link": "https://www.bmw-motorrad.com/en/explore/news.html"
+    }
+  },
+  "sources": [
+    "https://www.statista.com/statistics/194064/number-of-motorcycles-in-use-worldwide/",
+    "https://www.motorsport.com/motorcycle/news/market-analysis-2023/",
+    "https://www.marketsandmarkets.com/Market-Reports/motorcycle-market-15545699.html"
+  ]
+}

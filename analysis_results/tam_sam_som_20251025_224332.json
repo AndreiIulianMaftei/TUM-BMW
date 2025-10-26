@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all potential users of smart hydration solutions globally, specifically targeting students, educational institutions, and environmentally conscious consumers.",
+    "numbers": {
+      "2024": 210000000,
+      "2025": 227850000,
+      "2026": 247345000,
+      "2027": 268513000,
+      "2028": 291498000,
+      "2029": 316361000,
+      "2030": 343174000
+    },
+    "justification": "The TAM is derived from the global smart water bottle market size, projected to be €210M in 2025, with an annual growth rate of 8.5% through 2030. The figures are based on industry reports and growth trends observed in similar product categories. The market size reflects all potential buyers, including students and lifestyle buyers, thus justifying the larger market figure.",
+    "industry_example": {
+      "name": "LARQ",
+      "description": "LARQ operates in the smart hydration space with its product that offers UV-C cleaning and hydration tracking, appealing to environmentally conscious consumers and students.",
+      "link": "https://www.larq.com/pages/larq-technology"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market is focused on university and high-school students in the EU, along with institutional partnerships that can be realistically engaged for custom solutions.",
+    "numbers": {
+      "2024": 85000000,
+      "2025": 92150000,
+      "2026": 101200000,
+      "2027": 110600000,
+      "2028": 120800000,
+      "2029": 131900000,
+      "2030": 143900000
+    },
+    "justification": "The SAM represents approximately 40% of the TAM, focusing on students aged 17-27 and institutions that can implement sustainability initiatives. This percentage is based on market research indicating that educational institutions and student populations represent a significant segment of the smart bottle market, particularly in Europe.",
+    "industry_example": {
+      "name": "HydraSpark",
+      "description": "HydraSpark targets the student market with smart water bottles that track hydration levels, focusing on health and sustainability, thus aligning with the SAM for EcoHydrate.",
+      "link": "https://www.hydraspark.com/pages/about"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market represents the share of the SAM that EcoHydrate can realistically capture within the first few years, focusing on initial sales and partnerships.",
+    "numbers": {
+      "2024": 8500000,
+      "2025": 10200000,
+      "2026": 12000000,
+      "2027": 14000000,
+      "2028": 16000000,
+      "2029": 18000000,
+      "2030": 20000000
+    },
+    "justification": "The SOM is projected to be around 10% of the SAM in the initial years, growing to 16% by 2030 as brand recognition and partnerships expand. These projections are based on initial sales estimates, pilot program success, and market penetration strategies aimed at students and institutions.",
+    "industry_example": {
+      "name": "S'well",
+      "description": "S'well successfully captured a significant portion of the reusable bottle market by targeting environmentally conscious consumers and leveraging strategic partnerships, showcasing effective market entry strategies.",
+      "link": "https://www.swell.com/pages/about-us"
+    }
+  },
+  "sources": [
+    "https://www.statista.com/statistics/1101748/global-smart-water-bottle-market-size/",
+    "https://www.forbes.com/sites/bernardmarr/2021/05/17/the-bottle-that-cleans-itself-what-you-need-to-know-about-larqs-smart-water-bottle/",
+    "https://www.entrepreneur.com/article/354328"
+  ]
+}

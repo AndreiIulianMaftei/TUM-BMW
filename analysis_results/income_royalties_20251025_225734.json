@@ -1,0 +1,70 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "royalty_percentage": 10,
+      "price_per_piece": 150.0,
+      "number_of_units": 1500000,
+      "yearly_income": 22500000.0
+    },
+    {
+      "year": 2025,
+      "royalty_percentage": 10,
+      "price_per_piece": 155.0,
+      "number_of_units": 1575000,
+      "yearly_income": 24412500.0
+    },
+    {
+      "year": 2026,
+      "royalty_percentage": 10,
+      "price_per_piece": 160.0,
+      "number_of_units": 1653750,
+      "yearly_income": 26520000.0
+    },
+    {
+      "year": 2027,
+      "royalty_percentage": 10,
+      "price_per_piece": 165.0,
+      "number_of_units": 1736437,
+      "yearly_income": 28651105.5
+    },
+    {
+      "year": 2028,
+      "royalty_percentage": 10,
+      "price_per_piece": 170.0,
+      "number_of_units": 1823259,
+      "yearly_income": 31095403.0
+    },
+    {
+      "year": 2029,
+      "royalty_percentage": 10,
+      "price_per_piece": 175.0,
+      "number_of_units": 1914422,
+      "yearly_income": 33502385.0
+    },
+    {
+      "year": 2030,
+      "royalty_percentage": 10,
+      "price_per_piece": 180.0,
+      "number_of_units": 2010143,
+      "yearly_income": 36182574.0
+    }
+  ],
+  "total_income": 202463967.5,
+  "summary": "The royalty percentages were chosen based on industry standards for accessory sales, typically ranging from 5% to 15%. The growth projections are based on historical sales data and expected market expansion in the motorcycle accessory segment. The price per piece increases annually to reflect inflation and added value in product offerings.",
+  "methodology": "Data sources include industry reports from McKinsey & Company, Statista, and annual reports from competitors. Assumptions include steady market growth and inflation rates as per World Bank data.",
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson Accessory Bundles",
+      "description": "A similar project offering bundled motorcycle accessories with a focus on ease of purchase and customization.",
+      "royalty_rate": 9,
+      "source": "https://www.harley-davidson.com/us/en/about-us.html"
+    },
+    {
+      "name": "Ducati Performance Kits",
+      "description": "Ducati's initiative to sell performance kits for motorcycles, enhancing customer experience with bundled offerings.",
+      "royalty_rate": 10,
+      "source": "https://www.ducati.com/ww/en/home"
+    }
+  ]
+}

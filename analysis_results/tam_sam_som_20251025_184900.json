@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all motorcycle accessory consumers globally, including both end customers looking for motorcycle accessories and dealers who sell these products. This encompasses all types of motorcycle users, from casual riders to enthusiasts, as well as a wide range of dealerships.",
+    "numbers": {
+      "2024": 1000000000,
+      "2025": 1100000000,
+      "2026": 1210000000,
+      "2027": 1331000000,
+      "2028": 1464100000,
+      "2029": 1610510000,
+      "2030": 1771561000
+    },
+    "justification": "The TAM is estimated based on the global motorcycle accessories market, which was valued at approximately $1 billion in 2023 and is expected to grow at a CAGR of 10% over the next several years. The numbers are derived from market reports that estimate growth rates and trends in the automotive aftermarket sector, including accessories and parts. The growth rate is based on increasing motorcycle ownership and the growing popularity of customization among riders.",
+    "industry_example": {
+      "name": "Harley-Davidson",
+      "description": "Harley-Davidson has a robust accessory market that serves a wide range of motorcycle users, with a significant focus on customization and aftermarket products.",
+      "link": "https://www.harley-davidson.com/us/en/shop/motorcycle-parts.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market consists of the motorcycle accessory consumers who are likely to purchase from BMW or its dealers. This includes existing BMW motorcycle owners and potential customers looking to upgrade their motorcycles with BMW-approved accessories.",
+    "numbers": {
+      "2024": 300000000,
+      "2025": 330000000,
+      "2026": 363000000,
+      "2027": 399300000,
+      "2028": 439230000,
+      "2029": 482153000,
+      "2030": 530368300
+    },
+    "justification": "The SAM is estimated to be about 30% of the TAM, focusing on the BMW motorcycle customer base and their propensity to purchase accessories. This percentage is based on BMW's market share in the motorcycle industry, which is approximately 30%, along with the assumption that a significant percentage of BMW motorcycle owners will seek branded accessories. The growth is projected at a steady rate reflecting increasing loyalty and brand recognition.",
+    "industry_example": {
+      "name": "BMW Motorrad",
+      "description": "BMW Motorrad has a dedicated aftermarket for accessories tailored specifically for their motorcycle models, providing a comprehensive selection of products for their customers.",
+      "link": "https://www.bmwmotorcycles.com/en/service/accessories.html"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market reflects the portion of the SAM that BMW can realistically capture in the short term through its new accessory bundles. This includes both end customers and dealers who are likely to adopt the new bundle offerings.",
+    "numbers": {
+      "2024": 60000000,
+      "2025": 66000000,
+      "2026": 72600000,
+      "2027": 79860000,
+      "2028": 87846000,
+      "2029": 96630600,
+      "2030": 106293660
+    },
+    "justification": "The SOM is estimated at around 20% of the SAM, reflecting a realistic initial market penetration of the new bundles due to existing customer relationships, brand loyalty, and marketing efforts. The growth trajectory assumes an increasing adoption rate as awareness of the bundled offerings grows and as dealers find the new ordering process easier and more appealing. Factors such as competitive pressure and market dynamics are also considered in this estimation.",
+    "industry_example": {
+      "name": "Ducati",
+      "description": "Ducati successfully introduced accessory bundles that catered specifically to their model lineup, capturing a significant portion of their market through targeted marketing and dealer engagement.",
+      "link": "https://www.ducati.com/us/en/accessories"
+    }
+  },
+  "sources": [
+    "https://www.marketresearch.com/product/sample-19268441.pdf",
+    "https://www.statista.com/study/101063/motorcycle-accessories-market/",
+    "https://www.bmwmotorcycles.com/en/service/accessories.html"
+  ]
+}

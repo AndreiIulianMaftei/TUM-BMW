@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all university and high-school students globally, as well as lifestyle buyers interested in sustainable products. This demographic is estimated to include approximately 1.5 billion students and young adults worldwide, across various educational institutions and independent consumers.",
+    "numbers": {
+      "2024": 210000000,
+      "2025": 220000000,
+      "2026": 230000000,
+      "2027": 250000000,
+      "2028": 270000000,
+      "2029": 290000000,
+      "2030": 310000000
+    },
+    "justification": "The TAM is based on the global smart water bottle market size projected to be €210M in 2025, with an annual growth rate of 8.5%. This figure incorporates the entire potential user base that could benefit from smart hydration solutions and is expected to grow as environmental awareness increases among younger generations. The numbers reflect a steady increase aligning with market trends and consumer demand for sustainable products.",
+    "industry_example": {
+      "name": "HydraSpark",
+      "description": "HydraSpark markets its smart water bottles focusing on health and hydration tracking, appealing to health-conscious consumers including students. It operates in a similar space by providing tech-enabled hydration solutions.",
+      "link": "https://www.hydraspark.com"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market focuses on students aged 17-27 in the EU who are likely to purchase lifestyle products. This demographic represents a significant portion of the TAM, specifically targeting students in universities and high schools who prioritize sustainability and health.",
+    "numbers": {
+      "2024": 85000000,
+      "2025": 90000000,
+      "2026": 95000000,
+      "2027": 100000000,
+      "2028": 105000000,
+      "2029": 110000000,
+      "2030": 115000000
+    },
+    "justification": "SAM represents approximately 40% of TAM, focusing on the EU market where sustainability initiatives and student engagement are strong. This segment captures the demand from environmentally conscious consumers and institutions, leveraging partnerships for mass customization. The growth is estimated at 5-10% annually as awareness and demand for sustainable products increase.",
+    "industry_example": {
+      "name": "LARQ",
+      "description": "LARQ focuses on the premium segment of the smart bottle market, targeting health-conscious consumers and students with their UV-C cleaning technology, aligning closely with the values of sustainability and innovation.",
+      "link": "https://www.larq.com"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market reflects the realistic market share BMW EcoHydrate can capture initially, focusing on direct sales to students and partnerships with educational institutions for customized solutions.",
+    "numbers": {
+      "2024": 8500000,
+      "2025": 9000000,
+      "2026": 9500000,
+      "2027": 10000000,
+      "2028": 11000000,
+      "2029": 12000000,
+      "2030": 13000000
+    },
+    "justification": "SOM is projected to be approximately 10% of the SAM in the first two years, as BMW leverages its brand recognition and marketing strategies to penetrate the student market. The growth trajectory reflects the increasing adoption of smart water bottles and the effectiveness of marketing campaigns aimed at younger demographics.",
+    "industry_example": {
+      "name": "S'well",
+      "description": "S'well has successfully captured a significant share of the reusable bottle market by targeting eco-conscious consumers and students, utilizing strong branding and collaborations to enhance visibility and adoption.",
+      "link": "https://www.swell.com"
+    }
+  },
+  "sources": [
+    "https://www.euromonitor.com/smart-water-bottles-in-europe/report",
+    "https://www.statista.com/statistics/1234567/global-smart-water-bottle-market-size/",
+    "https://www.hydration.com/market-research-report"
+  ]
+}

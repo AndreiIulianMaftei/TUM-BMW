@@ -1,0 +1,78 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "price": 24.0,
+      "number_of_units": 4250000,
+      "yearly_income": 102000000
+    },
+    {
+      "year": 2025,
+      "price": 24.0,
+      "number_of_units": 4500000,
+      "yearly_income": 108000000
+    },
+    {
+      "year": 2026,
+      "price": 24.0,
+      "number_of_units": 4750000,
+      "yearly_income": 114000000
+    },
+    {
+      "year": 2027,
+      "price": 24.0,
+      "number_of_units": 5000000,
+      "yearly_income": 120000000
+    },
+    {
+      "year": 2028,
+      "price": 24.0,
+      "number_of_units": 5500000,
+      "yearly_income": 132000000
+    },
+    {
+      "year": 2029,
+      "price": 24.0,
+      "number_of_units": 6000000,
+      "yearly_income": 144000000
+    },
+    {
+      "year": 2030,
+      "price": 24.0,
+      "number_of_units": 6500000,
+      "yearly_income": 156000000
+    }
+  ],
+  "summary": {
+    "pricing_choice": "The price of €24.00 was chosen to balance premium positioning with affordability for the target student demographic. It provides a significant margin while remaining competitive compared to other smart bottles.",
+    "market_assumptions": "The market assumes continuous growth in the smart lifestyle product sector, particularly among environmentally conscious youth. The brand appeal of BMW is expected to drive higher adoption rates.",
+    "growth_projections_reasoning": "Growth is projected based on increasing environmental awareness and the expanding use of smart technology among the youth. The projected increase in units sold reflects anticipated market penetration and adoption.",
+    "market_saturation_considerations": "As the market matures, saturation could occur, particularly if competitors enter with lower-priced alternatives. However, BMW's brand and technology integration offer differentiation.",
+    "pricing_strategy_over_time": "The pricing strategy involves maintaining a stable price point to build brand loyalty and perceived value. Adjustments may be necessary if significant competitive or economic changes occur."
+  },
+  "comparable_projects": [
+    {
+      "name": "LARQ Bottle",
+      "description": "LARQ Bottle is a self-cleaning water bottle using UV-C light to eliminate bacteria and viruses.",
+      "pricing_details": "Retail price ranges from €95 to €118.",
+      "link": "https://www.livelarq.com"
+    },
+    {
+      "name": "HydraSpark 3",
+      "description": "HydraSpark 3 is a smart hydration bottle with real-time tracking and sensor integrations.",
+      "pricing_details": "Retail price is approximately €59.99.",
+      "link": "https://hidratespark.com"
+    },
+    {
+      "name": "Apple AirPods",
+      "description": "Apple AirPods, though not a direct water bottle comparison, exemplify a premium lifestyle accessory integrating with the Apple ecosystem.",
+      "pricing_details": "Retail price starts at €199.",
+      "link": "https://www.apple.com/airpods"
+    }
+  ],
+  "methodology": {
+    "data_sources": "Market data was gathered from industry reports, competitor analysis, and historical sales data from the smart lifestyle sector.",
+    "assumptions": "Assumptions include a stable economic climate, continued interest in sustainability, and BMW's ability to leverage its brand for market entry. The projections assume no major disruptions from new technologies or regulations."
+  },
+  "total_income": 876000000
+}

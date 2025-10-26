@@ -1,0 +1,57 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "price": 24.0,
+      "number_of_units": 4250000,
+      "yearly_income": 102000000.0
+    },
+    {
+      "year": 2025,
+      "price": 24.0,
+      "number_of_units": 4750000,
+      "yearly_income": 114000000.0
+    },
+    {
+      "year": 2026,
+      "price": 24.0,
+      "number_of_units": 5000000,
+      "yearly_income": 120000000.0
+    },
+    {
+      "year": 2027,
+      "price": 24.0,
+      "number_of_units": 5750000,
+      "yearly_income": 138000000.0
+    },
+    {
+      "year": 2028,
+      "price": 24.0,
+      "number_of_units": 6500000,
+      "yearly_income": 156000000.0
+    },
+    {
+      "year": 2029,
+      "price": 24.0,
+      "number_of_units": 7250000,
+      "yearly_income": 174000000.0
+    },
+    {
+      "year": 2030,
+      "price": 24.0,
+      "number_of_units": 8000000,
+      "yearly_income": 192000000.0
+    }
+  ],
+  "total_income": 996000000.0,
+  "summary": "The pricing of €24.00 per unit was chosen to reflect the premium design and smart technology features of the BMW EcoHydrate bottle, aligning with market expectations for high-quality, tech-integrated lifestyle products. Market assumptions include a steady growth in the smart bottle market and increased consumer preference for sustainable products. Growth projections are based on the increasing demand in the EU market and BMW's strong brand presence. The pricing strategy remains consistent over time to maintain competitiveness and brand value.",
+  "methodology": "Data sources include market research reports on smart water bottles, BMW's internal financial projections, and historical sales data from similar products. Assumptions used involve consistent market demand growth, stable production costs, and successful market penetration strategies.",
+  "comparable_projects": [
+    {
+      "name": "LARQ Smart Bottle",
+      "description": "A self-cleaning water bottle with UV-C technology and hydration tracking.",
+      "price": 95,
+      "source": "https://www.livelarq.com"
+    }
+  ]
+}

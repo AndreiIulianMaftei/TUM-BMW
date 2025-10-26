@@ -1,0 +1,78 @@
+{
+  "yearly_projections": {
+    "2024": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 1500000,
+      "yearly_income": 270000000,
+      "churn_rate": 0.05
+    },
+    "2025": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 1650000,
+      "yearly_income": 297000000,
+      "churn_rate": 0.05
+    },
+    "2026": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 1800000,
+      "yearly_income": 324000000,
+      "churn_rate": 0.05
+    },
+    "2027": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 1950000,
+      "yearly_income": 351000000,
+      "churn_rate": 0.05
+    },
+    "2028": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 2100000,
+      "yearly_income": 378000000,
+      "churn_rate": 0.05
+    },
+    "2029": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 2250000,
+      "yearly_income": 405000000,
+      "churn_rate": 0.05
+    },
+    "2030": {
+      "monthly_cost": 15,
+      "number_of_subscribers": 2400000,
+      "yearly_income": 432000000,
+      "churn_rate": 0.05
+    }
+  },
+  "summary": {
+    "pricing_reason": "The pricing model was set at 15 EUR per month to remain competitive with similar offerings in the motorcycle and automotive accessory industry, ensuring affordability while maximizing revenue.",
+    "market_assumptions": "The motorcycle accessory market is expected to grow steadily, driven by increased motorcycle ownership and the growing trend of customization.",
+    "growth_projections_reasoning": "The projections are based on historical market trends and expected growth in motorcycle sales, with a steady increase in subscriber numbers reflecting the expanding market and increased acceptance of subscription models.",
+    "churn_rate_assumptions": "A 5% churn rate is assumed, which is standard for subscription services in the automotive sector, reflecting both voluntary and involuntary churn.",
+    "customer_lifetime_value_considerations": "With a monthly subscription and a churn rate of 5%, the average customer lifetime is approximately 20 months, leading to a lifetime value of 300 EUR per customer."
+  },
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson H-D Connect",
+      "url": "https://www.harley-davidson.com/us/en/content/hd-connect.html",
+      "description": "Harley-Davidson offers a subscription-based service providing motorcycle connectivity features. The service enhances the rider experience through real-time data.",
+      "subscription_model_details": "Customers pay a yearly fee for connectivity services that provide insights and alerts."
+    },
+    {
+      "name": "Yamaha MyRide",
+      "url": "https://www.yamaha-motor.eu/eu/en/services/myride/",
+      "description": "Yamaha's MyRide app offers a subscription-based service allowing users to track rides and access personalized content.",
+      "subscription_model_details": "The app offers premium features through a subscription model targeted at enhancing user engagement."
+    },
+    {
+      "name": "Ducati Link App",
+      "url": "https://www.ducati.com/ww/en/ducati-world/ducati-link-app",
+      "description": "Ducati offers a mobile app that integrates various services and functionalities for Ducati riders, available through a subscription.",
+      "subscription_model_details": "The app provides enhanced connectivity and features through a subscription service."
+    }
+  ],
+  "methodology": {
+    "data_sources": "Data was gathered from industry reports, competitor analysis, and market research on motorcycle and automotive accessory markets.",
+    "assumptions": "Assumptions include consistent growth in the motorcycle market, the adoption of subscription models, and stable economic conditions."
+  },
+  "total_income": 2457000000
+}

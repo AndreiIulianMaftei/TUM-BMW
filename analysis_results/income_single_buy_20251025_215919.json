@@ -1,0 +1,71 @@
+{
+  "yearly_projections": {
+    "2024": {
+      "price": 24.0,
+      "number_of_units": 4250000,
+      "yearly_income": 102000000.0
+    },
+    "2025": {
+      "price": 24.0,
+      "number_of_units": 4750000,
+      "yearly_income": 114000000.0
+    },
+    "2026": {
+      "price": 24.0,
+      "number_of_units": 5000000,
+      "yearly_income": 120000000.0
+    },
+    "2027": {
+      "price": 24.0,
+      "number_of_units": 5750000,
+      "yearly_income": 138000000.0
+    },
+    "2028": {
+      "price": 24.0,
+      "number_of_units": 6500000,
+      "yearly_income": 156000000.0
+    },
+    "2029": {
+      "price": 24.0,
+      "number_of_units": 7250000,
+      "yearly_income": 174000000.0
+    },
+    "2030": {
+      "price": 24.0,
+      "number_of_units": 8000000,
+      "yearly_income": 192000000.0
+    }
+  },
+  "summary": {
+    "pricing_choice": "The pricing of €24.00 per unit was chosen to reflect the premium design and technological features of the BMW EcoHydrate, positioning it competitively against similar smart hydration products in the market.",
+    "market_assumptions": "Assumes a growing trend in sustainability and health consciousness among students, with increasing adoption of smart lifestyle products.",
+    "growth_projections_reasoning": "Projections are based on the increasing awareness and demand for eco-friendly products and the expected expansion of BMW's lifestyle brand reach.",
+    "market_saturation_considerations": "Consideration given to potential market saturation with competitive offerings, but confidence in BMW's brand strength to capture a significant market share.",
+    "pricing_strategy_over_time": "Maintain a stable pricing strategy to leverage brand value and appeal to premium market segments while monitoring for competitive pressure."
+  },
+  "comparable_projects": [
+    {
+      "name": "LARQ Bottle",
+      "description": "A self-cleaning water bottle that uses UV-C technology to purify water and clean the bottle.",
+      "pricing_details": "Priced at approximately €95.00 per unit.",
+      "url": "https://www.livelarq.com/"
+    },
+    {
+      "name": "HydraSpark 3.0",
+      "description": "A smart water bottle that tracks water intake and syncs with a mobile app.",
+      "pricing_details": "Priced at approximately €60.00 per unit.",
+      "url": "https://hidratespark.com/"
+    },
+    {
+      "name": "Thermos Connected Hydration Bottle",
+      "description": "A smart bottle that works with a mobile app to monitor hydration goals and daily water intake.",
+      "pricing_details": "Priced at approximately €50.00 per unit.",
+      "url": "https://www.thermos.com/"
+    }
+  ],
+  "methodology": {
+    "data_sources": "The analysis is based on market research reports, company financial statements, and industry benchmarks for smart hydration products.",
+    "assumptions": "Assumed consistent production capacity and market demand growth, with no major disruptions in supply chain or economic conditions."
+  },
+  "total_income": 996000000.0
+}

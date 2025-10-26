@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all motorcycle owners globally who are potential customers for motorcycle accessories, as well as all dealers who sell these accessories. This market encompasses both individual consumers and retail businesses involved in the motorcycle industry.",
+    "numbers": {
+      "2024": 150000000,
+      "2025": 160000000,
+      "2026": 170000000,
+      "2027": 180000000,
+      "2028": 190000000,
+      "2029": 200000000,
+      "2030": 210000000
+    },
+    "justification": "The TAM is calculated by estimating the total number of motorcycle owners globally, which is approximately 150 million as of 2024, with a projected annual growth rate of 5% driven by increasing motorcycle popularity, especially in emerging markets. These figures take into account both the growing number of motorcycle enthusiasts and the increasing adoption of motorcycles as a primary mode of transport.",
+    "industry_example": {
+      "name": "Harley-Davidson",
+      "description": "Harley-Davidson operates in a similar TAM space, targeting motorcycle owners with a wide range of accessories and apparel. Their extensive dealer network allows them to reach a large customer base effectively.",
+      "link": "https://www.harley-davidson.com/us/en/about-us/company.html"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market focuses on motorcycle owners who actively seek accessories and are willing to purchase bundles, as well as dealers who are part of the BMW network. This segment is more accessible due to targeted marketing and product availability.",
+    "numbers": {
+      "2024": 45000000,
+      "2025": 48000000,
+      "2026": 51000000,
+      "2027": 54000000,
+      "2028": 57000000,
+      "2029": 60000000,
+      "2030": 63000000
+    },
+    "justification": "The SAM is approximately 30% of the TAM, focusing on motorcycle owners who are part of the BMW brand ecosystem and are likely to purchase accessories. This segmentation considers consumer behavior trends and the effectiveness of targeted marketing strategies. The growth reflects an increasing interest in personalized motorcycle experiences.",
+    "industry_example": {
+      "name": "BMW Motorrad",
+      "description": "BMW Motorrad has successfully targeted its serviceable available market by providing tailored accessories for its riders, improving customer engagement, and leveraging its dealer network to enhance availability.",
+      "link": "https://www.bmw-motorrad.com/en/services/accessories.html"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market consists of the customers and dealers that can realistically be captured in the short term, focusing on initial sales of accessory bundles. This market includes early adopters and loyal BMW customers who are likely to engage with the new offering.",
+    "numbers": {
+      "2024": 9000000,
+      "2025": 10800000,
+      "2026": 12600000,
+      "2027": 14400000,
+      "2028": 16200000,
+      "2029": 18000000,
+      "2030": 19800000
+    },
+    "justification": "The SOM represents 20% of the SAM initially, tapping into the existing consumer base of BMW owners and leveraging marketing campaigns to increase visibility. Realistic growth assumptions are based on anticipated consumer interest in bundled products and the effectiveness of streamlined purchasing processes.",
+    "industry_example": {
+      "name": "Ducati",
+      "description": "Ducati has effectively captured its serviceable obtainable market by launching specific accessory bundles for its motorcycle line, which has significantly increased sales and customer satisfaction.",
+      "link": "https://www.ducati.com/ww/en/accessories"
+    }
+  },
+  "sources": [
+    "https://www.statista.com/statistics/222015/number-of-motorcycles-in-use-worldwide/",
+    "https://www.bikebiz.com/global-motorcycle-market-analysis-and-forecast/",
+    "https://www.pwc.com/gx/en/industries/automotive/publications/global-automotive-perspectives.html"
+  ]
+}

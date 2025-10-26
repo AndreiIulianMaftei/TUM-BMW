@@ -1,0 +1,63 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "price": 200.0,
+      "number_of_units": 450000,
+      "yearly_income": 90000000.0
+    },
+    {
+      "year": 2025,
+      "price": 205.0,
+      "number_of_units": 540000,
+      "yearly_income": 110700000.0
+    },
+    {
+      "year": 2026,
+      "price": 210.0,
+      "number_of_units": 630000,
+      "yearly_income": 132300000.0
+    },
+    {
+      "year": 2027,
+      "price": 215.0,
+      "number_of_units": 720000,
+      "yearly_income": 154800000.0
+    },
+    {
+      "year": 2028,
+      "price": 220.0,
+      "number_of_units": 810000,
+      "yearly_income": 178200000.0
+    },
+    {
+      "year": 2029,
+      "price": 225.0,
+      "number_of_units": 900000,
+      "yearly_income": 202500000.0
+    },
+    {
+      "year": 2030,
+      "price": 230.0,
+      "number_of_units": 990000,
+      "yearly_income": 227700000.0
+    }
+  ],
+  "total_income": 1096200000.0,
+  "summary": "The pricing strategy was chosen based on market analysis of similar accessory bundle offerings by competitors like Harley-Davidson and Ducati. The growth projections assume a steady increase in demand for motorcycle accessories, with pricing adjusted for inflation and increased value of bundles over time. The market saturation is expected to occur post-2030, allowing for robust growth within this period.",
+  "methodology": "Data was sourced from industry reports and competitor analysis, including annual reports from Harley-Davidson and Ducati. Assumptions were made based on historical growth rates in the motorcycle accessory market and projected consumer trends.",
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson Accessory Bundles",
+      "description": "Harley-Davidson offers accessory bundles that include various motorcycle parts and gear, aimed at enhancing customer convenience and increasing sales.",
+      "price": 180,
+      "source": "https://www.harley-davidson.com/us/en/shop/c/motorcycle-parts"
+    },
+    {
+      "name": "Ducati Performance Packages",
+      "description": "Ducati offers performance-oriented accessory packages that combine multiple parts for a comprehensive upgrade experience.",
+      "price": 210,
+      "source": "https://www.ducati.com/ww/en/accessories"
+    }
+  ]
+}

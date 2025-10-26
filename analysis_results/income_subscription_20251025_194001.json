@@ -1,0 +1,85 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "monthly_cost": 15,
+      "number_of_subscribers": 1500000,
+      "yearly_income": 270000000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2025,
+      "monthly_cost": 15.5,
+      "number_of_subscribers": 1575000,
+      "yearly_income": 292950000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2026,
+      "monthly_cost": 16,
+      "number_of_subscribers": 1653750,
+      "yearly_income": 317520000,
+      "churn_rate": 6
+    },
+    {
+      "year": 2027,
+      "monthly_cost": 16.5,
+      "number_of_subscribers": 1736437,
+      "yearly_income": 343199826,
+      "churn_rate": 6
+    },
+    {
+      "year": 2028,
+      "monthly_cost": 17,
+      "number_of_subscribers": 1823259,
+      "yearly_income": 371351388,
+      "churn_rate": 7
+    },
+    {
+      "year": 2029,
+      "monthly_cost": 17.5,
+      "number_of_subscribers": 1914422,
+      "yearly_income": 401785620,
+      "churn_rate": 7
+    },
+    {
+      "year": 2030,
+      "monthly_cost": 18,
+      "number_of_subscribers": 2010143,
+      "yearly_income": 434176824,
+      "churn_rate": 8
+    }
+  ],
+  "summary": {
+    "pricing": "The pricing was chosen based on competitive analysis of similar accessory subscription models in the automotive industry, offering value through bundled discounts.",
+    "market_assumptions": "The market is assumed to expand as more consumers opt for personalized accessories and convenience in purchasing.",
+    "growth_projections_reasoning": "Growth is projected based on increasing motorcycle sales and rising interest in personalized accessory bundles, leveraging BMW's strong brand presence.",
+    "churn_rate_assumptions": "Churn rates are estimated based on industry standards for similar subscription models, adjusted for the premium positioning of the BMW brand.",
+    "customer_lifetime_value": "With low churn and high brand loyalty, the customer lifetime value is expected to increase, offsetting acquisition costs and providing sustained revenue."
+  },
+  "comparable_projects": [
+    {
+      "project_name": "Harley-Davidson Genuine Parts & Accessories Subscription",
+      "description": "Offers a subscription service for original parts and accessories tailored to Harley owners.",
+      "subscription_model": "Monthly subscription with options for part upgrades and exclusive content.",
+      "url": "https://www.harley-davidson.com"
+    },
+    {
+      "project_name": "Indian Motorcycle Accessory Bundles",
+      "description": "Provides bundled accessory packages for Indian Motorcycle models, offering a subscription for frequent updates.",
+      "subscription_model": "Annual subscription with bundled discounts on accessories.",
+      "url": "https://www.indianmotorcycle.com"
+    },
+    {
+      "project_name": "Ducati Performance Accessories Subscription",
+      "description": "Subscription service for Ducati riders, offering performance accessories and exclusive maintenance offers.",
+      "subscription_model": "Quarterly subscription focused on performance parts and rider gear.",
+      "url": "https://www.ducati.com"
+    }
+  ],
+  "methodology": {
+    "data_sources": "Data was sourced from industry reports, market analysis from competitors, and BMW's internal market research.",
+    "assumptions": "Assumptions include steady growth in motorcycle sales, increased consumer interest in personalization, and stable economic conditions."
+  },
+  "total_income": 2434989658
+}

@@ -1,0 +1,84 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "royalty_percentage": 10,
+      "price_per_piece": 250,
+      "number_of_units": 1500000,
+      "yearly_income": 37500000
+    },
+    {
+      "year": 2025,
+      "royalty_percentage": 10,
+      "price_per_piece": 255,
+      "number_of_units": 1650000,
+      "yearly_income": 42075000
+    },
+    {
+      "year": 2026,
+      "royalty_percentage": 10,
+      "price_per_piece": 260,
+      "number_of_units": 1800000,
+      "yearly_income": 46800000
+    },
+    {
+      "year": 2027,
+      "royalty_percentage": 10,
+      "price_per_piece": 265,
+      "number_of_units": 1950000,
+      "yearly_income": 51667500
+    },
+    {
+      "year": 2028,
+      "royalty_percentage": 10,
+      "price_per_piece": 270,
+      "number_of_units": 2100000,
+      "yearly_income": 56700000
+    },
+    {
+      "year": 2029,
+      "royalty_percentage": 10,
+      "price_per_piece": 275,
+      "number_of_units": 2250000,
+      "yearly_income": 61875000
+    },
+    {
+      "year": 2030,
+      "royalty_percentage": 10,
+      "price_per_piece": 280,
+      "number_of_units": 2400000,
+      "yearly_income": 67200000
+    }
+  ],
+  "summary": {
+    "royalty_percentages_explanation": "A 10% royalty percentage is a standard rate in the automotive accessory industry, balancing profitability and competitiveness.",
+    "market_assumptions": "The motorcycle accessory market is expected to grow with increased customization trends and a rise in motorcycle usage globally.",
+    "growth_projections_reasoning": "Projected sales volumes increase annually due to market expansion and the bundling strategy improving ease of purchase for customers and dealers.",
+    "industry_standards": "Royalty rates in similar industries range from 5% to 15%, depending on brand strength, market position, and product uniqueness."
+  },
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson Accessory Bundles",
+      "url": "https://www.harley-davidson.com",
+      "description": "Harley-Davidson offers bundled accessories for their bikes, providing discounts similar to individual accessory pricing.",
+      "royalty_details": "Operates at a 10% royalty rate, with bundled discounts incentivizing customer purchases."
+    },
+    {
+      "name": "Ducati Performance Parts",
+      "url": "https://www.ducati.com",
+      "description": "Ducati provides performance parts in bundles, targeting enthusiasts looking for enhanced performance.",
+      "royalty_details": "Typically, a 12% royalty is applied, reflecting the premium market and performance orientation."
+    },
+    {
+      "name": "Yamaha Motorcycle Kits",
+      "url": "https://www.yamaha-motor.eu",
+      "description": "Yamaha offers complete kits that include several parts for specific motorcycle models.",
+      "royalty_details": "A 7% royalty rate is applied, allowing competitive pricing in the broader market."
+    }
+  ],
+  "methodology": {
+    "data_sources": "Data is based on industry reports, competitor analysis, and market research studies.",
+    "assumptions": "Assumed steady market growth and acceptance of bundled products by dealership networks and end customers."
+  },
+  "total_income": 363217500
+}

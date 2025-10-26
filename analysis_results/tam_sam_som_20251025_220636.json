@@ -1,0 +1,61 @@
+{
+  "TAM": {
+    "description_of_public": "The total addressable market includes all university and high-school students globally, as well as environmentally conscious consumers interested in sustainable products. This encompasses approximately 1.5 billion students worldwide, along with lifestyle buyers who prioritize health and sustainability.",
+    "numbers": {
+      "2024": 210000000,
+      "2025": 226500000,
+      "2026": 245000000,
+      "2027": 265000000,
+      "2028": 286500000,
+      "2029": 309500000,
+      "2030": 334000000
+    },
+    "justification": "The total addressable market (TAM) was calculated based on the global smart water bottle market projected to be €210M in 2025, with an estimated CAGR of 8.5%. The numbers reflect growth assumptions based on increasing environmental awareness and the rising demand for sustainable products among younger generations. The assumption includes a steady increase in market penetration as more consumers shift towards eco-friendly products.",
+    "industry_example": {
+      "name": "HydraCoach",
+      "description": "HydraCoach offers a smart water bottle that tracks hydration, similar to BMW's EcoHydrate, catering to health-conscious consumers and students. They leverage IoT technology to provide real-time data and reminders.",
+      "link": "https://www.hydracoach.com/news"
+    }
+  },
+  "SAM": {
+    "description_of_public": "The serviceable available market is comprised of university and high-school students within the EU and other developed markets who are likely to purchase premium sustainable products. This segment represents approximately 40% of the total market, focusing on students and lifestyle buyers.",
+    "numbers": {
+      "2024": 84000000,
+      "2025": 90000000,
+      "2026": 95000000,
+      "2027": 100000000,
+      "2028": 106000000,
+      "2029": 112500000,
+      "2030": 119500000
+    },
+    "justification": "The SAM is estimated to be 40% of the TAM, considering that not all students globally will be reachable or interested in purchasing the product. The growth rate reflects the increasing trend of sustainability among students and institutions, particularly in Europe where environmental initiatives are prominent. This segment is expected to grow as more universities adopt sustainability-focused programs.",
+    "industry_example": {
+      "name": "LARQ",
+      "description": "LARQ focuses on premium smart water bottles with sustainable features and targets environmentally conscious consumers. They successfully capture a significant portion of the market by emphasizing health and design.",
+      "link": "https://www.larq.com/press-release"
+    }
+  },
+  "SOM": {
+    "description_of_public": "The serviceable obtainable market consists of the portion of the SAM that BMW can realistically capture in the next two years, focusing on direct sales through partnerships with universities and online marketing. This segment is typically around 10-15% of the SAM.",
+    "numbers": {
+      "2024": 8500000,
+      "2025": 10000000,
+      "2026": 12000000,
+      "2027": 14000000,
+      "2028": 16000000,
+      "2029": 18000000,
+      "2030": 20000000
+    },
+    "justification": "The SOM is expected to be approximately 10% of the SAM in the initial years. This conservative estimate accounts for the competitive landscape and BMW's brand recognition, as well as initial marketing efforts to penetrate the student market. By leveraging partnerships with universities and a targeted marketing strategy, BMW can achieve steady growth in sales and brand presence.",
+    "industry_example": {
+      "name": "S'well",
+      "description": "S'well successfully captured market share by offering stylish and sustainable water bottles, focusing on direct-to-consumer sales and partnerships with retailers. Their strategy involved branding and social consciousness, leading to significant growth within their target market.",
+      "link": "https://www.swell.com/blogs/news/swell-success-story"
+    }
+  },
+  "sources": [
+    "https://www.statista.com/statistics/1121236/global-smart-water-bottle-market-size/",
+    "https://www.researchgate.net/publication/327200623_The_impact_of_sustainability_on_consumer_behavior",
+    "https://www.forbes.com/sites/forbestechcouncil/2021/08/31/how-iot-is-revolutionizing-sustainability/"
+  ]
+}

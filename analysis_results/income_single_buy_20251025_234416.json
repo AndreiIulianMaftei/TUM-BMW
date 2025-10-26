@@ -1,0 +1,63 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "price": 24.0,
+      "number_of_units": 4250000,
+      "yearly_income": 102000000.0
+    },
+    {
+      "year": 2025,
+      "price": 24.0,
+      "number_of_units": 5000000,
+      "yearly_income": 120000000.0
+    },
+    {
+      "year": 2026,
+      "price": 24.0,
+      "number_of_units": 6250000,
+      "yearly_income": 150000000.0
+    },
+    {
+      "year": 2027,
+      "price": 24.0,
+      "number_of_units": 7500000,
+      "yearly_income": 180000000.0
+    },
+    {
+      "year": 2028,
+      "price": 24.0,
+      "number_of_units": 8750000,
+      "yearly_income": 210000000.0
+    },
+    {
+      "year": 2029,
+      "price": 24.0,
+      "number_of_units": 10000000,
+      "yearly_income": 240000000.0
+    },
+    {
+      "year": 2030,
+      "price": 24.0,
+      "number_of_units": 11250000,
+      "yearly_income": 270000000.0
+    }
+  ],
+  "total_income": 1272000000.0,
+  "summary": "The pricing strategy of €24.00 per unit was chosen based on competitive pricing in the smart bottle market, ensuring a balance between premium positioning and affordability for students. Growth projections are based on increasing awareness and adoption of sustainability-focused products among Gen Z and institutional partnerships. Market saturation is anticipated to be gradual due to the expanding global focus on eco-friendly products. The strategy involves maintaining a stable price to capitalize on early market penetration and brand establishment.",
+  "methodology": "Data sources include industry reports on the global smart water bottle market, competitor pricing analysis, and BMW's internal cost structure. Assumptions are based on the projected CAGR of the market and BMW's targeted market share. Real-world examples from companies like LARQ and HydraSpark were used to validate pricing and growth projections.",
+  "comparable_projects": [
+    {
+      "name": "LARQ Smart Bottle",
+      "description": "A self-cleaning water bottle using UV-C technology with hydration tracking features.",
+      "price": 95,
+      "source": "https://www.livelarq.com"
+    },
+    {
+      "name": "HydraSpark Pro",
+      "description": "A smart water bottle with real-time sensor and app alerts for hydration tracking.",
+      "price": 60,
+      "source": "https://hydraspark.com"
+    }
+  ]
+}

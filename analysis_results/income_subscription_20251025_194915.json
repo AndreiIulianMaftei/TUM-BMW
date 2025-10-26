@@ -1,0 +1,85 @@
+{
+  "yearly_projections": [
+    {
+      "year": 2024,
+      "monthly_cost": 15,
+      "number_of_subscribers": 30000000,
+      "yearly_income": 5400000000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2025,
+      "monthly_cost": 15,
+      "number_of_subscribers": 36000000,
+      "yearly_income": 6480000000,
+      "churn_rate": 5
+    },
+    {
+      "year": 2026,
+      "monthly_cost": 16,
+      "number_of_subscribers": 43200000,
+      "yearly_income": 8294400000,
+      "churn_rate": 4.5
+    },
+    {
+      "year": 2027,
+      "monthly_cost": 16,
+      "number_of_subscribers": 51840000,
+      "yearly_income": 9953280000,
+      "churn_rate": 4.5
+    },
+    {
+      "year": 2028,
+      "monthly_cost": 17,
+      "number_of_subscribers": 62208000,
+      "yearly_income": 12645120000,
+      "churn_rate": 4
+    },
+    {
+      "year": 2029,
+      "monthly_cost": 17,
+      "number_of_subscribers": 74649600,
+      "yearly_income": 15240912000,
+      "churn_rate": 4
+    },
+    {
+      "year": 2030,
+      "monthly_cost": 18,
+      "number_of_subscribers": 89579520,
+      "yearly_income": 19349510400,
+      "churn_rate": 3.5
+    }
+  ],
+  "summary": {
+    "pricing_justification": "The pricing was set based on the expected market value of premium motorcycle accessory bundles, ensuring affordability while maximizing perceived value. The gradual increase in price reflects anticipated advancements and added value in the product offerings.",
+    "market_assumptions": "The market is assumed to grow steadily with increasing demand for personalized and convenient accessory purchasing options. The unique bundling approach is expected to attract both customer segments and retain them.",
+    "growth_projections_reasoning": "Subscriber growth is projected to follow historical trends observed in similar subscription models, with an initial boost due to novelty and sustained growth driven by product enhancements and market expansion.",
+    "churn_rate_assumptions": "Initial churn rates are set at 5%, decreasing over time as customer satisfaction improves due to better service and product offerings, alongside increased brand loyalty.",
+    "customer_lifetime_value_considerations": "The customer lifetime value is expected to increase over time as the churn rate decreases and the monthly subscription price incrementally increases, reflecting the added value provided to customers."
+  },
+  "comparable_projects": [
+    {
+      "name": "Harley-Davidson H-D Connect",
+      "url": "https://www.harley-davidson.com/us/en/content/h-d-connect.html",
+      "description": "H-D Connect is a subscription-based service offering real-time monitoring of motorcycle data and alerts through a mobile app. The service enhances the ownership experience by providing valuable insights.",
+      "subscription_model": "Monthly subscription fee with a focus on connectivity and data services for motorcycles."
+    },
+    {
+      "name": "RevZilla RPM Membership",
+      "url": "https://www.revzilla.com/rpm",
+      "description": "RevZilla offers a membership program providing discounts, exclusive content, and free shipping for motorcycle gear and accessories. It targets frequent buyers and enthusiasts.",
+      "subscription_model": "Annual subscription fee providing a range of benefits including discounts and exclusive access."
+    },
+    {
+      "name": "Indian Motorcycle Elite Membership",
+      "url": "https://www.indianmotorcycle.com/en-us/elite-membership/",
+      "description": "Indian Motorcycle provides a premium membership offering exclusive benefits, event access, and merchandise discounts to enhance brand loyalty and customer engagement.",
+      "subscription_model": "Annual membership fee offering premium features and exclusive benefits."
+    }
+  ],
+  "methodology": {
+    "data_sources": "The analysis used historical data from similar subscription services in the automotive and motorcycle industries, market research reports, and industry trend analyses.",
+    "assumptions": "Assumptions include steady growth in motorcycle accessory market demand, increased adoption of subscription models, and ongoing product innovation enhancing customer value."
+  },
+  "total_income": 76864422400
+}
