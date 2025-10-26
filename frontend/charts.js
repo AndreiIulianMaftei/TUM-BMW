@@ -25,7 +25,7 @@ function renderMarketGrowthChart(analysis) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const years = ['2025', '2026', '2027', '2028', '2029'];
     
     const datasets = [];
     
@@ -133,7 +133,7 @@ function renderRevenueChart(analysis) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const years = ['2025', '2026', '2027', '2028', '2029'];
     
     const datasets = [];
     
@@ -248,7 +248,7 @@ function renderCostChart(analysis) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const years = ['2025', '2026', '2027', '2028', '2029'];
     
     const datasets = [];
     
@@ -374,7 +374,7 @@ function renderProfitabilityChart(analysis) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const years = ['2025', '2026', '2027', '2028', '2029'];
     
     const datasets = [];
     

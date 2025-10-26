@@ -1217,7 +1217,7 @@ function generateModalContent(metricType, data) {
         html += `<thead><tr><th>Year</th><th>Value</th><th>YoY Change</th></tr></thead>`;
         html += `<tbody>`;
         
-        const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+        const years = ['2025', '2026', '2027', '2028', '2029'];
         let prevValue = null;
 
         // Select appropriate formatter based on metric type
@@ -1335,7 +1335,7 @@ function renderYearlyChart(metricType, numbersData) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+    const years = ['2025', '2026', '2027', '2028', '2029'];
     const values = years.map(year => numbersData[year] || 0);
     
     const chartFormatter = (val) => {
