@@ -689,16 +689,10 @@ This is a private project. For BMW employees and approved collaborators only.
 
 **Technical Issues:**
 - GitHub Issues: [Create an issue](https://github.com/AndreiIulianMaftei/TUM-BMW/issues)
-- Email: [support@bmw-analysis.internal](mailto:support@bmw-analysis.internal)
 
 **Feature Requests:**
 - Submit via GitHub Discussions
 - Include use case and expected behavior
-
-**Security Vulnerabilities:**
-- **DO NOT** create public issues
-- Email: [security@bmw-analysis.internal](mailto:security@bmw-analysis.internal)
-- Include proof of concept and impact assessment
 
 ---
 
@@ -715,7 +709,6 @@ This is a private project. For BMW employees and approved collaborators only.
 **Special Thanks:**
 - BMW Group Innovation Lab for project support
 - TU München for academic partnership
-- Open source community for incredible tools
 
 ---
 

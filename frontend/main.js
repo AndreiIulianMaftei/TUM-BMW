@@ -213,9 +213,11 @@ function displayResults(analysis) {
     
     const formatCurrency = (value) => {
         if (!value && value !== 0) return 'N/A';
+        // Use currency from settings
+        const currency = settings.currency || 'EUR';
         return new Intl.NumberFormat('en-US', { 
             style: 'currency', 
-            currency: 'EUR',
+            currency: currency,
             notation: 'compact',
             maximumFractionDigits: 1
         }).format(value);
@@ -682,6 +684,9 @@ function applySettings() {
     if (industrySelect) industrySelect.value = settings.industry_focus;
     const currencyRadio = document.querySelector(`input[name="currency"][value="${settings.currency}"]`);
     if (currencyRadio) currencyRadio.checked = true;
+    
+    // Apply currency to dashboard on load
+    updateDashboardCurrency(settings.currency);
 }
 
 // Settings Panel Handlers
@@ -717,6 +722,8 @@ document.querySelectorAll('input[name="currency"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
         settings.currency = e.target.value;
         saveSettings();
+        // Apply currency change immediately to dashboard
+        updateDashboardCurrency(e.target.value);
     });
 });
 
@@ -724,7 +731,55 @@ if (resetSettings) {
     resetSettings.addEventListener('click', () => {
         settings = loadSettings();
         applySettings();
+        updateDashboardCurrency(settings.currency);
     });
+}
+
+// Close settings panel when clicking outside
+document.addEventListener('click', (e) => {
+    if (settingsPanel && settingsPanel.classList.contains('active')) {
+        if (!settingsPanel.contains(e.target) && !settingsBtn?.contains(e.target)) {
+            settingsPanel.classList.remove('active');
+        }
+    }
+});
+
+// Function to update currency symbols in dashboard
+function updateDashboardCurrency(currency) {
+    const currencySymbols = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£'
+    };
+    
+    const symbol = currencySymbols[currency] || '€';
+    
+    // Update all currency displays in the dashboard
+    document.querySelectorAll('.metric-value').forEach(el => {
+        const text = el.textContent;
+        // Replace existing currency symbols
+        const updatedText = text.replace(/[$€£]/g, symbol);
+        el.textContent = updatedText;
+    });
+    
+    // Update chart tooltips and labels if charts exist
+    if (window.charts) {
+        Object.values(window.charts).forEach(chart => {
+            if (chart && chart.options && chart.options.plugins && chart.options.plugins.tooltip) {
+                chart.options.plugins.tooltip.callbacks.label = function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) label += ': ';
+                    if (context.parsed.y !== null) {
+                        label += symbol + context.parsed.y.toLocaleString();
+                    }
+                    return label;
+                };
+                chart.update();
+            }
+        });
+    }
+    
+    console.log(`💱 Currency updated to ${currency} (${symbol})`);
 }
 
 // Input Mode Tabs

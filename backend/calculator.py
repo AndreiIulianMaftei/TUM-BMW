@@ -419,7 +419,7 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
                 confidence=75
             ),
             volume=VolumeMetrics(
-                units_sold=units,
+                units_sold=int(round(units)),  # Convert float to integer
                 numbers=volume_numbers,
                 insight=f"Projected volume: {int(units):,} units in year 1" if not is_savings else "Savings project - no unit volume",
                 confidence=70

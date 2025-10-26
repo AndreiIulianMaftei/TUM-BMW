@@ -412,6 +412,211 @@ class ExcelExporter:
         ws.column_dimensions['C'].width = 25
         ws.column_dimensions['D'].width = 40
     
+    def create_complete_metrics_sheet(self, wb: Workbook, analysis_data: Dict[str, Any]):
+        """Create comprehensive dashboard metrics sheet"""
+        ws = wb.create_sheet("All Dashboard Metrics")
+        row = 1
+        
+        ws.merge_cells(f'A{row}:D{row}')
+        ws[f'A{row}'] = "Complete Dashboard Metrics & Income Projections"
+        ws[f'A{row}'].font = Font(bold=True, size=16, color="1F4788")
+        ws[f'A{row}'].alignment = Alignment(horizontal='center')
+        row += 2
+        
+        # Volume Metrics
+        volume = analysis_data.get('volume', {})
+        if volume:
+            ws[f'A{row}'] = "Volume Metrics"
+            ws[f'A{row}'].font = self.title_font
+            row += 1
+            
+            ws[f'A{row}'] = "Units Sold (Year 1)"
+            ws[f'B{row}'] = volume.get('units_sold', 0)
+            ws[f'B{row}'].number_format = '#,##0'
+            row += 1
+            
+            ws[f'A{row}'] = "Insight"
+            ws[f'B{row}'] = volume.get('insight', 'N/A')
+            ws.merge_cells(f'B{row}:D{row}')
+            row += 2
+        
+        # Turnover Metrics
+        turnover = analysis_data.get('turnover', {})
+        if turnover:
+            ws[f'A{row}'] = "Turnover Metrics"
+            ws[f'A{row}'].font = self.title_font
+            row += 1
+            
+            ws[f'A{row}'] = "Total Revenue"
+            ws[f'B{row}'] = turnover.get('total_revenue', 0)
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            row += 1
+            
+            ws[f'A{row}'] = "YoY Growth"
+            ws[f'B{row}'] = turnover.get('yoy_growth', 0)
+            ws[f'B{row}'].number_format = '0.0%'
+            row += 1
+            
+            ws[f'A{row}'] = "Insight"
+            ws[f'B{row}'] = turnover.get('insight', 'N/A')
+            ws.merge_cells(f'B{row}:D{row}')
+            row += 2
+        
+        # COGS Metrics
+        cogs = analysis_data.get('cogs', {})
+        if cogs:
+            ws[f'A{row}'] = "Cost of Goods Sold (COGS)"
+            ws[f'A{row}'].font = self.title_font
+            row += 1
+            
+            ws[f'A{row}'] = "Material Costs"
+            ws[f'B{row}'] = cogs.get('material', 0)
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            row += 1
+            
+            ws[f'A{row}'] = "Labor Costs"
+            ws[f'B{row}'] = cogs.get('labor', 0)
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            row += 1
+            
+            ws[f'A{row}'] = "Overhead Costs"
+            ws[f'B{row}'] = cogs.get('overheads', 0)
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            row += 1
+            
+            ws[f'A{row}'] = "Total COGS"
+            ws[f'B{row}'] = cogs.get('total_cogs', 0)
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            ws[f'B{row}'].font = self.currency_font
+            row += 1
+            
+            ws[f'A{row}'] = "COGS %"
+            ws[f'B{row}'] = cogs.get('cogs_percentage', 0) / 100
+            ws[f'B{row}'].number_format = '0.0%'
+            row += 2
+        
+        # Market Potential
+        market_potential = analysis_data.get('market_potential', {})
+        if market_potential:
+            ws[f'A{row}'] = "Market Potential"
+            ws[f'A{row}'].font = self.title_font
+            row += 1
+            
+            ws[f'A{row}'] = "Market Size"
+            ws[f'B{row}'] = market_potential.get('market_size', 0)
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            row += 1
+            
+            ws[f'A{row}'] = "Penetration Rate"
+            ws[f'B{row}'] = market_potential.get('penetration', 0) / 100
+            ws[f'B{row}'].number_format = '0.0%'
+            row += 1
+            
+            ws[f'A{row}'] = "Growth Rate"
+            ws[f'B{row}'] = market_potential.get('growth_rate', 0) / 100
+            ws[f'B{row}'].number_format = '0.0%'
+            row += 2
+        
+        # Income Projections (5-Year)
+        row += 1
+        ws[f'A{row}'] = "5-Year Income Projections"
+        ws[f'A{row}'].font = Font(bold=True, size=14, color="1F4788")
+        row += 1
+        
+        # Check if we have yearly data
+        yearly_revenue = turnover.get('numbers', {}) if turnover else {}
+        roi = analysis_data.get('roi', {})
+        yearly_costs = roi.get('cost_breakdown', {}) if roi else {}
+        
+        if yearly_revenue or yearly_costs:
+            ws[f'A{row}'] = "Year"
+            ws[f'B{row}'] = "Revenue"
+            ws[f'C{row}'] = "Costs"
+            ws[f'D{row}'] = "Net Profit"
+            ws[f'E{row}'] = "Margin %"
+            self.style_header_row(ws, row, 5)
+            row += 1
+            
+            # Get all years
+            all_years = set()
+            if yearly_revenue:
+                all_years.update(yearly_revenue.keys())
+            if yearly_costs:
+                all_years.update(yearly_costs.keys())
+            
+            for year in sorted(all_years):
+                revenue = yearly_revenue.get(year, 0) if yearly_revenue else 0
+                cost = yearly_costs.get(year, 0) if yearly_costs else 0
+                profit = revenue - cost
+                margin = (profit / revenue * 100) if revenue > 0 else 0
+                
+                ws[f'A{row}'] = year
+                ws[f'B{row}'] = revenue
+                ws[f'B{row}'].number_format = '€#,##0.00'
+                ws[f'C{row}'] = cost
+                ws[f'C{row}'].number_format = '€#,##0.00'
+                ws[f'D{row}'] = profit
+                ws[f'D{row}'].number_format = '€#,##0.00'
+                ws[f'E{row}'] = margin / 100
+                ws[f'E{row}'].number_format = '0.0%'
+                
+                for col in range(1, 6):
+                    ws.cell(row=row, column=col).border = self.border
+                row += 1
+            
+            # Totals
+            row += 1
+            ws[f'A{row}'] = "5-Year Totals"
+            ws[f'A{row}'].font = Font(bold=True)
+            total_revenue = sum(yearly_revenue.values()) if yearly_revenue else 0
+            total_costs = sum(yearly_costs.values()) if yearly_costs else 0
+            ws[f'B{row}'] = total_revenue
+            ws[f'B{row}'].number_format = '€#,##0.00'
+            ws[f'B{row}'].font = self.currency_font
+            ws[f'C{row}'] = total_costs
+            ws[f'C{row}'].number_format = '€#,##0.00'
+            ws[f'C{row}'].font = self.currency_font
+            ws[f'D{row}'] = total_revenue - total_costs
+            ws[f'D{row}'].number_format = '€#,##0.00'
+            ws[f'D{row}'].font = self.currency_font
+        
+        # Business Assumptions
+        assumptions = analysis_data.get('business_assumptions', [])
+        if assumptions:
+            row += 3
+            ws[f'A{row}'] = "Business Assumptions"
+            ws[f'A{row}'].font = self.title_font
+            row += 1
+            
+            for i, assumption in enumerate(assumptions, 1):
+                ws[f'A{row}'] = f"{i}."
+                ws[f'B{row}'] = assumption
+                ws.merge_cells(f'B{row}:D{row}')
+                ws[f'B{row}'].alignment = Alignment(wrap_text=True, vertical='top')
+                row += 1
+        
+        # Improvement Recommendations
+        recommendations = analysis_data.get('improvement_recommendations', [])
+        if recommendations:
+            row += 2
+            ws[f'A{row}'] = "Improvement Recommendations"
+            ws[f'A{row}'].font = self.title_font
+            row += 1
+            
+            for i, rec in enumerate(recommendations, 1):
+                ws[f'A{row}'] = f"{i}."
+                ws[f'B{row}'] = rec
+                ws.merge_cells(f'B{row}:D{row}')
+                ws[f'B{row}'].alignment = Alignment(wrap_text=True, vertical='top')
+                row += 1
+        
+        # Column widths
+        ws.column_dimensions['A'].width = 25
+        ws.column_dimensions['B'].width = 20
+        ws.column_dimensions['C'].width = 20
+        ws.column_dimensions['D'].width = 20
+        ws.column_dimensions['E'].width = 15
+    
     def generate_excel(self, analysis_data: Dict[str, Any]) -> str:
         """
         Generate complete Excel workbook with all sheets
@@ -425,6 +630,7 @@ class ExcelExporter:
         
         # Create all sheets
         self.create_executive_summary_sheet(wb, analysis_data)
+        self.create_complete_metrics_sheet(wb, analysis_data)  # NEW: All dashboard metrics
         self.create_cost_breakdown_sheet(wb, analysis_data)
         self.create_financial_projections_sheet(wb, analysis_data)
         self.create_risks_strategy_sheet(wb, analysis_data)
