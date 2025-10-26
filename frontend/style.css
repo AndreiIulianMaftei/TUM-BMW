@@ -2509,23 +2509,30 @@ html {
     color: var(--text-muted);
 }
 
-/* Logo avatar styling */
+/* Logo avatar styling - acts as standalone avatar */
 .chat-logo-container {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     background: white;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
 }
 
 .chat-logo-avatar {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    display: block;
+}
+
+/* Add spacing when logo container is used as avatar */
+.chat-message.assistant .chat-logo-container {
+    margin-right: 10px;
 }
 
 /* Message text formatting */
