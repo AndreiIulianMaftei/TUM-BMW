@@ -2362,20 +2362,25 @@ html {
 }
 
 .message-avatar {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    background: var(--primary-gradient);
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     box-shadow: var(--shadow-md);
     position: relative;
+    margin-right: 10px;
 }
 
-.message-avatar::before {
+/* User avatar styling */
+.message-avatar.user-avatar {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.message-avatar.user-avatar::before {
     content: '';
     position: absolute;
     inset: -2px;
@@ -2383,6 +2388,21 @@ html {
     background: var(--primary-gradient);
     opacity: 0.2;
     animation: avatarPulse 2s infinite;
+}
+
+/* Assistant avatar with BMW logo - clean professional look */
+.message-avatar.assistant-avatar {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #e1e8ed;
+    padding: 5px;
+    box-shadow: 0 2px 8px rgba(31, 71, 136, 0.12);
+}
+
+.assistant-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
 @keyframes avatarPulse {
@@ -2507,32 +2527,6 @@ html {
 
 .chat-input-area textarea::placeholder {
     color: var(--text-muted);
-}
-
-/* Logo avatar styling - acts as standalone avatar */
-.chat-logo-container {
-    width: 38px;
-    height: 38px;
-    background: white;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    flex-shrink: 0;
-}
-
-.chat-logo-avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-/* Add spacing when logo container is used as avatar */
-.chat-message.assistant .chat-logo-container {
-    margin-right: 10px;
 }
 
 /* Message text formatting */

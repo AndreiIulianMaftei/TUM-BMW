@@ -283,11 +283,15 @@ uvicorn==0.24.0           # ASGI server
 pymongo==4.6.0            # MongoDB driver
 pydantic==2.5.0           # Data validation
 openai==1.54.3            # OpenAI API client
+google-generativeai==0.3.2 # Google Gemini API client
 python-multipart==0.0.6   # File upload handling
 pypdf==4.0.0              # PDF parsing
 python-docx==1.1.0        # DOCX parsing
 openpyxl==3.1.2           # Excel generation
 python-dotenv==1.0.0      # Environment variables
+httpx==0.27.0             # Async HTTP client
+aiofiles==23.2.1          # Async file operations
+pydantic-settings==2.1.0  # Settings management
 ```
 
 ### **Step 4: Configure Environment Variables**
