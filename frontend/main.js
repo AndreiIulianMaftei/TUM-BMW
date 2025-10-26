@@ -8,6 +8,7 @@ const uploadSection = document.getElementById('uploadSection');
 const loadingSection = document.getElementById('loadingSection');
 const resultsSection = document.getElementById('resultsSection');
 const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+const exportExcelBtn = document.getElementById('exportExcelBtn');
 const geminiOption = document.getElementById('geminiOption');
 const openaiOption = document.getElementById('openaiOption');
 
@@ -25,9 +26,18 @@ const toggleChatBtn = document.getElementById('toggleChatBtn');
 const chatSidebar = document.getElementById('chatSidebar');
 const closeChatSidebar = document.getElementById('closeChatSidebar');
 const chatInput = document.getElementById('chatInput');
-const sendChat = document.getElementById('sendChat');
 const chatMessages = document.getElementById('chatMessages');
 const resultsMainContent = document.getElementById('resultsMainContent');
+
+// Navigation elements
+const dashboardNavItem = document.getElementById('dashboardNavItem');
+const simulatorNavItem = document.getElementById('simulatorNavItem');
+
+// Simulator Page elements
+const simulatorPage = document.getElementById('simulatorPage');
+const simulatorContent = document.getElementById('simulatorContent');
+const simulatorEmptyState = document.getElementById('simulatorEmptyState');
+const goToDashboardBtn = document.getElementById('goToDashboard');
 
 // History elements
 const historySidebar = document.getElementById('historySidebar');
@@ -50,6 +60,7 @@ let historyData = [];
 let currentAnalysisId = null;
 let analysisContext = null;
 let settings = loadSettings();
+let conversationHistory = []; // Chat conversation history
 
 // LLM Provider Selection
 geminiOption.classList.add('active'); // Set Gemini as default
@@ -124,10 +135,8 @@ uploadBtn.addEventListener('click', async () => {
     uploadSection.style.display = 'none';
     loadingSection.style.display = 'flex';
     
-    // Update loading message based on provider
     const loadingCard = document.querySelector('.loading-card h3');
-    const providerName = selectedProvider === 'gemini' ? 'Google Gemini 2.5 Flash' : 'OpenAI GPT-5';
-    loadingCard.textContent = `Analyzing with ${providerName}`;
+    loadingCard.textContent = 'Analyzing with Fast AI + Accurate Math';
     
     try {
         let response;
@@ -179,9 +188,28 @@ uploadBtn.addEventListener('click', async () => {
 function displayResults(analysis) {
     loadingSection.style.display = 'none';
     resultsSection.style.display = 'block';
+    resultsSection.dataset.hasResults = 'true'; // Mark that we have results
+    
+    // Clear conversation history for new analysis
+    conversationHistory = [];
+    console.log('🔄 Conversation history cleared for new analysis');
     
     document.getElementById('executiveSummary').textContent = analysis.executive_summary || 'No executive summary available';
     document.getElementById('generatedText').textContent = analysis.value_market_potential_text || 'Generated text not available';
+    
+    if (analysis.project_type) {
+        const projectTypeHeader = document.getElementById('projectTypeHeader');
+        const projectTypeBadge = document.getElementById('projectTypeBadge');
+        
+        if (projectTypeHeader && projectTypeBadge) {
+            const typeDisplay = analysis.project_type.replace(/_/g, ' ');
+            const typeClass = analysis.project_type.replace(/_/g, '-').toLowerCase();
+            
+            projectTypeBadge.textContent = typeDisplay;
+            projectTypeBadge.className = `project-type-badge ${typeClass}`;
+            projectTypeHeader.style.display = 'block';
+        }
+    }
     
     const formatCurrency = (value) => {
         if (!value && value !== 0) return 'N/A';
@@ -210,6 +238,29 @@ function displayResults(analysis) {
         if (confidence >= 80) return 'confidence-high';
         if (confidence >= 60) return 'confidence-medium';
         return 'confidence-low';
+    };
+
+    const shouldHideCard = (value, insight) => {
+        if (value === null || value === undefined) return true;
+        if (value === 0) return true;
+        if (value === 'N/A') return true;
+        if (insight && (
+            insight.includes('no unit volume') || 
+            insight.includes('Savings project') ||
+            insight.includes('COGS per unit: €0.00')
+        )) return true;
+        return false;
+    };
+
+    const hideCardIfNeeded = (cardId, value, insight) => {
+        const card = document.getElementById(cardId);
+        if (card) {
+            if (shouldHideCard(value, insight)) {
+                card.style.display = 'none';
+            } else {
+                card.style.display = 'block';
+            }
+        }
     };
 
     if (analysis.tam) {
@@ -253,19 +304,25 @@ function displayResults(analysis) {
     }
 
     if (analysis.volume) {
-        document.getElementById('volumeValue').textContent = formatNumber(analysis.volume.units_sold);
-        document.getElementById('volumeInsight').textContent = analysis.volume.insight || '';
+        const volumeValue = analysis.volume.units_sold;
+        const volumeInsight = analysis.volume.insight || '';
+        document.getElementById('volumeValue').textContent = formatNumber(volumeValue);
+        document.getElementById('volumeInsight').textContent = volumeInsight;
         const volumeBadge = document.getElementById('volumeConfidence');
         volumeBadge.textContent = `${analysis.volume.confidence}%`;
         volumeBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.volume.confidence)}`;
+        hideCardIfNeeded('volumeCard', volumeValue, volumeInsight);
     }
 
     if (analysis.unit_economics) {
-        document.getElementById('unitEconomicsValue').textContent = formatCurrency(analysis.unit_economics.margin);
-        document.getElementById('unitEconomicsInsight').textContent = analysis.unit_economics.insight || '';
+        const ueValue = analysis.unit_economics.margin;
+        const ueInsight = analysis.unit_economics.insight || '';
+        document.getElementById('unitEconomicsValue').textContent = formatCurrency(ueValue);
+        document.getElementById('unitEconomicsInsight').textContent = ueInsight;
         const ueBadge = document.getElementById('unitEconomicsConfidence');
         ueBadge.textContent = `${analysis.unit_economics.confidence}%`;
         ueBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.unit_economics.confidence)}`;
+        hideCardIfNeeded('unitEconomicsCard', ueValue, ueInsight);
     }
 
     if (analysis.ebit) {
@@ -277,11 +334,14 @@ function displayResults(analysis) {
     }
 
     if (analysis.cogs) {
-        document.getElementById('cogsValue').textContent = formatCurrency(analysis.cogs.total_cogs);
-        document.getElementById('cogsInsight').textContent = analysis.cogs.insight || '';
+        const cogsValue = analysis.cogs.total_cogs;
+        const cogsInsight = analysis.cogs.insight || '';
+        document.getElementById('cogsValue').textContent = formatCurrency(cogsValue);
+        document.getElementById('cogsInsight').textContent = cogsInsight;
         const cogsBadge = document.getElementById('cogsConfidence');
         cogsBadge.textContent = `${analysis.cogs.confidence}%`;
         cogsBadge.className = `confidence-badge ${getConfidenceBadgeClass(analysis.cogs.confidence)}`;
+        hideCardIfNeeded('cogsCard', cogsValue, cogsInsight);
     }
 
     if (analysis.market_potential) {
@@ -432,11 +492,97 @@ function displayResults(analysis) {
         setTimeout(() => renderAllCharts(analysis), 200);
     }
     
+    // Initialize income simulator
+    setTimeout(() => initializeSimulator(analysis), 300);
+    
     // Attach click handlers to cards for modal interactions
     setTimeout(attachCardClickHandlers, 100);
 }
 
 newAnalysisBtn.addEventListener('click', resetUpload);
+
+// Export to Excel functionality
+if (exportExcelBtn) {
+    exportExcelBtn.addEventListener('click', async () => {
+        if (!analysisContext) {
+            alert('No analysis data available to export');
+            return;
+        }
+        
+        console.log('📊 Exporting to Excel...');
+        exportExcelBtn.disabled = true;
+        exportExcelBtn.innerHTML = `
+            <svg class="spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Generating...
+        `;
+        
+        try {
+            const response = await fetch('/api/export', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(analysisContext)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Export failed: ${response.statusText}`);
+            }
+            
+            // Get filename from response headers
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'BMW_Analysis.xlsx';
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="?(.+)"?/i);
+                if (match) filename = match[1];
+            }
+            
+            // Download the file
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            console.log('✅ Excel exported successfully:', filename);
+            
+            // Show success message
+            exportExcelBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Exported!
+            `;
+            
+            setTimeout(() => {
+                exportExcelBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export to Excel
+                `;
+                exportExcelBtn.disabled = false;
+            }, 2000);
+            
+        } catch (error) {
+            console.error('❌ Export error:', error);
+            alert('Failed to export analysis. Please try again.');
+            exportExcelBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export to Excel
+            `;
+            exportExcelBtn.disabled = false;
+        }
+    });
+}
 
 function resetUpload() {
     selectedFile = null;
@@ -614,22 +760,33 @@ if (textInput) {
 
 // Chat Handlers
 if (toggleChatBtn) {
-    toggleChatBtn.addEventListener('click', () => {
+    toggleChatBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('💬 Chat nav button clicked');
         if (chatSidebar) {
             chatSidebar.classList.toggle('active');
-            if (resultsMainContent) {
-                resultsMainContent.classList.toggle('chat-open');
-            }
+            console.log('   Chat sidebar active:', chatSidebar.classList.contains('active'));
         }
     });
 }
 
 if (closeChatSidebar) {
     closeChatSidebar.addEventListener('click', () => {
+        console.log('❌ Closing chat sidebar');
         if (chatSidebar) chatSidebar.classList.remove('active');
-        if (resultsMainContent) resultsMainContent.classList.remove('chat-open');
     });
 }
+
+// Close chat when clicking outside
+document.addEventListener('click', (e) => {
+    if (chatSidebar && chatSidebar.classList.contains('active')) {
+        // Check if click is outside chat sidebar and not on toggle button
+        if (!chatSidebar.contains(e.target) && 
+            !toggleChatBtn?.contains(e.target)) {
+            chatSidebar.classList.remove('active');
+        }
+    }
+});
 
 // Handle suggestion chip clicks
 document.addEventListener('click', (e) => {
@@ -646,8 +803,8 @@ document.addEventListener('click', (e) => {
 });
 
 if (chatInput) {
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && e.shiftKey === false) {
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendChatMessage();
         }
@@ -656,13 +813,7 @@ if (chatInput) {
     // Auto-resize textarea
     chatInput.addEventListener('input', () => {
         chatInput.style.height = 'auto';
-        chatInput.style.height = Math.min(chatInput.scrollHeight, 150) + 'px';
-    });
-}
-
-if (sendChat) {
-    sendChat.addEventListener('click', () => {
-        sendChatMessage();
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
     });
 }
 
@@ -670,12 +821,18 @@ async function sendChatMessage() {
     const message = chatInput.value.trim();
     if (!message || !analysisContext) return;
     
+    console.log('💬 Sending chat message:', message);
+    
     addChatMessage(message, 'user');
     chatInput.value = '';
     
     const typingId = addTypingIndicator();
     
     try {
+        console.log('📡 Calling /api/chat endpoint...');
+        console.log('📊 Analysis context keys:', Object.keys(analysisContext));
+        console.log('🤖 Provider:', selectedProvider);
+        
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -685,23 +842,152 @@ async function sendChatMessage() {
                 message: message,
                 analysis_context: analysisContext,
                 provider: selectedProvider,
-                settings: settings
+                settings: settings,
+                conversation_history: conversationHistory
             })
         });
         
+        console.log('📥 Response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error('Chat request failed');
+            const errorText = await response.text();
+            console.error('❌ Chat request failed:', errorText);
+            throw new Error(`Chat request failed: ${response.status} - ${errorText}`);
         }
         
         const data = await response.json();
+        console.log('✅ Chat response received:', data);
+        console.log('   Response length:', data.response?.length);
+        console.log('   Modifications:', data.modifications);
+        console.log('   Simulation:', data.simulation ? 'Yes' : 'No');
         
         removeTypingIndicator(typingId);
-        addChatMessage(data.response, 'assistant');
+        
+        // Add assistant response
+        addChatMessage(data.response || 'I received your message but have no response.', 'assistant');
+        
+        // Store in conversation history
+        conversationHistory.push(
+            { role: 'user', content: message },
+            { role: 'assistant', content: data.response }
+        );
+        
+        // If there are modifications, show them
+        if (data.modifications) {
+            console.log('🔧 Parameter modifications detected:', data.modifications);
+            addModificationMessage(data.modifications);
+        }
+        
+        // If simulation was run, update the UI
+        if (data.simulation && data.simulation.analysis) {
+            console.log('📊 Updating UI with simulation results...');
+            
+            // Update the simulated analysis
+            updateComparisonDisplay(
+                data.simulation.analysis,
+                data.simulation.comparison
+            );
+            
+            // Show success message
+            addChatMessage(
+                '✅ I\'ve updated the simulator with these changes. You can see the new projections above!',
+                'assistant'
+            );
+        }
         
     } catch (error) {
+        console.error('❌ Chat error:', error);
+        console.error('   Error stack:', error.stack);
+        
         removeTypingIndicator(typingId);
-        addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+        addChatMessage(
+            `Sorry, I encountered an error: ${error.message}. Please check the console for details.`,
+            'assistant'
+        );
     }
+}
+
+function addModificationMessage(modifications) {
+    console.log('📝 Adding modification message to chat');
+    
+    const modList = Object.entries(modifications)
+        .map(([key, value]) => {
+            const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            let displayValue = value;
+            
+            // Format based on parameter type
+            if (key.includes('percentage') || key.includes('rate') || key.includes('coverage')) {
+                displayValue = `${value}%`;
+            } else if (key.includes('cost') || key.includes('revenue') || key.includes('savings')) {
+                displayValue = `€${value.toLocaleString()}`;
+            }
+            
+            return `• ${label}: ${displayValue}`;
+        })
+        .join('\n');
+    
+    const modMessage = `🔧 Parameter Changes:\n${modList}`;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message system';
+    messageDiv.innerHTML = `
+        <div class="message-content modification-notice">
+            <pre>${escapeHtml(modMessage)}</pre>
+        </div>
+    `;
+    
+    if (chatMessages) {
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
+// Simple markdown parser for chat messages
+function parseMarkdown(text) {
+    if (!text) return '';
+    
+    // Escape HTML first
+    let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    
+    // Parse markdown
+    // Bold: **text** or __text__
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    
+    // Italic: *text* or _text_
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    
+    // Code: `text`
+    html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+    
+    // Headers
+    html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+    html = html.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^# (.+)$/gm, '<h3>$1</h3>');
+    
+    // Lists - numbered
+    html = html.replace(/^\d+\.\s+(.+)$/gm, '<li class="numbered-item">$1</li>');
+    
+    // Lists - bullet points
+    html = html.replace(/^[-*]\s+(.+)$/gm, '<li class="bullet-item">$1</li>');
+    
+    // Wrap consecutive list items
+    html = html.replace(/(<li class="numbered-item">.*?<\/li>\s*)+/gs, '<ol>$&</ol>');
+    html = html.replace(/(<li class="bullet-item">.*?<\/li>\s*)+/gs, '<ul>$&</ul>');
+    
+    // Paragraphs - split by double newlines
+    const paragraphs = html.split(/\n\n+/);
+    html = paragraphs.map(p => {
+        // Don't wrap if already wrapped in tags
+        if (p.match(/^<[h|u|o]/)) return p;
+        return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
+    
+    return html;
 }
 
 function addChatMessage(text, sender) {
@@ -713,17 +999,19 @@ function addChatMessage(text, sender) {
         minute: '2-digit' 
     });
     
+    // Use logo.png for assistant avatar with white background
+    const avatarContent = sender === 'assistant' 
+        ? '<div class="chat-logo-container"><img src="logo.png" alt="AI Assistant" class="chat-logo-avatar" onerror="this.parentElement.style.display=\'none\'; this.parentElement.nextElementSibling.style.display=\'block\'"></div><svg viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+    
+    const messageContent = sender === 'assistant' ? parseMarkdown(text) : escapeHtml(text);
+    
     messageDiv.innerHTML = `
         <div class="message-avatar">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                ${sender === 'assistant' 
-                    ? '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>'
-                    : '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>'
-                }
-            </svg>
+            ${avatarContent}
         </div>
         <div class="message-content">
-            <p>${escapeHtml(text)}</p>
+            <div class="message-text">${messageContent}</div>
             <div class="message-timestamp">${timestamp}</div>
         </div>
     `;
@@ -747,7 +1035,10 @@ function addTypingIndicator() {
     
     typingDiv.innerHTML = `
         <div class="message-avatar">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+            <div class="chat-logo-container">
+                <img src="logo.png" alt="AI Assistant" class="chat-logo-avatar" onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='block'">
+            </div>
+            <svg viewBox="0 0 24 24" fill="currentColor" style="display:none;">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
             </svg>
         </div>
@@ -874,19 +1165,27 @@ function generateModalContent(metricType, data) {
         
         const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
         let prevValue = null;
-        
+
+        // Select appropriate formatter based on metric type
+        const yearlyFormatter = (val) => {
+            if (val === null || val === undefined) return 'N/A';
+            if (metricType === 'volume') return formatNumber(val);
+            if (metricType === 'roi') return formatPercentage(val);
+            return formatCurrency(val);
+        };
+
         years.forEach(year => {
             const value = data.numbers[year];
             if (value !== null && value !== undefined) {
                 let changeHtml = '-';
-                if (prevValue !== null) {
+                if (prevValue !== null && prevValue !== 0) {
                     const change = ((value - prevValue) / prevValue * 100);
                     const changeColor = change >= 0 ? 'var(--success)' : 'var(--error)';
                     changeHtml = `<span style="color: ${changeColor}">${change >= 0 ? '+' : ''}${change.toFixed(1)}%</span>`;
                 }
                 html += `<tr>
                     <td><strong>${year}</strong></td>
-                    <td>${formatCurrency(value)}</td>
+                    <td>${yearlyFormatter(value)}</td>
                     <td>${changeHtml}</td>
                 </tr>`;
                 prevValue = value;
@@ -909,9 +1208,17 @@ function generateModalContent(metricType, data) {
         
         Object.entries(breakdown).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
+                let formatted;
+                if (metricType === 'volume') {
+                    formatted = formatNumber(value);
+                } else if (metricType === 'roi' && typeof value === 'number' && value <= 200 && /roi|percentage|margin/i.test(key)) {
+                    formatted = formatPercentage(value);
+                } else {
+                    formatted = formatCurrency(value);
+                }
                 html += `<tr>
                     <td>${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
-                    <td><strong>${formatCurrency(value)}</strong></td>
+                    <td><strong>${formatted}</strong></td>
                 </tr>`;
             }
         });
@@ -977,12 +1284,19 @@ function renderYearlyChart(metricType, numbersData) {
     const years = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
     const values = years.map(year => numbersData[year] || 0);
     
+    const chartFormatter = (val) => {
+        if (metricType === 'volume') return formatNumber(val);
+        if (metricType === 'roi') return formatPercentage(val);
+        return formatCurrency(val);
+    };
+    const datasetLabel = metricType === 'volume' ? 'Projected Units' : (metricType === 'roi' ? 'Projected ROI %' : 'Projected Value');
+
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: years,
             datasets: [{
-                label: 'Projected Value',
+                label: datasetLabel,
                 data: values,
                 borderColor: '#1C69D4',
                 backgroundColor: 'rgba(28, 105, 212, 0.1)',
@@ -1010,7 +1324,7 @@ function renderYearlyChart(metricType, numbersData) {
                     bodyFont: { size: 13 },
                     callbacks: {
                         label: function(context) {
-                            return formatCurrency(context.parsed.y);
+                            return chartFormatter(context.parsed.y);
                         }
                     }
                 }
@@ -1020,7 +1334,7 @@ function renderYearlyChart(metricType, numbersData) {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return formatCurrency(value);
+                            return chartFormatter(value);
                         }
                     },
                     grid: {
@@ -1243,6 +1557,76 @@ if (historySearchInput) {
 // Load history on page load
 loadHistory();
 
+// ============== PAGE NAVIGATION ==============
+
+function showDashboard() {
+    console.log('📄 Switching to Dashboard');
+    
+    // Hide all pages
+    simulatorPage.style.display = 'none';
+    
+    // Show dashboard sections based on whether we have results
+    const hasResults = resultsSection.dataset.hasResults === 'true';
+    uploadSection.style.display = hasResults ? 'none' : 'block';
+    resultsSection.style.display = hasResults ? 'block' : 'none';
+    
+    // Chat sidebar state is preserved (it's now global)
+    console.log('   Chat sidebar active:', chatSidebar?.classList.contains('active'));
+    
+    // Update nav (exclude chat button from active state changes)
+    document.querySelectorAll('.nav-item:not(#toggleChatBtn)').forEach(item => item.classList.remove('active'));
+    dashboardNavItem.classList.add('active');
+}
+
+function showSimulator() {
+    console.log('🎯 Switching to Simulator');
+    
+    // Hide dashboard sections
+    uploadSection.style.display = 'none';
+    resultsSection.style.display = 'none';
+    
+    // Show simulator page
+    simulatorPage.style.display = 'flex';
+    
+    // Chat sidebar state is preserved (it's now global)
+    console.log('   Chat sidebar active:', chatSidebar?.classList.contains('active'));
+    
+    // Check if we have analysis data
+    if (analysisContext) {
+        simulatorEmptyState.style.display = 'none';
+        simulatorContent.style.display = 'block';
+    } else {
+        simulatorEmptyState.style.display = 'flex';
+        simulatorContent.style.display = 'none';
+    }
+    
+    // Update nav (exclude chat button from active state changes)
+    document.querySelectorAll('.nav-item:not(#toggleChatBtn)').forEach(item => item.classList.remove('active'));
+    simulatorNavItem.classList.add('active');
+}
+
+// Navigation event listeners
+if (dashboardNavItem) {
+    dashboardNavItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        showDashboard();
+    });
+}
+
+if (simulatorNavItem) {
+    simulatorNavItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSimulator();
+    });
+}
+
+if (goToDashboardBtn) {
+    goToDashboardBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showDashboard();
+    });
+}
+
 // ============== STICKY HEADER FUNCTIONALITY ==============
 
 // Add shadow to header on scroll
@@ -1283,3 +1667,501 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// ============== INCOME SIMULATOR FUNCTIONALITY ==============
+
+let simulationChart = null;
+let originalParameters = {};
+let currentParameters = {};
+
+function initializeSimulator(analysis) {
+    if (!analysis) return;
+    
+    // Store analysis context globally
+    analysisContext = analysis;
+    
+    // Store original parameters
+    originalParameters = {
+        project_name: analysis.project_name || 'Business Analysis',
+        project_type: analysis.project_type || 'revenue',
+        annual_revenue_or_savings: analysis.turnover?.total_revenue * 5 || analysis.som?.revenue_potential || 0,
+        growth_rate: analysis.tam?.growth_rate || 5,
+        price_per_unit: analysis.unit_economics?.unit_revenue || 0,
+        fleet_size_or_units: analysis.volume?.units_sold || 0,
+        development_cost: analysis.total_estimated_cost_summary?.total_cost_5_years * 0.1 || 0,
+        market_coverage: 50,
+        take_rate: 10,
+        royalty_percentage: 0
+    };
+    
+    currentParameters = { ...originalParameters };
+    
+    // Build parameter controls
+    buildParameterControls(analysis);
+    
+    // Initialize comparison display
+    updateComparisonDisplay(analysis, analysis);
+    
+    // Setup event listeners
+    setupSimulatorEvents();
+}
+
+function buildParameterControls(analysis) {
+    const container = document.getElementById('parameterControls');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    const projectType = analysis.project_type || 'revenue';
+    const isSavings = projectType === 'savings';
+    
+    // Growth Rate
+    addParameterControl(container, {
+        id: 'growth_rate',
+        label: 'Annual Growth Rate',
+        value: currentParameters.growth_rate,
+        min: -10,
+        max: 30,
+        step: 0.5,
+        suffix: '%',
+        format: (v) => `${v.toFixed(1)}%`
+    });
+    
+    // Annual Revenue/Savings
+    if (isSavings) {
+        const annualSavings = originalParameters.annual_revenue_or_savings / 5;
+        addParameterControl(container, {
+            id: 'annual_revenue_or_savings',
+            label: 'Annual Savings (Year 1)',
+            value: annualSavings,
+            min: annualSavings * 0.5,
+            max: annualSavings * 2,
+            step: annualSavings * 0.05,
+            prefix: '€',
+            format: (v) => formatCurrency(v)
+        });
+    } else {
+        // Price per Unit
+        if (currentParameters.price_per_unit > 0) {
+            addParameterControl(container, {
+                id: 'price_per_unit',
+                label: 'Price per Unit',
+                value: currentParameters.price_per_unit,
+                min: currentParameters.price_per_unit * 0.5,
+                max: currentParameters.price_per_unit * 2,
+                step: currentParameters.price_per_unit * 0.05,
+                prefix: '€',
+                format: (v) => formatCurrency(v)
+            });
+        }
+        
+        // Volume/Units
+        if (currentParameters.fleet_size_or_units > 0) {
+            addParameterControl(container, {
+                id: 'fleet_size_or_units',
+                label: 'Volume (Units)',
+                value: currentParameters.fleet_size_or_units,
+                min: currentParameters.fleet_size_or_units * 0.5,
+                max: currentParameters.fleet_size_or_units * 2,
+                step: currentParameters.fleet_size_or_units * 0.05,
+                format: (v) => formatNumber(v)
+            });
+        }
+    }
+    
+    // Development Cost
+    if (currentParameters.development_cost > 0) {
+        addParameterControl(container, {
+            id: 'development_cost',
+            label: 'Implementation Cost',
+            value: currentParameters.development_cost,
+            min: 0,
+            max: currentParameters.development_cost * 3,
+            step: currentParameters.development_cost * 0.1,
+            prefix: '€',
+            format: (v) => formatCurrency(v)
+        });
+    }
+    
+    // Market Coverage (for revenue projects)
+    if (!isSavings) {
+        addParameterControl(container, {
+            id: 'market_coverage',
+            label: 'Market Coverage',
+            value: currentParameters.market_coverage,
+            min: 10,
+            max: 100,
+            step: 5,
+            suffix: '%',
+            format: (v) => `${v.toFixed(0)}%`
+        });
+    }
+}
+
+function addParameterControl(container, config) {
+    const group = document.createElement('div');
+    group.className = 'parameter-group';
+    
+    group.innerHTML = `
+        <div class="parameter-label">
+            <span>${config.label}</span>
+            <span class="parameter-value" id="${config.id}_value">${config.format(config.value)}</span>
+        </div>
+        <input 
+            type="range" 
+            class="parameter-slider" 
+            id="${config.id}_slider"
+            min="${config.min}" 
+            max="${config.max}" 
+            step="${config.step}" 
+            value="${config.value}"
+            data-param="${config.id}"
+            data-format="${config.format.toString()}"
+        />
+    `;
+    
+    container.appendChild(group);
+    
+    // Add event listener
+    const slider = group.querySelector('.parameter-slider');
+    const valueDisplay = group.querySelector('.parameter-value');
+    
+    // Initialize slider fill
+    updateSliderFill(slider);
+    
+    slider.addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        currentParameters[config.id] = value;
+        
+        // Update slider fill
+        updateSliderFill(slider);
+        
+        // Special handling for annual_revenue_or_savings
+        if (config.id === 'annual_revenue_or_savings') {
+            currentParameters[config.id] = value * 5; // Convert back to 5-year total
+            valueDisplay.textContent = config.format(value);
+        } else {
+            valueDisplay.textContent = config.format(value);
+        }
+    });
+}
+
+function setupSimulatorEvents() {
+    // Run Simulation button
+    const runBtn = document.getElementById('runSimulation');
+    if (runBtn) {
+        runBtn.addEventListener('click', runSimulation);
+    }
+    
+    // Reset button
+    const resetBtn = document.getElementById('resetSimulation');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            // Reset to original parameters
+            currentParameters = { ...originalParameters };
+            
+            // Reset all scenario buttons
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.scenario === 'current') {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Rebuild controls and run simulation with original values
+            buildParameterControls(analysisContext);
+            
+            // Visual feedback
+            resetBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Reset!
+            `;
+            
+            setTimeout(() => {
+                resetBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Reset
+                `;
+                
+                // Re-run simulation with original values
+                runSimulation();
+            }, 800);
+        });
+    }
+    
+    // Scenario buttons
+    const scenarioBtns = document.querySelectorAll('.scenario-btn');
+    scenarioBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            scenarioBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            const scenario = e.target.dataset.scenario;
+            applyScenario(scenario);
+        });
+    });
+}
+
+function applyScenario(scenario) {
+    const multipliers = {
+        current: 1.0,
+        optimistic: 1.3,
+        conservative: 0.7
+    };
+    
+    const mult = multipliers[scenario] || 1.0;
+    
+    // Adjust parameters based on scenario
+    if (scenario === 'optimistic') {
+        currentParameters.growth_rate = Math.min(originalParameters.growth_rate * 1.5, 30);
+        currentParameters.annual_revenue_or_savings = originalParameters.annual_revenue_or_savings * 1.3;
+        currentParameters.market_coverage = Math.min(originalParameters.market_coverage * 1.2, 100);
+    } else if (scenario === 'conservative') {
+        currentParameters.growth_rate = Math.max(originalParameters.growth_rate * 0.7, 0);
+        currentParameters.annual_revenue_or_savings = originalParameters.annual_revenue_or_savings * 0.7;
+        currentParameters.market_coverage = originalParameters.market_coverage * 0.8;
+    } else {
+        currentParameters = { ...originalParameters };
+    }
+    
+    buildParameterControls(analysisContext);
+    runSimulation();
+}
+
+async function runSimulation() {
+    const runBtn = document.getElementById('runSimulation');
+    const originalText = runBtn.innerHTML;
+    
+    try {
+        // Show loading state
+        runBtn.disabled = true;
+        runBtn.innerHTML = `
+            <svg style="animation: spin 1s linear infinite; width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Calculating...
+        `;
+        
+        console.log('🎯 Running simulation with parameters:', currentParameters);
+        
+        const response = await fetch('/api/simulate-income', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                document_id: currentAnalysisId,
+                parameters: currentParameters
+            })
+        });
+        
+        if (!response.ok) throw new Error('Simulation failed');
+        
+        const data = await response.json();
+        console.log('✓ Simulation complete:', data);
+        
+        // Update display with new results
+        updateComparisonDisplay(analysisContext, data.analysis, data.comparison);
+        
+        // Show success feedback
+        runBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Updated!
+        `;
+        
+        setTimeout(() => {
+            runBtn.innerHTML = originalText;
+            runBtn.disabled = false;
+        }, 1500);
+        
+    } catch (error) {
+        console.error('❌ Simulation error:', error);
+        runBtn.innerHTML = originalText;
+        runBtn.disabled = false;
+        alert('Failed to run simulation. Please try again.');
+    }
+}
+
+function updateComparisonDisplay(original, simulated, comparison) {
+    // Remove pulse animation - make it live and smooth
+    // document.querySelectorAll('.metric-card-sim').forEach(card => {
+    //     card.classList.add('updating');
+    //     setTimeout(() => card.classList.remove('updating'), 500);
+    // });
+    
+    // Update income/cost/profit cards
+    const totalIncome = simulated.total_estimated_cost_summary?.total_revenue_5_years || 0;
+    const totalCost = simulated.total_estimated_cost_summary?.total_cost_5_years || 0;
+    const netProfit = simulated.total_estimated_cost_summary?.net_profit_5_years || 0;
+    const roi = simulated.total_estimated_cost_summary?.roi_percentage || 0;
+    const breakeven = simulated.total_estimated_cost_summary?.break_even_months || 0;
+    
+    document.getElementById('simulatedIncome').textContent = formatCurrency(totalIncome);
+    document.getElementById('simulatedCost').textContent = formatCurrency(totalCost);
+    document.getElementById('simulatedProfit').textContent = formatCurrency(netProfit);
+    document.getElementById('simulatedROI').textContent = `${roi.toFixed(1)}%`;
+    
+    // Better break-even display
+    const breakevenElement = document.getElementById('breakevenMonths');
+    if (breakeven === 0) {
+        breakevenElement.textContent = 'Immediate';
+        breakevenElement.style.color = '#10b981'; // Green for immediate ROI
+    } else if (breakeven >= 60) {
+        breakevenElement.textContent = 'Never (>5 years)';
+        breakevenElement.style.color = '#ef4444'; // Red for never
+    } else if (breakeven >= 36) {
+        breakevenElement.textContent = `${breakeven} months`;
+        breakevenElement.style.color = '#f59e0b'; // Orange for long payback
+    } else {
+        breakevenElement.textContent = `${breakeven} months`;
+        breakevenElement.style.color = '#10b981'; // Green for quick payback
+    }
+    
+    // Update change indicators
+    if (comparison) {
+        updateChangeIndicator('incomeChange', comparison.tam_change, comparison.tam_change_pct);
+        updateChangeIndicator('costChange', 0, 0); // Cost change not tracked yet
+        updateChangeIndicator('profitChange', comparison.som_change, comparison.som_change_pct);
+        updateChangeIndicator('roiChangeValue', comparison.roi_change, null);
+    }
+    
+    // Update chart
+    updateSimulationChart(simulated);
+}
+
+function updateChangeIndicator(elementId, absoluteChange, percentChange) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const isPositive = absoluteChange > 0;
+    const isNegative = absoluteChange < 0;
+    
+    element.className = 'comparison-change';
+    if (isPositive) element.classList.add('positive');
+    else if (isNegative) element.classList.add('negative');
+    else element.classList.add('neutral');
+    
+    const arrow = isPositive ? '↑' : isNegative ? '↓' : '•';
+    const pctText = percentChange !== null && percentChange !== undefined 
+        ? `${arrow} ${Math.abs(percentChange).toFixed(1)}%` 
+        : `${arrow} ${formatCurrency(Math.abs(absoluteChange))}`;
+    
+    element.textContent = pctText;
+}
+
+function updateSimulationChart(analysis) {
+    const canvas = document.getElementById('simulationChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Destroy existing chart
+    if (simulationChart) {
+        simulationChart.destroy();
+    }
+    
+    // Extract 5-year data
+    const years = ['2025', '2026', '2027', '2028', '2029'];
+    const revenueData = years.map(y => analysis.turnover?.numbers?.[y] || 0);
+    const costData = years.map(y => analysis.yearly_cost_breakdown?.[y]?.total_cost || 0);
+    const profitData = revenueData.map((rev, i) => rev - costData[i]);
+    
+    simulationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: revenueData,
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Cost',
+                    data: costData,
+                    borderColor: '#F59E0B',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Net Profit',
+                    data: profitData,
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return formatCurrency(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Helper function for formatting currency in simulator
+function formatCurrency(value) {
+    if (!value && value !== 0) return 'N/A';
+    return new Intl.NumberFormat('en-US', { 
+        style: 'currency', 
+        currency: 'EUR',
+        notation: 'compact',
+        maximumFractionDigits: 1
+    }).format(value);
+}
+
+function formatNumber(value) {
+    if (!value && value !== 0) return 'N/A';
+    return new Intl.NumberFormat('en-US', { 
+        notation: 'compact',
+        maximumFractionDigits: 1
+    }).format(value);
+}
+
+function updateSliderFill(slider) {
+    const min = parseFloat(slider.min);
+    const max = parseFloat(slider.max);
+    const value = parseFloat(slider.value);
+    const percentage = ((value - min) / (max - min)) * 100;
+    slider.style.background = `linear-gradient(to right, var(--primary-light) 0%, var(--primary-light) ${percentage}%, var(--border-light) ${percentage}%, var(--border-light) 100%)`;
+}
+
+// ============== END INCOME SIMULATOR ==============
+

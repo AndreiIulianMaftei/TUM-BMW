@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 
 
@@ -245,6 +245,10 @@ class MarketPotential(BaseModel):
 
 
 class ComprehensiveAnalysis(BaseModel):
+    # Project identification
+    project_name: Optional[str] = None
+    project_type: Optional[str] = None  # savings, one_time_sale, subscription, royalty, mixed
+    
     # Original market metrics
     tam: TAMMetrics
     sam: SAMMetrics
@@ -315,13 +319,19 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     """Request for chat interaction"""
     message: str = Field(..., min_length=1, max_length=2000)
+    analysis_context: Optional[Dict[str, Any]] = None  # Current analysis data
     document_id: Optional[str] = None  # Reference to analyzed document
     conversation_history: List[ChatMessage] = Field(default_factory=list)
     provider: str = Field(default="gemini")
+    settings: Optional[Any] = None
 
 
 class ChatResponse(BaseModel):
     """Response from chat interaction"""
-    message: str
+    success: bool = True
+    response: str
+    modifications: Optional[Dict[str, Any]] = None  # Parameter modifications detected
+    simulation: Optional[Dict[str, Any]] = None  # Simulation results if modifications applied
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     tokens_used: Optional[int] = None
+

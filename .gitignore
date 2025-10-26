@@ -210,3 +210,6 @@ __marimo__/
 settings.json
 *.xlsx
 Json_Results/
+exports/
+input/*.pdf
+input/*.docx
