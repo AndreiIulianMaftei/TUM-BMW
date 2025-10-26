@@ -2022,18 +2022,9 @@ async function runSimulation() {
         // Update display with new results
         updateComparisonDisplay(analysisContext, data.analysis, data.comparison);
         
-        // Show success feedback
-        runBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Updated!
-        `;
-        
-        setTimeout(() => {
-            runBtn.innerHTML = originalText;
-            runBtn.disabled = false;
-        }, 1500);
+        // Restore button immediately
+        runBtn.innerHTML = originalText;
+        runBtn.disabled = false;
         
     } catch (error) {
         console.error('❌ Simulation error:', error);
