@@ -17,6 +17,7 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
         fleet_size = extracted.get('fleet_size_or_units')
         price_per_unit = extracted.get('price_per_unit')
         streams = extracted.get('stream_values', [])
+        total_streams = sum(s for s in streams if s) if streams else None
         dev_cost = extracted.get('development_cost', 0)
         growth = extracted.get('growth_rate', 5.0)
         royalty = extracted.get('royalty_percentage', 0.0)
@@ -47,49 +48,33 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
         
         is_savings = project_type in ['savings', 'cost_savings', 'efficiency']
         
-        print("\n💡 Calculating TAM...")
-        tam = None
-        total_streams = sum(s for s in streams if s) if streams else None
-        
-        if total_streams and total_streams > 0:
-            tam = total_streams * 5
-            print(f"   TAM from streams (€{total_streams:,} annual × 5 years): €{tam:,.0f}")
-        elif annual_value:
-            tam = annual_value * 5
-            print(f"   TAM from annual value (€{annual_value:,} × 5 years): €{tam:,.0f}")
-        elif fleet_size and price_per_unit:
+        print("\n💡 Calculating TAM, SAM, SOM using standard formulas...")
+
+        # Calculate TAM: prefer fleet_size × price_per_unit (customers × ARPU/ACV)
+        if fleet_size and price_per_unit:
             tam = fleet_size * price_per_unit
-            print(f"   TAM from fleet × price ({fleet_size:,} × €{price_per_unit}): €{tam:,.0f}")
+            print(f"   TAM = {fleet_size:,} customers × €{price_per_unit} = €{tam:,.0f}")
+        elif annual_value:
+            # If only annual_value provided, treat it as TAM (annual market value)
+            tam = annual_value
+            print(f"   TAM (from provided annual value): €{tam:,.0f}")
         else:
-            tam = 50_000_000
-            print(f"   TAM fallback: €{tam:,.0f}")
-        
-        if is_savings:
-            sam_percent = 75.0
-            som_percent = 70.0
-            print(f"\n💡 Market segmentation (SAVINGS PROJECT):")
-            print(f"   SAM: {sam_percent}% of TAM (organizational capacity to implement)")
-            print(f"   SOM: {som_percent}% of SAM (realistic execution considering change management)")
-            
-            if dev_cost == 0:
-                annual_savings = total_streams if total_streams else (annual_value or tam/5)
-                dev_cost = annual_savings * 0.15
-                print(f"   💡 Estimated development cost: €{dev_cost:,.0f} (15% of annual savings)")
-                print(f"      Covers: feasibility studies, software dev, process implementation, training")
-        else:
-            sam_percent = 100.0
-            som_percent = 80.0
-            print(f"\n💡 Market segmentation (REVENUE PROJECT):")
-            print(f"   SAM: {sam_percent}% of TAM (serviceable market)")
-            print(f"   SOM: {som_percent}% of SAM (realistic market share)")
-        
-        sam = tam * (sam_percent / 100)
-        som = sam * (som_percent / 100)
-        
-        print(f"\n💡 Market sizes:")
-        print(f"   TAM: €{tam:,.0f}")
-        print(f"   SAM: €{sam:,.0f}")
-        print(f"   SOM: €{som:,.0f}")
+            tam = 0
+            print("   TAM data missing — set to 0 (handle downstream)")
+
+        # Calculate SAM: portion of TAM we can serve (market coverage)
+        try:
+            sam = tam * (market_cov / 100)
+        except Exception:
+            sam = 0
+        print(f"\n   SAM = €{tam:,.0f} × {market_cov}% = €{sam:,.0f}")
+
+        # Calculate SOM: portion of SAM we can capture (take rate / penetration)
+        try:
+            som = sam * (take_rate / 100)
+        except Exception:
+            som = 0
+        print(f"   SOM = €{sam:,.0f} × {take_rate}% = €{som:,.0f}")
         
         if is_savings:
             units = 0
@@ -276,8 +261,8 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
         if is_savings:
             identified_vars = [
                 Variable(name="TAM", value=f"€{tam:,.0f}", description="Total addressable savings over 5 years"),
-                Variable(name="SAM", value=f"€{sam:,.0f}", description=f"Serviceable savings ({sam_percent}% of TAM due to organizational capacity)"),
-                Variable(name="SOM", value=f"€{som:,.0f}", description=f"Obtainable savings ({som_percent}% of SAM after execution risk)"),
+                Variable(name="SAM", value=f"€{sam:,.0f}", description=f"Serviceable savings ({market_cov}% of TAM due to organizational capacity)"),
+                Variable(name="SOM", value=f"€{som:,.0f}", description=f"Obtainable savings ({take_rate}% of SAM after execution risk)"),
                 Variable(name="Annual Savings (Y1)", value=f"€{som/5:,.0f}", description="First year achievable savings"),
                 Variable(name="Implementation Cost", value=f"€{dev_cost:,.0f}", description="Upfront investment for feasibility, software, process setup"),
                 Variable(name="Growth Rate", value=f"{growth}%", description="Annual savings growth rate"),
@@ -298,12 +283,12 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
                 Formula(
                     name="SAM Calculation",
                     formula="SAM = TAM × Organizational Capacity %",
-                    calculation=f"€{tam:,.0f} × {sam_percent}% = €{sam:,.0f}"
+                    calculation=f"€{tam:,.0f} × {market_cov}% = €{sam:,.0f}"
                 ),
                 Formula(
                     name="SOM Calculation",
                     formula="SOM = SAM × Execution Success Rate %",
-                    calculation=f"€{sam:,.0f} × {som_percent}% = €{som:,.0f}"
+                    calculation=f"€{sam:,.0f} × {take_rate}% = €{som:,.0f}"
                 ),
                 Formula(
                     name="Annual Savings (Year 1)",
@@ -329,8 +314,8 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
         else:
             identified_vars = [
                 Variable(name="TAM", value=f"€{tam:,.0f}", description="Total addressable market over 5 years"),
-                Variable(name="SAM", value=f"€{sam:,.0f}", description=f"Serviceable available market ({sam_percent}% of TAM)"),
-                Variable(name="SOM", value=f"€{som:,.0f}", description=f"Serviceable obtainable market ({som_percent}% of SAM)"),
+                Variable(name="SAM", value=f"€{sam:,.0f}", description=f"Serviceable available market ({market_cov}% of TAM)"),
+                Variable(name="SOM", value=f"€{som:,.0f}", description=f"Serviceable obtainable market ({take_rate}% of SAM)"),
                 Variable(name="Price per Unit", value=f"€{price_per_unit:,.2f}", description="Average selling price per unit"),
                 Variable(name="COGS per Unit", value=f"€{cogs_per_unit:,.2f}", description="Cost of goods sold per unit (25% of price)"),
                 Variable(name="Units (Year 1)", value=f"{int(units):,}", description="Projected volume in first year"),
@@ -347,7 +332,7 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
                 Formula(
                     name="SOM Calculation",
                     formula="SOM = TAM × SAM % × Market Share %",
-                    calculation=f"€{tam:,.0f} × {sam_percent}% × {som_percent}% = €{som:,.0f}"
+                    calculation=f"€{tam:,.0f} × {market_cov}% × {take_rate}% = €{som:,.0f}"
                 ),
                 Formula(
                     name="Units Calculation",
@@ -384,20 +369,20 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
                 confidence=85
             ),
             sam=SAMMetrics(
-                description_of_public=f"Serviceable savings ({sam_percent}% of TAM) - organizational capacity" if is_savings else f"Serviceable available market ({sam_percent}% of TAM)",
+                description_of_public=f"Serviceable savings ({market_cov}% of TAM) - organizational capacity" if is_savings else f"Serviceable available market ({market_cov}% of TAM)",
                 market_size=sam,
                 numbers=sam_numbers,
-                justification=f"Limited by budget, resources, and change management capacity" if is_savings else f"Full internal access: {sam_percent}% penetration",
+                justification=f"Limited by budget, resources, and change management capacity" if is_savings else f"Full internal access: {market_cov}% penetration",
                 insight=f"Achievable savings considering organizational constraints: €{sam/1_000_000:.1f}M" if is_savings else f"Realistic serviceable market of €{sam/1_000_000:.1f}M",
                 confidence=80,
-                penetration_rate=sam_percent
+                penetration_rate=market_cov
             ),
             som=SOMMetrics(
-                description_of_public=f"Obtainable savings ({som_percent}% of SAM) - execution realism" if is_savings else f"Serviceable obtainable market ({som_percent}% of SAM)",
-                market_share=som_percent,
+                description_of_public=f"Obtainable savings ({take_rate}% of SAM) - execution realism" if is_savings else f"Serviceable obtainable market ({take_rate}% of SAM)",
+                market_share=take_rate,
                 revenue_potential=som,
                 numbers=som_numbers,
-                justification=f"Accounts for implementation challenges and adoption resistance" if is_savings else f"Target {som_percent}% implementation rate",
+                justification=f"Accounts for implementation challenges and adoption resistance" if is_savings else f"Target {take_rate}% implementation rate",
                 insight=f"Realistic net savings after execution risk: €{som/1_000_000:.1f}M" if is_savings else f"Achievable revenue potential: €{som/1_000_000:.1f}M",
                 confidence=75,
                 customer_acquisition_cost=0
@@ -454,7 +439,7 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
             ),
             market_potential=MarketPotential(
                 market_size=tam,
-                penetration=som_percent,
+                penetration=take_rate,
                 growth_rate=growth,
                 numbers=tam_numbers,
                 insight=f"Strong market potential with {growth}% growth",
@@ -476,10 +461,10 @@ def calculate_complete_analysis(extracted: Dict[str, Any]) -> ComprehensiveAnaly
                 'break_even_months': float(break_even_months)
             },
             executive_summary=f"{project_name}: €{tam/1_000_000:.1f}M total savings potential, €{som/1_000_000:.1f}M achievable savings, {roi_pct:.1f}% ROI over 5 years." if is_savings else f"{project_name}: €{tam/1_000_000:.1f}M TAM, €{som/1_000_000:.1f}M SOM, {roi_pct:.1f}% ROI over 5 years.",
-            value_market_potential_text=f"Strong savings opportunity with €{tam/1_000_000:.1f}M total potential and {growth}% annual growth. Target achievable savings of €{som/1_000_000:.1f}M represents {som_percent}% execution rate with {roi_pct:.1f}% ROI and {break_even_months} months to break-even. Implementation requires €{dev_cost/1_000_000:.1f}M upfront investment." if is_savings else f"Strong market opportunity with €{tam/1_000_000:.1f}M TAM and {growth}% annual growth. Target SOM of €{som/1_000_000:.1f}M represents {som_percent}% market penetration with {roi_pct:.1f}% ROI and {break_even_months} months to break-even.",
+            value_market_potential_text=f"Strong savings opportunity with €{tam/1_000_000:.1f}M total potential and {growth}% annual growth. Target achievable savings of €{som/1_000_000:.1f}M represents {take_rate}% execution rate with {roi_pct:.1f}% ROI and {break_even_months} months to break-even. Implementation requires €{dev_cost/1_000_000:.1f}M upfront investment." if is_savings else f"Strong market opportunity with €{tam/1_000_000:.1f}M TAM and {growth}% annual growth. Target SOM of €{som/1_000_000:.1f}M represents {take_rate}% market penetration with {roi_pct:.1f}% ROI and {break_even_months} months to break-even.",
             business_assumptions=[
                 f"{growth}% annual growth rate",
-                f"{som_percent}% implementation penetration target" if is_savings else f"{som_percent}% market penetration target",
+                f"{take_rate}% implementation penetration target" if is_savings else f"{take_rate}% market penetration target",
                 f"Annual savings: €{som/5:,.0f} (Year 1)" if is_savings else f"€{price_per_unit:.0f} average transaction value"
             ],
             improvement_recommendations=[
