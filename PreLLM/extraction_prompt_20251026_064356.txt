@@ -1,0 +1,211 @@
+Extract ONLY these financial metrics from the business document. Return valid JSON only.
+
+DOCUMENT:
+[DATE]  
+PROJECT NAME: B2B Connect Motorcycle (formerly Port Partner)  
+ 
+IDEA DESCRIPTION  
+Briefly describe your idea to give a broad 
+overview of the concept.  The project involves setting up a [sanitized] Motorrad certification and partner program to improve and monetize a range of third -party 
+accessories for [sanitized] motorcycles. The aim is to achieve the widest possible range of products and compatibility of third -party 
+accessories.  
+Certified partners receive detailed information on mechanical, electrical, and/or electronic interfaces, a test catalog with product 
+requirements, trademark rights in the form of a label for their products (e.g., “Made for [sanitized] Motorrad”), and, if applicabl e, (co -) 
+marketing commitments with the necessary guidelines.  
+Currently, it is not possible for third -party accessory manufacturers to access vehicle interface information (mechanical, E/E) via 
+[sanitized]. The project is to be implemented through a multi -level and monetizable partner certification program (gold/silver/bronz e – 
+analogous to the cost model), which will open up a new revenue stream and also complete and improve the customer experience i n 
+the [sanitized] Motorrad ecosystem.  
+ 
+Existing examples from other industries:  
+• Apple : Apple's certification ecosystems (Made for iPhone; MFI (https://mfi.apple.com/) are considered the benchmark, 
+containing specifications, certification tools, and a badge for tested accessories.  
+• Amazon : “Works with Alexa” includes a certification badge and improved visibility in the electronic app store.  
+• GoPro : “Works with GoPro”/“Designed for OpenGoPro” includes access to product and lifestyle images, promotion of 
+integrations on the GoPro website, and creation of solution packages with GoPro cameras.  
+• DJI : “DJI Recommended Accessories” for certified accessory solutions for use with DJI products.  
+  
+CUSTOMER SEGMENT  | PERSONA  
+How would you describe the relevant 
+customer segments that have just been 
+selected ? • Third -party manufacturers:  These include established manufacturers of motorcycle accessories and new entrants to 
+the motorcycle segment. They require information about [sanitized] vehicle characteristics (e.g., dimensions and mechanical, 
+electrical, and/or electronic interfaces) in order t o ensure quality standards during the development and production of 
+accessories. If there is already a connection to [sanitized], e.g., as a [sanitized] supplier, these manufacturers are often not 
+associated with [sanitized] in the customer's perception.  
+• End consumers:  [sanitized] Motorrad customers, motorcyclists. These customers require the following products:  
+o Mass market:  Standard connectivity (communication systems, smartphone holders/integration, navigation 
+devices, etc.), vehicle data/diagnostics/data connectivity, etc., if applicable), safety and emergency devices, 
+connectivity hubs (theft, accident, etc.)  
+o Niche market:  action cams/360 -degree cams, wearables, smart gear; off -road/race products  
+• HO (retail organization):  interested in a high -quality, broad range of accessories.  
+  
+CUSTOMER PROBLEM(S)  
+What is the customer problem for each of 
+the customer segments that needs to be 
+solved? Is there already a metric that proves 
+the customer problem?  - Third -party manufacturers:  Currently have no way of developing or testing their products and functions with and on 
+[sanitized] motorcycles in accordance with valid (interface) documentation. Manufacturers therefore use reverse engineering 
+to access (mechanical & E/E) vehicle specifications , which means that compatibility and quality cannot be guaranteed, 
+leading to functional and quality problems and, in some cases, customer frustration. customer frustration.  
+- End customers:  Customers do not always find the right accessories in the [sanitized] Motorrad range, as not all accessories 
+in demand, especially niche products, are offered by [sanitized] as original parts. Currently, end consumers cannot always rely 
+on the quality and compatibility o f third -party suppliers.  
+- [sanitized] Motorrad:  Competes with a large number of suppliers in the accessories market. These suppliers expand and/or 
+offer alternatives to [sanitized] parts. In addition, incompatible accessories can lead to technical malfunctions, warranty 
+claims, etc. on the motorcycle.   
+  
+VALUE PROPOSITION  
+How does the idea solve the defined 
+customer problem (Pain Relievers)? What 
+benefits does the idea offer beyond mere 
+problem -solving (Gain Creators)?  • Third -party manufacturers:  
+o Access to information about [sanitized] vehicle characteristics:  For example, dimensions and mechanical, 
+electrical, and/or electronic interfaces to ensure a standard of quality during the development and production of 
+accessories.  
+o Market access:  Certification opens up/simplifies access to [sanitized] Motorrad customers and dealers. Cooperation 
+with [sanitized] Communications accelerates market launch and increases market acceptance.  
+o Trust advantage:  The “Made for [sanitized] Motorrad” label signals quality and increases willingness to buy.  
+o Innovation opportunities:  Partners can develop niche products that meaningfully expand the ecosystem.  
+o Liability protection:  Certification reduces the risk of product liability and legal conflicts.  
+o Cooperation:  Third -party providers benefit from close cooperation with [sanitized], dealers, and service networks.  
+• End customers:  
+o Increased customer satisfaction and loyalty:  
+▪ Closing gaps in the product range and expanding the overall offering:  
+▪ Safety:  Certified accessories minimize risks such as malfunctions and ensure a safe riding experience.  
+o Accessory compatibility:  Accessories are technically tested and ideally function reliably without additional 
+adjustments or specialist knowledge (depending on the product).  
+o Value retention:  Motorcycles with certified accessories retain their market value for longer and are more 
+attractive when resold.  
+• [sanitized] -Motorcycles:  
+o New revenue streams:  Licenses and expanded accessories open up additional sources of income. This allows 
+participation in the value creation of third -party manufacturers.  
+o Customer loyalty:  The ecosystem keeps end customers loyal to the brand and accessories in the long term.  
+o Potential impact on the vehicle is reduced:  Damage/malfunctions to the motorcycle caused by incompatible 
+accessories are avoided.  
+o Brand strength:  “Made for [sanitized] Motorrad” becomes a quality feature that strengthens trust and premium 
+positioning.  
+o Innovation : Third -party providers bring new functions and creative enhancements to the existing system. [sanitized] 
+can reduce the integration effort through standardized onboarding, testing, and labeling processes.  
+o Securing the existing product range : e.g., in the case of the navigator, as this will be discontinued as a [sanitized] 
+Original Accessory in the medium term.   
+VALUE | FINANCIAL  
+What are the most important cost drivers 
+and revenue drivers in the business model 
+(qualitative description)?  Costs:  
+System enabling costs (setting up the partner management portal, process changes, product planning and development), legal 
+consulting costs (one -time), marketing expenses per partner and product, ongoing partner management expenses (FTEs); 
+Certification co sts (possibly covered by third -party providers); enabling for interface compatibility  
+ 
+Revenue side:  
+• Direct and predictable revenue:  
+o License fees per product sold (royalties)  
+o Revenue from subscriptions  
+o One -time revenues (e.g., advertising costs but not certifications, if applicable)  
+• Indirect revenues:  
+• Through increased brand appeal, customer satisfaction, and thus long -term increased interest in the [sanitized] Motorrad 
+product range, possibly in conjunction with existing [sanitized] accessories, such as holders for navigation systems  
+  
+VALUE | MARKET POTENTIAL  
+What is the rough estimate of the market 
+potential?  Disclaimer: The following figures are only a conservative initial analysis. A detailed analysis will follow in the validation phase.  
+ 
+Direct and predictable revenues:  
+• License fees per product sold (royalty):  
+[Annual number of motorcycles sold¹] * [Number of product categories for accessories] * [Average take rate for 
+accessories²] * [Average UPE for accessories in EUR ] * [Market coverage³] * [Royalty fee ⁴] 
+ 210,000¹ * 10 * 10% * EUR 350 * 50% * 10% = EUR 3,675,000 p.a.  
+ 
+¹ Note regarding motorcycles sold : Value from 2024, worldwide sales.  
+² Note regarding take rate: The take rate for [sanitized] accessories varies greatly, depending on the vehicle category. It ranges from 
+approx. 1% for milled parts to 70% for cases. The assumed 10% take rate is therefore conservative.  
+³ Note regarding market coverage: Approximately 50% of customers purchase their accessories from [sanitized].  
+⁴ Note regarding royalty fee: Amazon charges a 30% sales commission, so the 10% is a conservative estimate -> to be 
+validated.  
+ 
+• Revenue from subscriptions:  
+[Number of product categories for accessories] * [Average number of partners per product category] * [Average 
+subscription fee¹]  
+ TBD Potential assessment in the validation phase  
+¹ Note regarding subscription fee: Apple charges $99/month  
+  
+ • One -time revenues  
+[Number of product categories for accessories] * [Average number of partners per product category] * 
+[Average number of products offered per category] * [Average listing costs/certification fee¹]  
+ 10* 5 (i.e., 50 partner agreements) * TBD * TBD = TBD Potential assessment in the validation phase  
+ 
+¹ Note regarding certification fee : In order to integrate many providers into the portal, the certification process may only cover 
+costs. No revenue potential through certification (to be validated).  
+ 
+Indirect revenue:  Potential assessment in the validation phase →  e.g., additional upside for [sanitized] Motorrad volume  
+ 
+ 
+ 
+VALUE | NON -FINANCIAL  
+What other, non -financial values does the 
+idea generate for the [sanitized] Group?  • Endkunde:  [sanitized] -Motorrad setzt sich aktiv mit den Bedürfnissen der Kunden auseinander. Dies spiegelt sich im Angebot von 
+maßgeschneiderte, an den use -case des Kunden angepasste Zubehörbundles wieder.  
+• Händler:  Stärkung der Händlerbeziehung durch Verbesserung der operativen Abläufe.  
+• [sanitized] -Motorrad:  Professionelle, kunden -zentrische Wahrnehmung.  
+  
+NEXT STEPS  
+What is the current status of the idea and 
+what are the next steps?  • Validation of the pricing model and cost structure:  Through direct feedback from manufacturers and end customers.  
+• Market analysis:  Customer survey.  
+• Review of the legal situation:  Validation that [sanitized] is not exposed to any liability risk.  
+• Definition of products  
+• Identification of internal interfaces  
+• Establishment of a KPI structure : e.g., time -to-certify, pass rate in the first test, certified share of sales of certified products  
+• Development of a portal structure : partner portal, access to specifications, test procedures, certificate/badge, marketing.  
+• Pilot phase:  With selected third -party accessory manufacturers, implementation of onboarding and certification platform 
+(online), marketing launch.  
+  
+RED FLAGS  
+Does the idea raise any regulatory, criminal 
+law, or ESG (Environment, Social, 
+Governance) concerns?  Disclaimer : No direct red flags were identified, but there are potential issues that need to be examined during the validation phase.  
+• Review of regulatory requirements:  Which issues are safety -related and to what extent are safety -related features 
+associated with safety obligations?  
+• Other technical and regulatory hurdles for accessories with electronics:  Is type approval required (liability issue if [sanitized] 
+is certified)?  
+• Data protection & cybersecurity : Is there liability in the event of malfunction in the case of connected add -ons (ISO/SAE 
+21434, UN R155)? Also UN EXCE T156, Cyber Resilience Act, US Executive Orders, Tech De -Coupling, ...
+
+EXTRACT (use null if not found):
+1. project_name: Project title
+2. project_type: Identify the business model:
+   - "savings" if document mentions cost reduction/efficiency/avoiding costs
+   - "one_time_sale" if selling products once (cars, hardware, equipment)
+   - "subscription" if recurring revenue (SaaS, membership, monthly fees)
+   - "royalty" if taking percentage of transactions (marketplace, licensing, platform)
+   - "mixed" if combination
+3. annual_revenue_or_savings: Total annual revenue OR savings in EUR (e.g., "€5 million p.a." → 5000000)
+4. fleet_size_or_units: Number of units/customers/vehicles (null if savings project without units)
+5. price_per_unit: Price or value per unit in EUR (null if savings project)
+6. stream_values: Array of revenue/savings stream values [stream1, stream2, ...] in EUR (ANNUAL values)
+7. development_cost: One-time development/setup/implementation cost in EUR (look for: feasibility studies, software dev, training costs)
+8. growth_rate: Annual growth rate as percentage (default 5)
+9. royalty_percentage: For royalty model - percentage taken (0-100, use 0 if not applicable)
+10. take_rate: Customer adoption/conversion rate as percentage (default 10)
+11. market_coverage: Market penetration percentage (default 50)
+
+IMPORTANT INSTRUCTIONS:
+- Stream values should be ANNUAL amounts (p.a. values), NOT one-time totals
+- For development_cost: Add up any mentioned costs for studies, software, implementation, training
+- If costs aren't specified but project needs implementation, estimate 10-20% of annual value
+- Growth rate: Look for phrases like "5% annual growth", "CAGR", "year-over-year increase"
+
+Return ONLY this JSON:
+{
+  "project_name": "string or null",
+  "project_type": "savings or one_time_sale or subscription or royalty or mixed",
+  "annual_revenue_or_savings": number or null,
+  "fleet_size_or_units": number or null,
+  "price_per_unit": number or null,
+  "stream_values": [number] or null,
+  "development_cost": number or null,
+  "growth_rate": number or null,
+  "royalty_percentage": number or null,
+  "take_rate": number or null,
+  "market_coverage": number or null
+}

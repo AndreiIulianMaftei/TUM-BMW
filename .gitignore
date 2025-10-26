@@ -5,6 +5,10 @@ __pycache__/
 
 # C extensions
 *.so
+# Folder Str
+
+./Json_Results
+./PreLLM
 
 # Distribution / packaging
 .Python
